@@ -1,0 +1,27 @@
+from firebase_admin import credentials, firestore, initialize_app
+
+cred = credentials.Certificate(
+    'my-flix-91e46-firebase-adminsdk-tx9sq-c48bb4e2a9.json')
+initialize_app(cred)
+db = firestore.client()
+video_collection = db.collection('videos')
+data_collection = db.collection('data')
+genre_collection = db.collection('genres')
+stats_collection = db.collection('stats')
+
+
+def get_collection(coll_ref, collection, cursor=None):
+  if cursor is not None:
+    docs = [snapshot.reference for snapshot
+            in coll_ref.limit(1000).start_after(cursor).stream()]
+  else:
+    docs = [snapshot.reference for snapshot
+            in coll_ref.limit(1000).stream()]
+
+  collection = collection + docs
+
+  if len(docs) == 1000:
+    print('1000 docs fetched')
+    return get_collection(coll_ref, collection, docs[999].get())
+  else:
+    return collection

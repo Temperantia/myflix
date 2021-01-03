@@ -1,0 +1,99 @@
+<template lang='pug'>
+v-container(fluid)
+  v-row.header-border
+    v-col(cols='2')
+      img(:src='user.image ? user.image : "/defaultUser.png"')
+    v-col(cols='7')
+      a.red-netflix--text {{ user.username }}
+      div(v-if='!preview')
+        b {{ review.likes.length + " " }}
+        span people found this review helpful
+    v-col.text-right(cols='3')
+      div {{ postedOn }}
+      //-div(v-if='title.summary.type === "show"') {{ review.episodes }} of {{ title.episodeCount }} episodes seen
+      div Overall Rating: {{ review.ratings.Overall }}
+  v-row
+    v-col(cols='3')
+      .ratings.pa-1
+        .black-subheader.d-flex.justify-space-between
+          span.px-3.py-1 Overall
+          span.px-3.py-1 {{ review.ratings.Overall }}
+        .d-flex.justify-space-between(
+          v-for='(rating, name) in review.ratings',
+          :key='name'
+        )
+          span.px-3.py-1 {{ name }}
+          span.px-3.py-1 {{ rating }}
+    v-col(cols='9')
+      p(v-html='content')
+      span.red-netflix--text.click.ml-1(
+        v-if='content.length > 500 && expanded',
+        @click='expanded = false'
+      ) show less
+      span.red-netflix--text.click.ml-1(
+        v-else-if='content.length > 500',
+        @click='expanded = true'
+      ) show more
+  v-row.section-border
+    v-col(cols='7', offset='3')
+      button.button-action(v-if='!preview', @click='') I found this review helpful
+    //-v-col(cols='2')
+      span.small-action.click permalink
+      span.small-action {{ " | " }}
+      span.small-action.click report
+</template>
+<script>
+export default {
+  data: () => ({
+    expanded: false,
+  }),
+  props: ['review', 'title', 'preview'],
+  computed: {
+    content() {
+      return !this.expanded && this.review.content.length > 500
+        ? this.review.content.substring(0, 500) + ' ...'
+        : this.review.content;
+    },
+    user() {
+      return this.preview
+        ? this.$store.state.localStorage.user
+        : this.review.author;
+    },
+    postedOn() {
+      return this.$dateFns.format(
+        this.preview
+          ? new Date()
+          : new Date(Date(this.review.postedOn.seconds)),
+        'MMM d, yyyy'
+      );
+    },
+  },
+};
+</script>
+<style lang="scss" scoped>
+.ratings {
+  border: 1px solid $black-subheader;
+}
+
+.button-action {
+  padding: 5px 20px;
+  border-radius: 5px;
+  border: 1px solid white;
+}
+
+.header-border {
+  border-bottom: 1px solid $white-font;
+}
+
+.section-border {
+  border-bottom: 1px solid white;
+}
+
+.small-action {
+  color: $white-font;
+}
+
+.click {
+  cursor: pointer;
+}
+</style>

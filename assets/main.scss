@@ -1,0 +1,77 @@
+.button {
+  padding: 5px 30px;
+  border-radius: 5px;
+  background-color: $grey-button;
+  color: $white-font;
+}
+
+.button-grey {
+  background-color: $grey-button;
+  color: $white-font;
+}
+
+.button-red {
+  color: white;
+  background-color: $red-netflix;
+}
+
+.v-application a {
+  color: white !important;
+  text-decoration: none;
+}
+
+.title-border {
+  padding: 5px 0;
+  border-bottom: 3px solid $red-netflix;
+}
+
+.subtitle-border {
+  border-bottom: 1px solid $white-font;
+}
+
+* {
+  color: white;
+  word-wrap: break-word;
+}
+
+.white-font--text {
+  color: $white-font;
+}
+
+.green-watching--border {
+  border-color: $green-watching;
+}
+
+.blue-completed--border {
+  border-color: $blue-completed;
+}
+
+.yellow-on-hold--border {
+  border-color: $yellow-on-hold;
+}
+
+.red-dropped--border {
+  border-color: $red-dropped;
+}
+
+.grey-plan-to-watch--border {
+  border-color: $grey-plan-to-watch;
+}
+
+.white-font--border {
+  border-color: $white-font;
+}
+
+.toasted {
+  font-family: "Roboto", sans-serif;
+}
+
+img {
+  width: 100%;
+}
+
+.border {
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+}
