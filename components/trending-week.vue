@@ -2,7 +2,7 @@
 v-carousel(:hide-delimiters='true', :hide-delimiters-background='true')
   v-carousel-item(v-for='item in trendingWeek', :key='item.id')
     div(
-      :style='"height: 100%;  position: relative; background-size: cover; background-image: url(" + item.storyArt + ");"',
+      :style='"height: 100%;  position: relative; background-size: cover; background-image: url(" + item.b + ");"',
       v-if='item'
     )
       div(style='position: absolute; top: 0; left: 0')
@@ -12,26 +12,26 @@ v-carousel(:hide-delimiters='true', :hide-delimiters-background='true')
           h3 {{ getWeek() }}
       div(
         style="width: 100%;\
-                                height: 100%;\
-                                      position: absolute;\
-                                      bottom: 0;\
-                                      left: 0; \
-                                      background: linear-gradient(rgba(0, 0, 0, .1), rgba(0, 0, 0, .7));\
-                                      "
+                                                        height: 100%;\
+                                                              position: absolute;\
+                                                              bottom: 0;\
+                                                              left: 0; \
+                                                              background: linear-gradient(rgba(0, 0, 0, .1), rgba(0, 0, 0, .7));\
+                                                              "
       )
       div(
         style="\
-                                      width: 100%;\
-                                      position: absolute;\
-                                      bottom: 0;\
-                                      left: 0;\
-                                      padding: 30px;\
-                                      "
+                                                              width: 100%;\
+                                                              position: absolute;\
+                                                              bottom: 0;\
+                                                              left: 0;\
+                                                              padding: 30px;\
+                                                              "
       )
-        h1 {{ item.title }}
-        h2(v-if='item.episodeCount', style='padding-top: 10px') Episodes: {{ item.episodeCount }}
+        h1 {{ item.t }}
+        h2(v-if='item.e', style='padding-top: 10px') Episodes: {{ item.e }}
         h2(style='padding-top: 10px') Available on Netflix: {{ availability(item) }}
-        p(style='padding-top: 10px', v-html='item.synopsis')
+        p(style='padding-top: 10px', v-html='item.d')
         div(style='padding-top: 10px')
           button.button.button-red.mr-5
             a(
@@ -43,12 +43,11 @@ v-carousel(:hide-delimiters='true', :hide-delimiters-background='true')
 </template>
 <script>
 export default {
-  props: ['trendingWeek'],
   methods: {
     availability(item) {
       return this.$dateFns
         .format(
-          new Date(item.availability.availabilityStartTime),
+          new Date(item.a),
           'd MMM, yyyy'
         )
         .toUpperCase();
@@ -57,14 +56,22 @@ export default {
       const d = new Date();
       const week =
         this.$dateFns
-          .format(this.$dateFns.startOfWeek(d, { weekStartsOn: 1 }), 'd MMM')
+          .format(this.$dateFns.startOfWeek(d, { weekStartsOn: 1 }), 'MMM d')
           .toUpperCase() +
         ' - ' +
         this.$dateFns
-          .format(this.$dateFns.endOfWeek(d, { weekStartsOn: 1 }), 'd MMM')
+          .format(this.$dateFns.endOfWeek(d, { weekStartsOn: 1 }), 'MMM d')
           .toUpperCase();
 
       return week;
+    },
+  },
+  computed: {
+    trendingWeek() {
+      return this.$search
+        .filter((title) => title.w)
+        .sort((a, b) => (a.popularity > b.popularity ? -1 : 1))
+        .slice(0, 10);
     },
   },
 };

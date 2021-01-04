@@ -27,11 +27,10 @@ v-app
                     v-list-item-title {{ item.title }}
     .subHeader
       v-row(align='center', style='height: inherit')
-        v-col.text-center(
+        v-col.pa-0.text-center(
           cols='1',
           v-for='tab of tabs',
           :key='tab.name',
-          style='padding: 0'
         )
           h3(
             :class='{ "tab-active": tab.route === currentTab, tab: true }',
@@ -95,10 +94,10 @@ export default {
           name: 'NEWS',
           route: 'news',
         }, */
-      /*  {
+      {
         name: 'NEW RELEASES',
         route: 'new-releases',
-      }, */
+      },
     ],
     items: [],
   }),

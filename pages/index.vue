@@ -1,22 +1,7 @@
 <template lang="pug">
 div
+  trending-week.title-border.pa-0
   v-row
     v-col
-      trending-week(:trendingWeek='trendingWeek')
-  v-row
-    v-col
-      premieres(:premieres='premieres')
+      premieres
 </template>
-
-<script>
-export default {
-  async asyncData({ store, $getPremieres, $getTrendingWeek }) {
-    const premieres = await $getPremieres();
-    const trendingWeek = (await $getTrendingWeek());
-    return {
-      premieres,
-      trendingWeek,
-    };
-  },
-};
-</script>

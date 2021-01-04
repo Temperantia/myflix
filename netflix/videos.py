@@ -6,6 +6,7 @@ from threads import threads
 from netflix import url, headers
 from video_summary import get_summary
 from jsonmerge import merge
+from get_media import media
 
 
 def listUntilEmpty(data, k=None):
@@ -95,7 +96,7 @@ def fetchVideo(id, shows, genre_dict):
           'creators': creators,
           'directors': directors,
           'writers': writers,
-          'actors': cast
+         # 'actors': cast
       })
   except:
     print('error ' + str(id))
@@ -126,6 +127,7 @@ def get_videos():
   for id in id_list:
     ids.append([id, shows, genre_dict])
   threads(fetchVideo, ids, 0.02)
+  shows = get_media(shows)
   print('Collected ' + str(showCount) +
         ' shows and ' + str(movieCount) + ' movies')
   dump(shows, open('data/videos.json', 'w', encoding='utf-8'),

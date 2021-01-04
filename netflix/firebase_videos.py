@@ -7,6 +7,30 @@ from threads import threads
 from random import randint
 from datetime import datetime
 
+"""
+a : availability
+b : story art
+c : category
+d : description / synopsis
+e : episode number
+g : genres
+i : image / tall box art
+m : current month
+n : current new release (< 2 weeks)
+o : original
+p : popularity
+q : rank
+r : route
+s : season count
+t : title
+u : type 1 = show 0 = movie
+v : video maturity
+w : current week
+y : release year
+z : score
+
+"""
+
 searches = []
 types = {}
 title_ids = {}
@@ -32,7 +56,7 @@ def create_route(title, type, id):
 def find_key_by_route(route):
   global searches
   for index, search in enumerate(searches):
-    for key in search:
+    for key in list(search):
       if search[key]['r'] == route:
         return index, key
   return None, None
@@ -58,15 +82,16 @@ def remove_ids(genres):
 
 def duplicate(route, type, title):
   global searches
-  index, key = find_key_by_route(route)
-  if key and types[route] == type:
-    if not id in title_ids:
-      title_ids[id] = 1
-    else:
-      title_ids[id] += 1
-    searches[index][key]['r'] = create_route(
-        title, types[route], title_ids[id])
-    route = create_route(title, type, title_ids[id] + 1)
+  if route in types and types[route] == type:
+    index, key = find_key_by_route(route)
+    if key:
+      if not id in title_ids:
+        title_ids[id] = 1
+      else:
+        title_ids[id] += 1
+      searches[index][key]['r'] = create_route(
+          title, type, title_ids[id])
+      route = create_route(title, type, title_ids[id] + 1)
   return route
 
 
@@ -79,8 +104,8 @@ def search_videos(video, id, index):
   type = video['summary']['type']
   route = create_route(video['title'], type, 0)
   route = duplicate(route, type, video['title'])
-  searches[index_search][id] = {'r': route, 't': video['title'], 'i': video['tallBoxArt'] if 'tallBoxArt' in video else video['boxArt'], 'b': video['boxArt'], 'c': find_categories(
-      video['genres']), 'g': remove_ids(video['genres']), 'y': video['releaseYear'], 'm': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0}
+  searches[index_search][id] = {'r': route, 't': video['title'], 'i': video['tallBoxArt'] if 'tallBoxArt' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
+      video['genres']), 'g': remove_ids(video['genres']), 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score']}
 
   if video['summary']['isOriginal']:
     searches[index_search][id]['o'] = 1
@@ -91,18 +116,19 @@ def search_videos(video, id, index):
   types[route] = type
 
 
-def upload(id, index):
+def upload(id, index, data):
   video = data[id]
-  ref = video_collection.document(id).get()
-  # if not ref:
-  random = round(uniform(7.5, 9.8), 1)
-  video['scores'] = {'1': random}
-  video['score'] = random
-  video['rank'] = None
-  video['popularity'] = None
-  video['followers'] = {str(i): now for i in range(randint(0, 5))}
+  if not 'exists' in video:
+    random = round(uniform(7.5, 9.8), 1)
+    video['scores'] = {'1': random}
+    video['score'] = random
+    video['rank'] = None
+    video['popularity'] = None
+    video['followers'] = {str(i): now for i in range(randint(0, 5))}
+    video['exists'] = True
+
   search_videos(video, id, index)
-  video_collection.document(id).set(video, merge=True)
+  #ref.set(video, merge=True)
 
 
 def upload_search():
@@ -114,19 +140,23 @@ def upload_search():
     for key in search:
       arr.append({'id': key} | search[key])
     json = dumps(arr)
-    # must not exceed 1048487
-    print(len(json.encode('utf-8')))
+    print(len(json.encode('utf-8')))  # must not exceed 1048487
     data_collection.document('search' + str(index)).set({'search': json})
+
 
 def launch():
   ids = []
   for index, id in enumerate(data):
-    ids.append((
+    ids.append([
         id,
         index,
-    ))
+        data
+    ])
   threads(upload, ids, 0)
-  #upload_search()
+  dump(data, open('data/videos.json',
+                  'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+  upload_search()
+
 
 
 launch()

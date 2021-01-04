@@ -12,16 +12,17 @@ stats_collection = db.collection('stats')
 
 def get_collection(coll_ref, collection, cursor=None):
   if cursor is not None:
-    docs = [snapshot.reference for snapshot
+    docs = [snapshot for snapshot
             in coll_ref.limit(1000).start_after(cursor).stream()]
   else:
-    docs = [snapshot.reference for snapshot
+    docs = [snapshot for snapshot
             in coll_ref.limit(1000).stream()]
 
   collection = collection + docs
 
   if len(docs) == 1000:
     print('1000 docs fetched')
-    return get_collection(coll_ref, collection, docs[999].get())
+    return get_collection(coll_ref, collection, docs[999])
   else:
+    print('Finished fetching')
     return collection

@@ -10,4 +10,4 @@ while '81290263' not in videos:
   for video in docs:
     videos[video.id] = video.to_dict()
   after = int(list(videos)[-1])
-dump(videos, open('data/videos_export.json', 'w', encoding='utf-8'), ensure_ascii=False, sort_keys=True, indent=2)
+dump(videos, open('data/videos.json', 'w', encoding='utf-8'), ensure_ascii=False, sort_keys=True, indent=2)

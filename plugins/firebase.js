@@ -33,7 +33,12 @@ async function getTrendingWeek() {
     .orderBy("popularity", "desc")
     .where("week", "==", true)
     .where("storyArt", "!=", null)
-    .limit(4);
+    .limit(10);
+  return await get(query);
+}
+
+async function getNewReleases() {
+  const query = collectionVideos.where("week", "==", true);
   return await get(query);
 }
 
@@ -209,7 +214,6 @@ let collectionUsers;
 let collectionVideos;
 let collectionReviews;
 let collectionRecommendations;
-let collectionStats;
 
 export default async ({ $fire, $fireModule, $dateFns, store }, inject) => {
   firestore = $fire.firestore;
@@ -221,9 +225,9 @@ export default async ({ $fire, $fireModule, $dateFns, store }, inject) => {
   collectionVideos = firestore.collection("videos");
   collectionReviews = firestore.collection("reviews");
   collectionRecommendations = firestore.collection("recommendations");
-  collectionStats = firestore.collection("stats");
   inject("getPremieres", getPremieres);
   inject("getTrendingWeek", getTrendingWeek);
+  inject("getNewReleases", getNewReleases);
   inject("getTitle", getTitle);
   inject("getReviews", getReviews);
   inject("getRecommendations", getRecommendations);

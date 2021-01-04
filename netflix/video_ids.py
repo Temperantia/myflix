@@ -40,7 +40,7 @@ def get_ids():
                         '28630857',
                         '28631029',
                         '28631995',
-                        '28634944']) | load(open('data/video_ids.json', 'r'))
+                        '28634944'], {}) | load(open('data/video_ids.json', 'r'))
   ids = []
   # 60 000 000 to 82 000 000
   for i in range(5):  # 60_037_677
@@ -63,4 +63,4 @@ def get_ids():
     dump(videos, outfile, ensure_ascii=False)
   return videos
 
-# get_ids()
+#get_ids()

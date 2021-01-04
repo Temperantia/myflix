@@ -2,11 +2,8 @@ from requests import post
 from threads import threads
 from json import load, dump
 
-count = 0
-
 
 def request(id):
-  global count
   data = {
       'operationName': 'getOriginalHook',
       'variables': {
@@ -22,14 +19,13 @@ def request(id):
       return
     response = response.json()
     if response and 'data' in response and 'original' in response['data'] and 'description' in response['data']['original'] and response['data']['original']['description']:
-      count += 1
       titles[id]['synopsis'] = response['data']['original']['description']
-      titles[id]['tallBoxArt'] = response['data']['original']['image']['url']
+      titles[id]['originalBoxArt'] = response['data']['original']['image']['url']
   except:
     print('error ', id)
 
 
-def launch(titles):
+def get_media(titles):
   ids = []
   for id in titles:
     if titles[id]['summary']['isOriginal']:
@@ -39,6 +35,6 @@ def launch(titles):
        ensure_ascii=False, indent=2, sort_keys=True)
 
 
-titles = load(
-    open('data/videos.json', 'r', encoding='utf-8'))
-launch(titles)
+#titles = load(
+#    open('data/videos.json', 'r', encoding='utf-8'))
+#launch(titles)

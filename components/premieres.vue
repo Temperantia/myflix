@@ -10,6 +10,5 @@ v-container(fluid, style='margin: 0 20px')
 </template>
 <script>
 export default {
-  props: ['premieres'],
 };
 </script>
