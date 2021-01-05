@@ -22,26 +22,6 @@ export async function doc(query) {
   }
 }
 
-async function getPremieres() {
-  const query = collectionVideos.where("month", "==", "true").limit(4);
-  return await get(query);
-}
-
-async function getTrendingWeek() {
-  const query = collectionVideos
-    .orderBy("storyArt", "desc")
-    .orderBy("popularity", "desc")
-    .where("week", "==", true)
-    .where("storyArt", "!=", null)
-    .limit(10);
-  return await get(query);
-}
-
-async function getNewReleases() {
-  const query = collectionVideos.where("week", "==", true);
-  return await get(query);
-}
-
 const maturities = {
   AL: "PG",
   "Kids OK": "TV-Y7",
@@ -123,65 +103,76 @@ async function getTitle(id) {
 }
 
 async function getReviews(id) {
-  return await get(collectionReviews.where("idVideo", "==", Number(id)));
+  return await get(collectionReviews.where("title.id", "==", Number(id)));
+}
+
+async function getReviewsLatest() {
+  return await get(collectionReviews.orderBy("postedOn", "desc").limit(3));
 }
 
 async function getRecommendations(id) {
   return await get(
-    collectionRecommendations.where("idVideo", "==", Number(id))
+    collectionRecommendations.where("title.id", "==", Number(id))
   );
 }
 
 async function getSearch() {
   return (await get(collectionData))
     .reduce((data, current) => [...data, ...JSON.parse(current.search)], [])
-    .filter(title => !title.title)
-    .map(title => {
-      if (!title.m) {
-        title.m = "AL";
-      } else {
-        title.m = maturities[title.m];
+    .filter(title => {
+      if (title.y === 0 || title.y >= 2030) {
+        return false;
       }
-      return title;
+      return !title.title;
     });
 }
 
-async function createReview(idVideo, review, author) {
-  let data = {
-    author,
-    idVideo,
+async function createReview(title, review, author) {
+  const data = {
+    author: {
+      username: author.username,
+      image: author.image
+    },
+    title: {
+      id: title.summary.id,
+      title: title.title,
+      boxArt: title.boxArt,
+      tallBoxArt: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
+      storyArt: title.storyArt
+    },
     ...review,
     likes: [],
     postedOn: fireModule.firestore.Timestamp.now()
   };
   const ref = await collectionReviews.add(data);
   $store.commit("title/CREATE_REVIEW", data);
-  data = {
-    id: ref.id,
-    idVideo,
-    ...review,
-    likes: [],
-    postedOn: fireModule.firestore.Timestamp.now()
-  };
+
+  data.id = ref.id;
   collectionUsers.doc(author.id).update({
     reviews: fireModule.firestore.FieldValue.arrayUnion(data)
   });
   $store.commit("localStorage/USER_REVIEW", data);
 }
 
-async function createRecommendation(idVideo, recommendation, author) {
-  let data = {
-    author,
-    idVideo,
+async function createRecommendation(title, recommendation, author) {
+  const data = {
+    author: {
+      username: author.username,
+      image: author.image
+    },
+    title: {
+      id: title.summary.id,
+      title: title.title,
+      boxArt: title.boxArt,
+      tallBoxArt: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
+      storyArt: title.storyArt
+    },
     ...recommendation
   };
   const ref = await collectionRecommendations.add(data);
   $store.commit("title/CREATE_RECOMMENDATION", data);
-  data = {
-    id: ref.id,
-    idVideo,
-    ...recommendation
-  };
+
+  data.id = ref.id;
   collectionUsers.doc(author.id).update({
     recommendations: fireModule.firestore.FieldValue.arrayUnion(data)
   });
@@ -225,16 +216,30 @@ export default async ({ $fire, $fireModule, $dateFns, store }, inject) => {
   collectionVideos = firestore.collection("videos");
   collectionReviews = firestore.collection("reviews");
   collectionRecommendations = firestore.collection("recommendations");
-  inject("getPremieres", getPremieres);
-  inject("getTrendingWeek", getTrendingWeek);
-  inject("getNewReleases", getNewReleases);
+  const search = await getSearch();
+  let categories = {};
+  for (const item of search) {
+    for (const category of item.c) {
+      if (categories[category]) {
+        categories[category].value++;
+      } else {
+        categories[category] = { category: category, value: 1, image: item.b };
+      }
+    }
+  }
+  categories = Object.values(categories)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 3);
+
   inject("getTitle", getTitle);
   inject("getReviews", getReviews);
+  inject("getReviewsLatest", getReviewsLatest);
   inject("getRecommendations", getRecommendations);
   inject("createReview", createReview);
   inject("createRecommendation", createRecommendation);
   inject("updateFlixlist", updateFlixlist);
-  inject("search", await getSearch());
+  inject("search", search);
+  inject("categories", categories);
   inject("ratings", ratings);
   inject("maturities", maturities);
   inject("statusesTvShow", statusesTvShow);

@@ -3,7 +3,7 @@ from threads import threads
 from json import load, dump
 
 
-def request(id):
+def request(id, titles):
   data = {
       'operationName': 'getOriginalHook',
       'variables': {
@@ -21,7 +21,7 @@ def request(id):
     if response and 'data' in response and 'original' in response['data'] and 'description' in response['data']['original'] and response['data']['original']['description']:
       titles[id]['synopsis'] = response['data']['original']['description']
       titles[id]['originalBoxArt'] = response['data']['original']['image']['url']
-  except:
+  except e:
     print('error ', id)
 
 
@@ -29,12 +29,10 @@ def get_media(titles):
   ids = []
   for id in titles:
     if titles[id]['summary']['isOriginal']:
-      ids.append((id,))
+      ids.append([id, titles])
   threads(request, ids, 0.02)
-  dump(titles, open('data/videos.json', 'w', encoding='utf-8'),
-       ensure_ascii=False, indent=2, sort_keys=True)
+  return titles
 
 
-#titles = load(
-#    open('data/videos.json', 'r', encoding='utf-8'))
+#titles = load(open('data/videos.json', 'r', encoding='utf-8'))
 #launch(titles)

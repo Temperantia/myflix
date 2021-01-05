@@ -59,7 +59,8 @@ export default {
         onFirebaseHosting: true
       }
     ],
-    ["nuxt-vuex-localstorage"]
+    ["nuxt-vuex-localstorage"],
+    "@nuxtjs/google-adsense"
   ],
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
@@ -97,6 +98,9 @@ export default {
   },
   styleResources: {
     scss: ["~/assets/variables.scss"]
+  },
+  "google-adsense": {
+    id: "ca-pub-4080768963424465"
   },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)

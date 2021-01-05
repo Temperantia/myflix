@@ -37,6 +37,7 @@ Each week :
 
 
 def upload_ranks(id):
+  print(rank[id])
   video_collection.document(id).set(
       {'score': scores[id], 'rank': rank[id], 'popularity': popularity[id]}, merge=True)
 
@@ -62,17 +63,19 @@ def get_video_stats():
 
   print('Uploading ranks')
   ids = [[id] for id in videos]
-  #threads(upload_ranks, ids, 0)
+  threads(upload_ranks, ids, 0)
 
 
 def update_search_tables():
   print('Updating search tables')
+  CUT = 900
   search = []
   for doc in data_collection.stream():
     search += loads(doc.to_dict()['search'])
-    #doc.reference.delete()
+    # doc.reference.delete()
 
   for video in search:
+    video['f'] = followers[video['id']]
     video['z'] = scores[video['id']]
     video['q'] = rank[video['id']]
     video['p'] = popularity[video['id']]
@@ -83,7 +86,7 @@ def update_search_tables():
       video['m'] = 1 if availability >= month_start and availability <= month_end else 0
 
   print('Uploading search tables')
-  searches = [search[x:x+1000] for x in range(0, len(search), 1000)]
+  searches = [search[x:x+CUT] for x in range(0, len(search), CUT)]
   for index, s in enumerate(searches):
     json = dumps(s)
     print(len(json.encode('utf-8')))  # must not exceed 1048487

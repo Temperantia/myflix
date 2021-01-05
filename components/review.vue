@@ -2,7 +2,7 @@
 v-container(fluid)
   v-row.header-border
     v-col(cols='2')
-      img(:src='user.image ? user.image : "/defaultUser.png"')
+      img(:src='user && user.image ? user.image : "/defaultUser.png"')
     v-col(cols='7')
       a.red-netflix--text {{ user.username }}
       div(v-if='!preview')

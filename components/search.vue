@@ -2,8 +2,8 @@
 v-autocomplete(v-if='nav', :items='items')
   template(v-slot:item='{ item }')
     nuxt-link(style='width: 100%', :to='getRoute(item)')
-      v-list-item
-        v-list-item-avatar
+      v-list-item(@click='click(item)')
+        v-list-item-avatar.rounded-0(width='auto', height='100')
           img(:src='getImage(item)')
         v-list-item-content
           v-list-item-title(v-text='item')
@@ -15,7 +15,7 @@ v-autocomplete(
 )
   template(v-slot:item='{ item }')
     v-list-item(@click='click(item)')
-      v-list-item-avatar
+      v-list-item-avatar.rounded-0(width='auto', height='100')
         img(:src='getImage(item)')
       v-list-item-content
         v-list-item-title(v-text='item')
@@ -35,7 +35,7 @@ export default {
       this.$emit('click', value, this.getImage(value), this.getRoute(value));
     },
     getRoute(title) {
-      return  this.$search.find((item) => item.t === title).r;
+      return this.$search.find((item) => item.t === title).r;
     },
     getImage(title) {
       return this.$search.find((item) => item.t === title).i;

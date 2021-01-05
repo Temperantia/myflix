@@ -121,7 +121,7 @@ export default {
         return;
       }
       this.$createReview(
-        this.title.summary.id,
+        this.title,
         this.review,
         this.$store.state.localStorage.user
       );

@@ -4,12 +4,13 @@ from json import dump, dumps, load
 from time import sleep
 from threads import threads
 from netflix import url, headers
-from video_summary import get_summary
 from jsonmerge import merge
-from get_media import media
+
+from video_summary import get_summary
+from media import get_media
 
 
-def listUntilEmpty(data, k=None):
+def list_until_empty(data, k=None):
   l = []
   for key in data:
     obj = data[key]
@@ -17,7 +18,6 @@ def listUntilEmpty(data, k=None):
       if not 'value' in obj[k]:
         break
       l.append(obj[k]['value'])
-
     else:
       if not 'value' in obj:
         break
@@ -32,7 +32,7 @@ def find_genre_name(genre_id, genre_dict):
   return ''
 
 
-def fetchVideo(id, shows, genre_dict):
+def fetch_video(id, shows, genre_dict):
   # print('Collecting ' + id[0] + ' to ' + id[-1])
   data = {
       "path": """["videos", """ + dumps(id) + """, ["title", "synopsis", "seasonCount", "episodeCount", "releaseYear", "maturity", "availability", "genres", "moodTags", "creators", "directors", "writers", "cast"],{"from":0,"to":3},["name"] ]"""}
@@ -63,22 +63,22 @@ def fetchVideo(id, shows, genre_dict):
       releaseYear = video['releaseYear']['value'] if 'releaseYear' in video else None
       maturity = video['maturity']['value']['rating']['value'] if 'maturity' in video and 'value' in video['maturity']['value']['rating'] else None
       availability = video['availability']['value'] if 'availability' in video else None
-      genres = listUntilEmpty(
+      genres = list_until_empty(
           video['genres']) if 'genres' in video else []
       genres = [{'id': genre[1], 'name': find_genre_name(
           genre[1], genre_dict)} for genre in genres]
-      moodTags = listUntilEmpty(
+      moodTags = list_until_empty(
           video['moodTags'], 'name') if 'moodTags' in video else []
-      creators = listUntilEmpty(
+      creators = list_until_empty(
           video['creators']) if people and 'creators' in video else []
       creators = [people[id[1]]['name']['value'] for id in creators]
-      directors = listUntilEmpty(
+      directors = list_until_empty(
           video['directors']) if people and 'directors' in video else []
       directors = [people[id[1]]['name']['value'] for id in directors]
-      writers = listUntilEmpty(
+      writers = list_until_empty(
           video['writers']) if people and 'writers' in video else []
       writers = [people[id[1]]['name']['value'] for id in writers]
-      cast = listUntilEmpty(
+      cast = list_until_empty(
           video['cast']) if people and 'cast' in video else []
       cast = [people[id[1]]['name']['value'] for id in cast]
       shows[videoId].update({
@@ -96,18 +96,17 @@ def fetchVideo(id, shows, genre_dict):
           'creators': creators,
           'directors': directors,
           'writers': writers,
-         # 'actors': cast
+          # 'actors': cast
       })
   except:
     print('error ' + str(id))
 
 
 def get_videos():
-
   genre_dict = load(open('data/genres.json', 'r', encoding='utf-8'))
 
   #shows = merge(get_summary(), load(open('data/videos.json', 'r', encoding='utf-8')))
-  shows = merge({}, load(open('data/videos.json', 'r', encoding='utf-8')))
+  shows = merge({}, load(open('data/video_summary.json', 'r', encoding='utf-8')))
   showCount = 0
   movieCount = 0
   count = 0
@@ -122,11 +121,10 @@ def get_videos():
     id_list[-1].append(id)
     count += 1
 
-  print(id_list[0])
   ids = []
   for id in id_list:
     ids.append([id, shows, genre_dict])
-  threads(fetchVideo, ids, 0.02)
+  threads(fetch_video, ids, 0.02)
   shows = get_media(shows)
   print('Collected ' + str(showCount) +
         ' shows and ' + str(movieCount) + ' movies')

@@ -68,7 +68,7 @@ export default {
         return;
       }
       this.$createRecommendation(
-        this.title.summary.id,
+        this.title,
         this.recommendation,
         this.$store.state.localStorage.user
       );

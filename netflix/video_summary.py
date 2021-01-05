@@ -7,7 +7,7 @@ from netflix import url, headers
 from video_ids import get_ids
 
 
-def fetchVideo(id, shows_with_summary):
+def fetch_video(id, shows_with_summary):
   #print('Collecting ' + id)
   data = {
       "path": """["videos", """ + id + """, "summary"]"""}
@@ -28,13 +28,12 @@ def fetchVideo(id, shows_with_summary):
 
 
 def get_summary():
-  #shows = load(open('data/video_ids.json', 'r'))
   shows_with_summary = load(
       open('data/video_summary.json', 'r', encoding='utf-8'))
   ids = []
   for id in get_ids():
     ids.append((id, shows_with_summary))
-  threads(fetchVideo, ids, 0.02)
+  threads(fetch_video, ids, 0.02)
   print('Collected ' + str(len(shows_with_summary)) + ' shows and movies')
   dump(shows_with_summary, open('data/video_summary.json',
                                 'w', encoding='utf-8'), ensure_ascii=False, indent=2)

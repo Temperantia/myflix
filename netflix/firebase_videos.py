@@ -13,6 +13,7 @@ b : story art
 c : category
 d : description / synopsis
 e : episode number
+f : follower number
 g : genres
 i : image / tall box art
 m : current month
@@ -26,6 +27,7 @@ t : title
 u : type 1 = show 0 = movie
 v : video maturity
 w : current week
+x : box art
 y : release year
 z : score
 
@@ -34,7 +36,7 @@ z : score
 searches = []
 types = {}
 title_ids = {}
-CUT = 1200
+CUT = 1000
 now = datetime.now()
 data = {k: v for k, v in sorted(
     load(open('data/videos.json', 'r', encoding='utf-8')).items(), key=lambda item: (not item[1]['title'][0].isalpha(), item[1]['title']) if item[1]['title'] else (False, item[1]['title']))}
@@ -104,7 +106,7 @@ def search_videos(video, id, index):
   type = video['summary']['type']
   route = create_route(video['title'], type, 0)
   route = duplicate(route, type, video['title'])
-  searches[index_search][id] = {'r': route, 't': video['title'], 'i': video['tallBoxArt'] if 'tallBoxArt' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
+  searches[index_search][id] = {'r': route, 't': video['title'], 'i': video['tallBoxArt'] if 'tallBoxArt' in video else video['boxArt'], 'b': video['storyArt'], 'x': video['boxArt'], 'c': find_categories(
       video['genres']), 'g': remove_ids(video['genres']), 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score']}
 
   if video['summary']['isOriginal']:
@@ -119,16 +121,17 @@ def search_videos(video, id, index):
 def upload(id, index, data):
   video = data[id]
   if not 'exists' in video:
-    random = round(uniform(7.5, 9.8), 1)
-    video['scores'] = {'1': random}
-    video['score'] = random
+    #random = round(uniform(7.5, 9.8), 1)
+    video['scores'] = {}#{'1': random}
+    #video['score'] = random
     video['rank'] = None
     video['popularity'] = None
-    video['followers'] = {str(i): now for i in range(randint(0, 5))}
+    video['followers'] = {}#{str(i): now for i in range(randint(0, 5))}
     video['exists'] = True
 
   search_videos(video, id, index)
-  #ref.set(video, merge=True)
+  video_collection.document(id).set(video, merge=True)
+  video['followers'] = None  # to save locally via json
 
 
 def upload_search():
@@ -156,7 +159,6 @@ def launch():
   dump(data, open('data/videos.json',
                   'w', encoding='utf-8'), ensure_ascii=False, indent=2)
   upload_search()
-
 
 
 launch()
