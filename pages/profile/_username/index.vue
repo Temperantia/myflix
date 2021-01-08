@@ -176,7 +176,7 @@ export default {
       const username = this.$route.params.username;
       const userCurrent = this.$store.state.localStorage.user;
       let user;
-      if (username === userCurrent.username) {
+      if (userCurrent && username === userCurrent.username) {
         user = userCurrent;
         this.self = true;
       } else {
@@ -329,9 +329,19 @@ export default {
     },
   },
   methods: {
-    async save(copy) {
-      await this.$updateUser(copy);
-      this.edition = false;
+    async save(copy, passwordNew, passwordCurrent, email, username) {
+      const error = await this.$updateUser(
+        copy,
+        passwordNew,
+        passwordCurrent,
+        email,
+        username
+      );
+      if (error) {
+        this.$toasted.error(error);
+      } else {
+        this.edition = false;
+      }
     },
     textColor(type, status) {
       if (type === 'show') {

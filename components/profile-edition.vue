@@ -7,7 +7,7 @@ v-container(fluid)
           :class='{ "red-netflix--text": isCurrentTab(tab.name) }'
         ) {{ tab.name }}
     v-col.text-right
-      a(@click='save(copy)') SAVE CHANGES
+      a(@click='validate') SAVE CHANGES
   v-container(fluid, v-if='currentTab === "EDIT PROFILE"')
     v-row.subtitle-border
       v-col(cols='3')
@@ -65,12 +65,129 @@ v-container(fluid)
             input.location(v-model='copy.location')
           v-col.py-1(cols='3')
             .white-font--text Ex: Anaheim, CA
+  v-container(fluid, v-if='currentTab === "ACCOUNT SETTINGS"')
+    v-form(ref='form')
+      v-row.subtitle-border
+        v-col Social Sign-in
+      v-row
+        v-col(cols='2')
+          .d-flex.align-center
+            .button-block.google
+              img(src='/Google.png')
+              button Google
+              .disable(v-if='!copy.providers.google')
+            img.pl-2.icon.click(
+              src='/Layer 127.png',
+              @click='signInWithGoogle'
+            )
+        v-col(cols='2')
+          .d-flex.align-center
+            .button-block.facebook
+              img(src='/Facebook auth.png')
+              button Facebook
+              .disable(v-if='!copy.providers.facebook')
+            img.pl-2.icon.click(
+              src='/Layer 127.png',
+              @click='signInWithFacebook'
+            )
+      v-row(:class='{"subtitle-border": !isSocial}')
+        template(
+          v-if='!isSocial'
+        )
+          v-col(cols='4')
+            .mb-5.subtitle-border Change Password
+            v-text-field.my-2(
+              type='password',
+              color='red',
+              outlined,
+              v-model='passwordNew',
+              label='New Password',
+              :rules='[(v) => !v || v.length >= 6 || "Password should be at least 6 characters"]',
+              autocomplete='new-password'
+            )
+          v-col(cols='4')
+            .mb-5.subtitle-border Change Email
+            v-text-field(
+              color='red',
+              outlined,
+              v-model='email',
+              label='New Email',
+              :rules='[(v) => !v || /.+@.+\..+/.test(v) || "E-mail must be valid"]',
+              autocomplete='email'
+            )
+        v-col(cols='4')
+          .mb-5.subtitle-border Change Username
+          v-text-field(
+            color='red',
+            outlined,
+            v-model='username',
+            :rules='[(v) => !v || v.length >= 2 || v.length <= 16 || "(Between 2 and 16 characters)"]',
+            autocomplete='new-username',
+            label='New Username'
+          )
+          div
+            .white-font--text - You may only change your username once every month.
+            .white-font--text - If you change your username, all links that used to go to your old username will no longer work.
+      v-row(
+        v-if='!isSocial'
+      )
+        v-col(cols='4')
+          v-text-field.my-2(
+            type='password',
+            color='red',
+            outlined,
+            label='Confirm Password *',
+            v-model='passwordCurrent',
+            :hide-details='true',
+            autocomplete='password'
+          )
+    v-form(ref='deletion')
+      v-row.subtitle-border
+        v-col Account Deletion
+      v-row(align='center')
+        template(
+          v-if='!isSocial'
+        )
+          v-col(cols='2')
+            v-text-field.my-2(
+              color='red',
+              outlined,
+              label='Confirm Email',
+              :rules='[(v) => !!v || "Required", (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"]',
+              v-model='deletionEmail',
+              required
+            )
+          v-col(cols='2')
+            v-text-field.my-2(
+              type='password',
+              color='red',
+              outlined,
+              label='Confirm Password',
+              v-model='deletionPassword',
+              :rules='[(v) => !!v || "Required"]',
+              required
+            )
+        v-col(cols='2')
+          a.px-10.py-2.red-netflix.rounded(@click='deleteUser') DELETE ACCOUNT
 </template>
 <script>
 import { listTimeZones } from 'timezone-support';
 import { formatToTimeZone } from 'date-fns-timezone';
+import merge from 'lodash.merge';
 export default {
   methods: {
+    validate() {
+      if (!this.$refs.form.validate()) {
+        return;
+      }
+      this.save(
+        this.copy,
+        this.passwordNew,
+        this.passwordCurrent,
+        this.email,
+        this.username
+      );
+    },
     isCurrentTab(tab) {
       return tab === this.currentTab;
     },
@@ -125,12 +242,43 @@ export default {
       reader.readAsDataURL(file);
     },
     updateTimeZone(value) {
-      this.copy = Object.assign({}, this.copy, { timeZone: value });
+      this.copy.timeZone = value;
     },
     updateBirthdate(value) {
       this.copy.birthdate = value;
     },
-
+    async deleteUser() {
+      if (!this.$refs.deletion.validate()) {
+        return;
+      }
+      const error = await this.$deleteUser(
+        this.deletionEmail,
+        this.deletionPassword
+      );
+      if (error) {
+        this.$toasted.error(error);
+      }
+    },
+    async link(provider, name) {
+      try {
+        const cred = await this.$fire.auth.signInWithPopup(provider);
+        console.log(cred);
+        this.$set(this.copy.providers, name, {
+          id: cred.user.uid,
+          token: cred.credential.accessToken,
+        });
+      } catch (error) {
+        this.$toasted.error(error);
+      }
+    },
+    signInWithGoogle() {
+      const provider = new this.$fireModule.auth.GoogleAuthProvider();
+      this.link(provider, 'google');
+    },
+    signInWithFacebook() {
+      const provider = new this.$fireModule.auth.FacebookAuthProvider();
+      this.link(provider, 'facebook');
+    },
   },
   props: ['user', 'save'],
   data: () => ({
@@ -138,16 +286,29 @@ export default {
     formatToTimeZone,
     currentTab: 'EDIT PROFILE',
     copy: null,
+    passwordNew: '',
+    passwordCurrent: '',
+    email: '',
+    username: '',
+    deletionEmail: '',
+    deletionPassword: '',
   }),
   created() {
-    this.copy = Object.assign({}, this.user);
+    this.copy = merge({}, this.user);
     if (!this.copy.timeZone) {
-      this.copy = Object.assign({}, this.copy, {
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      });
+      this.$set(
+        this.copy,
+        'timeZone',
+        Intl.DateTimeFormat().resolvedOptions().timeZone
+      );
     }
   },
   computed: {
+    isSocial() {
+      return Object.values(this.copy.providers).find(
+        (provider) => provider.id === copy.id
+      );
+    },
     tabs() {
       return [
         {
@@ -185,5 +346,54 @@ img {
   padding-left: 5px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 5px;
+}
+.google {
+  background-color: white;
+  color: $grey-google;
+}
+
+.facebook {
+  background-color: #3c5b97;
+}
+
+.apple {
+  background-color: black;
+  border: 1px solid $grey-light;
+}
+
+.button-block {
+  position: relative;
+  height: 50px;
+  width: 100%;
+  display: flex;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+
+  .disable {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  img {
+    width: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    left: 10px;
+  }
+
+  button {
+    padding-left: 30px;
+    outline: none;
+    cursor: default;
+  }
+}
+.icon {
+  height: 30px;
 }
 </style>

@@ -19,5 +19,15 @@ export const mutations = {
   },
   CREATE_RECOMMENDATION(state, recommendation) {
     state.recommendations.push(recommendation);
+  },
+  REPORT_REVIEW(state, payload) {
+    const review = state.reviews.find(review => review.id === payload.id);
+    review.reports.push(payload.idUser);
+  },
+  REPORT_RECOMMENDATION(state, payload) {
+    const recommendation = state.recommendations.find(
+      recommendation => recommendation.id === payload.id
+    );
+    recommendation.reports.push(payload.idUser);
   }
 };

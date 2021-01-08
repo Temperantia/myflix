@@ -36,16 +36,29 @@ v-container(fluid)
       ) show more
   v-row.section-border
     v-col(cols='7', offset='3')
-      button.button-action(v-if='!preview', @click='') I found this review helpful
-    //-v-col(cols='2')
-      span.small-action.click permalink
-      span.small-action {{ " | " }}
-      span.small-action.click report
+      button.button-action(v-if='!preview') I found this review helpful
+    v-col.text-right(cols='2')
+      //-span.small-action.click permalink
+      //-span.small-action {{ " | " }}
+      client-only
+        span.small-action.click(
+          v-if='$store.state.localStorage.connected && !review.reports.includes($store.state.localStorage.user.id)',
+          @click='overlay = true'
+        ) report
+  report(
+    :display='overlay',
+    type='review',
+    :username='review.author.username',
+    :title='review.title.title',
+    :confirm='report',
+    :cancel='() => (overlay = false)'
+  )
 </template>
 <script>
 export default {
   data: () => ({
     expanded: false,
+    overlay: false,
   }),
   props: ['review', 'title', 'preview'],
   computed: {
@@ -66,6 +79,16 @@ export default {
           : new Date(Date(this.review.postedOn.seconds)),
         'MMM d, yyyy'
       );
+    },
+  },
+  methods: {
+    report() {
+      this.$report('reviews', this.review.id);
+      this.overlay = false;
+      this.$store.commit('title/REPORT_REVIEW', {
+        id: this.review.id,
+        idUser: this.$store.state.localStorage.user.id,
+      });
     },
   },
 };

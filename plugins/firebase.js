@@ -116,6 +116,12 @@ async function getRecommendations(id) {
   );
 }
 
+async function getRecommendationsLatest() {
+  return await get(
+    collectionRecommendations.orderBy("postedOn", "desc").limit(3)
+  );
+}
+
 async function getSearch() {
   return (await get(collectionData))
     .reduce((data, current) => [...data, ...JSON.parse(current.search)], [])
@@ -141,6 +147,7 @@ async function createReview(title, review, author) {
       storyArt: title.storyArt
     },
     ...review,
+    reports: [],
     likes: [],
     postedOn: fireModule.firestore.Timestamp.now()
   };
@@ -167,7 +174,9 @@ async function createRecommendation(title, recommendation, author) {
       tallBoxArt: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
       storyArt: title.storyArt
     },
-    ...recommendation
+    ...recommendation,
+    reports: [],
+    postedOn: fireModule.firestore.Timestamp.now()
   };
   const ref = await collectionRecommendations.add(data);
   $store.commit("title/CREATE_RECOMMENDATION", data);
@@ -194,6 +203,17 @@ function updateFlixlist(idUser, title, status, episodes, score) {
       .doc(title.id)
       .update({ ["scores." + title.id]: { time: new Date(), value: score } }); */
   }
+}
+
+function report(collection, id) {
+  firestore
+    .collection(collection)
+    .doc(id)
+    .update({
+      reports: fireModule.firestore.FieldValue.arrayUnion(
+        $store.state.localStorage.user.id
+      )
+    });
 }
 
 let firestore;
@@ -235,9 +255,11 @@ export default async ({ $fire, $fireModule, $dateFns, store }, inject) => {
   inject("getReviews", getReviews);
   inject("getReviewsLatest", getReviewsLatest);
   inject("getRecommendations", getRecommendations);
+  inject("getRecommendationsLatest", getRecommendationsLatest);
   inject("createReview", createReview);
   inject("createRecommendation", createRecommendation);
   inject("updateFlixlist", updateFlixlist);
+  inject("report", report);
   inject("search", search);
   inject("categories", categories);
   inject("ratings", ratings);

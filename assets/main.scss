@@ -70,6 +70,10 @@ img {
   width: 100%;
 }
 
+.click {
+  cursor: pointer;
+}
+
 .border {
   border-style: solid;
   border-width: 1px;
@@ -78,4 +82,8 @@ img {
 
 .icon {
   width: auto;
+}
+
+.w-100 {
+  width: 100%;
 }

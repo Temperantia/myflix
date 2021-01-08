@@ -70,13 +70,39 @@ div
             )
               h1 {{ category.category }}
               div {{ category.value }} Titles
+    v-row
+      v-col
+        h1.title-border LATEST USER RECOMMENDATIONS
+        v-row
+          v-col(
+            cols='4',
+            v-for='recommendation in recommendationsLatest',
+            :key='recommendation.id'
+          )
+            v-row
+              v-col(cols='2')
+                img(:src='recommendation.title.tallBoxArt')
+              v-col(cols='4') If you liked
+                .red-netflix--text {{ recommendation.title.title }}
+              v-col(cols='2')
+                img(:src='recommendation.similar.image')
+              v-col(cols='4') Then you might like...
+                .red-netflix--text {{ recommendation.similar.title }}
+            v-row
+              v-col
+                p {{ recommendation.content }}
+                div Recommendation by
+                  span.red-netflix--text {{ " " + recommendation.author.username }}
+                  span {{ " - " + $dateFns.format(new Date(recommendation.postedOn.seconds * 1000), "MMM d, yyyy").toUpperCase() }}
 </template>
 <script>
 export default {
-  async asyncData({ $getReviewsLatest }) {
+  async asyncData({ $getReviewsLatest, $getRecommendationsLatest }) {
     const reviewsLatest = await $getReviewsLatest();
+    const recommendationsLatest = await $getRecommendationsLatest();
     return {
       reviewsLatest,
+      recommendationsLatest,
       expanded: [false, false, false],
     };
   },

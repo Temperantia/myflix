@@ -76,7 +76,7 @@ export default {
           this.password
         );
 
-        await this.$register(cred.user.uid, this.username);
+        await this.$register(cred.user.uid, this.email, this.username);
         this.$router.push('/');
       } catch (error) {
         console.error(error);
@@ -89,10 +89,6 @@ export default {
 <style lang="scss" scoped>
 .line {
   border-bottom: 1px solid white;
-}
-
-img {
-  width: auto;
 }
 
 p {

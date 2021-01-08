@@ -50,6 +50,8 @@ export default {
       birthdate = new Date(
         new Date().setFullYear(new Date().getFullYear() - 13)
       );
+    } else {
+      birthdate = new Date(birthdate.seconds * 1000);
     }
     this.day = birthdate.getDate();
     this.month = birthdate.getMonth() + 1;
@@ -58,7 +60,7 @@ export default {
   computed: {
     days() {
       let days = this.daysByMonth[this.month - 1];
-      if (this.month === 2  && this.year % 4 === 0) {
+      if (this.month === 2 && this.year % 4 === 0) {
         days += 1;
       }
       return Array.from({ length: days }, (x, i) => i + 1);
@@ -66,7 +68,7 @@ export default {
   },
   methods: {
     update() {
-      this.onUpdate(new Date(this.year, this.month, this.day));
+      this.onUpdate(new Date(this.year, this.month - 1, this.day));
     },
   },
 };

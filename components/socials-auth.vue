@@ -19,29 +19,42 @@ v-container(fluid)
       v-model='username',
       :rules='[(v) => !!v || "Required", (v) => v.length >= 2 || v.length <= 16 || "(Between 2 and 16 characters)"]',
       label='Username',
-      required,
-      autocomplete='username'
+      required
+    )
+    v-text-field(
+      v-if='!emailFromAuth',
+      color='red',
+      v-model='email',
+      :rules='[(v) => !!v || "Required", (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"]',
+      label='Email',
+      required
     )
     button.button-red.px-8.py-3.rounded-lg(type='submit') Create Account
 </template>
 <script>
 export default {
   data: () => ({
-    id: null,
+    id: '',
+    emailFromAuth: '',
+    email: '',
     username: '',
-    image: null,
+    image: '',
+    name: '',
+    token: '',
   }),
   methods: {
     async signIn(provider) {
       try {
         const cred = await this.$fire.auth.signInWithPopup(provider);
         const id = cred.user.uid;
-        const exists = await this.$signIn(id);
+        const exists = await this.$signIn(id, this.name);
         if (exists) {
           this.$router.push('/');
         } else {
           this.id = id;
+          this.emailFromAuth = cred.user.email;
           this.image = cred.user.photoURL;
+          this.token = cred.credential.accessToken;
         }
       } catch (error) {
         this.$toasted.error(error);
@@ -52,20 +65,28 @@ export default {
         return;
       }
 
-      await this.$register(this.id, this.username, this.image);
-
-      this.$router.push('/');
+      await this.$register(
+        this.id,
+        this.emailFromAuth ? this.emailFromAuth : this.email,
+        this.username,
+        this.image,
+        this.name,
+        this.token
+      );
     },
     signInWithGoogle() {
       const provider = new this.$fireModule.auth.GoogleAuthProvider();
+      this.name = 'google';
       this.signIn(provider);
     },
     signInWithFacebook() {
       const provider = new this.$fireModule.auth.FacebookAuthProvider();
+      this.name = 'facebook';
       this.signIn(provider);
     },
     signInWithApple() {
       const provider = new this.$fireModule.auth.OAuthProvider('apple.com');
+      this.name = 'apple';
       this.signIn(provider);
     },
   },
