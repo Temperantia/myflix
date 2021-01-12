@@ -1,18 +1,26 @@
 <template lang="pug">
 defaultLayout
-  v-row
-    v-col(cols='12', md='1')
-    //- ad
-    v-col(cols='12', md='2')
-      img(:src='title.tallBoxArt')
-      client-only
-        .mt-5(v-if='$store.state.localStorage.connected')
-          .d-flex.justify-space-between.align-end.title-border
-            h3.text-h5 YOUR OVERVIEW
-          //-span Add to Favorites
+  v-container(fluid)
+    v-row
+      //-v-col(cols='12', md='1')
+      //- ad
+      v-col(cols='12', md='2')
+        img(:src='title.tallBoxArt')
+        client-only.mt-5(v-if='$store.state.localStorage.connected')
+          v-row.title-border
+            v-col
+              h3.text-h5 YOUR OVERVIEW
+            v-col.text-right
+              a.click(
+                v-if='isFavorite(title.id)',
+                @click='$removeFavorite(title, title.summary.type === "show" ? "shows" : "films")'
+              ) Remove from Favorites
+              a.click(
+                v-else,
+                @click='$addFavorite(title, title.summary.type === "show" ? "shows" : "films")'
+              ) Add to Favorites
           v-row(align='center')
-            v-col(cols='4')
-              | Status:
+            v-col(cols='4') Status:
             v-col(cols='8')
               v-select(
                 :items='title.summary.type === "show" ? $statusesTvShow : $statusesFilm',
@@ -23,15 +31,16 @@ defaultLayout
                 @change='updateStatus'
               )
           v-row(align='center', v-if='title.summary.type === "show"')
-            v-col(cols='4')
-              | Eps seen:
+            v-col(cols='4') Eps seen:
             v-col(cols='3')
-              input(type='number', v-model='episodes', @input='updateEpisodes')
-            v-col(cols='3')
-              | / {{ title.episodeCount }}
+              input(
+                type='number',
+                v-model='episodes',
+                @input='updateEpisodes'
+              )
+            v-col(cols='3') / {{ title.episodeCount }}
           v-row(align='center')
-            v-col(cols='4')
-              | Your Score
+            v-col(cols='4') Your Score
             v-col(cols='8')
               v-select(
                 :items='Object.entries($ratings).map(([score, rating]) => `(${score}) ${rating}`)',
@@ -41,30 +50,31 @@ defaultLayout
                 :hide-details='true'
               )
           v-row
-            v-col(offset='3')
+            v-col(offset='3', cols='6', align='center')
               button.update(@click='update') UPDATE
-      .mt-5
-        h3.text-h5.title-border INFORMATION
-        .my-1(
-          v-if='data',
-          v-for='(data, name) in title.information',
-          :key='name'
-        )
-          b {{ name }}:
-          span.pl-1 {{ data }}
-      .mt-5
-        h3.title-border STATISTICS
-        .my-1(v-for='(data, name) in title.statistics', :key='name')
-          b {{ name }}:
-          span.pl-1 {{ data }}
-    v-col(cols='12', md='8')
-      .title-border.pa-2
-        nuxt-link(v-for='tab in tabs', :to='tab.route', :key='tab.name')
-          h3.d-inline.mr-10(
-            :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
-          ) {{ tab.name }}
-      breadcrumb(:titleName='title.title')
-      nuxt
+        .mt-5
+          h3.text-h5.title-border INFORMATION
+          .my-1(
+            v-if='data',
+            v-for='(data, name) in title.information',
+            :key='name'
+          )
+            b {{ name }}:
+            span.pl-1 {{ data }}
+        .mt-5
+          h3.title-border STATISTICS
+          .my-1(v-for='(data, name) in title.statistics', :key='name')
+            b {{ name }}:
+            span.pl-1 {{ data }}
+      v-col(cols='12', md='8')
+        v-row.title-border
+          v-col(cols='12', lg='2', v-for='tab in tabs', :key='tab.name')
+            nuxt-link(:to='tab.route')
+              h3.d-inline.mr-10(
+                :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
+              ) {{ tab.name }}
+        breadcrumb(:titleName='title.title')
+        nuxt
 </template>
 <script>
 import DefaultLayout from '~/layouts/default.vue';
@@ -107,11 +117,14 @@ export default {
     }
   },
   computed: {
+    user() {
+      return this.$store.getters['localStorage/USER'];
+    },
     flixlist() {
-      const flixlist = this.$store.state.localStorage.user.flixlist;
-      if (flixlist) {
-        return flixlist[this.title.id];
-      }
+      return this.user ? this.user.flixlist[this.title.id] : null;
+    },
+    favorites() {
+      return this.user.favorites;
     },
     title() {
       return this.$store.state.title.data;
@@ -148,6 +161,17 @@ export default {
     },
   },
   methods: {
+    isFavorite(id) {
+      return (
+        !!this.favorites &&
+        !!this.favorites[
+          this.title.summary.type === 'show' ? 'shows' : 'films'
+        ] &&
+        !!this.favorites[
+          this.title.summary.type === 'show' ? 'shows' : 'films'
+        ][id]
+      );
+    },
     isCurrentTab(route) {
       return route === this.$route.path;
     },

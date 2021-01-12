@@ -1,17 +1,32 @@
 <template lang="pug">
-v-autocomplete(v-if='nav', :items='items')
+v-autocomplete(
+  v-if='nav',
+  :items='items',
+  outlined,
+  dense,
+  :hide-details='true',
+  append-icon='mdi-magnify',
+  background-color='#0f0f0f',
+  placeholder='SEARCH FOR TITLES',
+  width='0'
+)
   template(v-slot:item='{ item }')
-    nuxt-link(style='width: 100%', :to='getRoute(item)')
-      v-list-item(@click='click(item)')
-        v-list-item-avatar.rounded-0(width='auto', height='100')
-          img(:src='getImage(item)')
-        v-list-item-content
-          v-list-item-title(v-text='item')
+    nuxt-link.w-100(:to='getRoute(item)')
+      v-list-item
+        v-row
+          v-col(cols='5')
+            img(:src='getImage(item)')
+          v-col(cols='7') {{item}}
 v-autocomplete(
   v-else,
   :items='items',
   v-model='selected',
-  :menu-props='{ closeOnContentClick: true }'
+  :menu-props='{ closeOnContentClick: true }',
+  outlined,
+  dense,
+  :hide-details='true',
+  append-icon='mdi-magnify',
+  background-color='#0f0f0f'
 )
   template(v-slot:item='{ item }')
     v-list-item(@click='click(item)')
@@ -32,7 +47,13 @@ export default {
     click(value) {
       this.similar = value;
       this.selected = value;
-      this.$emit('click', value, this.getImage(value), this.getRoute(value));
+      this.$emit(
+        'click',
+        this.getId(value),
+        value,
+        this.getImage(value),
+        this.getRoute(value)
+      );
     },
     getRoute(title) {
       return this.$search.find((item) => item.t === title).r;
@@ -49,3 +70,17 @@ export default {
   },
 };
 </script>
+<style lang="scss"  scoped>
+::v-deep .v-input__slot {
+  border: none !important;
+}
+::v-deep fieldset {
+  border: none !important;
+}
+::v-deep .mdi-magnify {
+  color: $red-netflix !important;
+}
+::v-deep input {
+  text-align: center;
+}
+</style>

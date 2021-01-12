@@ -8,7 +8,7 @@ div
           h2 Browse New Releases
           div {{ getWeek() }}
     v-row
-      v-col(cols='2') Category
+      v-col(cols='12', lg='2') Category
         v-select(
           :items='["All", "TV Shows", "Films"]',
           v-model='category',
@@ -16,7 +16,7 @@ div
           outlined,
           dense
         )
-      v-col(cols='2') User Score
+      v-col(cols='12', lg='2') User Score
         v-select(
           :items='[ "All",...Object.entries($ratings).map(([score, rating]) => `(${score}) ${rating}`).reverse(), ]',
           v-model='score',
@@ -24,7 +24,7 @@ div
           outlined,
           dense
         )
-      v-col(cols='2') Genre
+      v-col(cols='12', lg='2') Genre
         v-select(
           :items='["All", ...genres]',
           v-model='genre',
@@ -34,7 +34,7 @@ div
         )
     v-row
       v-col.py-0(cols='12') More filters
-      v-col(cols='2')
+      v-col(cols='12', lg='2')
         v-checkbox.my-0(
           label='Netflix Original',
           v-model='original',

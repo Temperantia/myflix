@@ -1,5 +1,5 @@
 <template lang="pug">
-.score
+.score.d-flex.align-center.justify-center
   img(src='/Layer 25.png')
   .content.text-center
     h2(v-if='title') {{ title }}
@@ -14,9 +14,6 @@ export default {
 <style lang="scss" scoped>
 .score {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
   .content {
     position: absolute;

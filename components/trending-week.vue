@@ -2,7 +2,7 @@
 v-carousel(:hide-delimiters='true', :hide-delimiters-background='true')
   v-carousel-item(v-for='item in trendingWeek', :key='item.id')
     div(
-      :style='"height: 100%; background-size: cover; background-image: url(" + item.b + ");"'
+      :style='"height: 100%; background-size: contain; background-position: center; background-image: url(" + item.b + ");"'
     )
     div(style='position: absolute; top: 0; left: 0')
       img(src='/title bg.png')
@@ -18,7 +18,10 @@ v-carousel(:hide-delimiters='true', :hide-delimiters-background='true')
       h1 {{ item.t }}
       h2(v-if='item.e', style='padding-top: 10px') Episodes: {{ item.e }}
       h2(style='padding-top: 10px') Available on Netflix: {{ availability(item.a) }}
-      p(style='padding-top: 10px', v-html='item.d')
+      p(
+        style='padding-top: 10px',
+        v-html='item.d.length < 200 ? item.d : item.d.substring(0, 200) + "..."'
+      )
       div(style='padding-top: 10px')
         button.button.button-red.mr-5
           a(

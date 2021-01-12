@@ -130,6 +130,12 @@ async function getSearch() {
         return false;
       }
       return !title.title;
+    })
+    .map(title => {
+      if (title.u && !title.s) {
+        title.s = 1;
+      }
+      return title;
     });
 }
 
@@ -198,11 +204,52 @@ function updateFlixlist(idUser, title, status, episodes, score) {
   };
   collectionUsers.doc(idUser).update({ [`flixlist.${title.id}`]: data });
   $store.commit("localStorage/USER_FLIXLIST", { idTitle: title.id, data });
+
+  const video = { ["followers." + idUser]: new Date() };
   if (score) {
-    /* collectionVideos
-      .doc(title.id)
-      .update({ ["scores." + title.id]: { time: new Date(), value: score } }); */
+    video["scores." + idUser] = { time: new Date(), value: score };
   }
+  collectionVideos.doc(title.id).update(video);
+}
+
+function addFavorite(title, type) {
+  const idUser = $store.state.localStorage.user.id;
+  const favorite = {
+    favorites: {
+      [type]: {
+        [title.id]: {
+          image: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
+          title: title.title,
+          year: title.releaseYear,
+          maturity: title.maturity ? title.maturity : null,
+          season: title.seasonCount ? title.seasonCount : null,
+          genres: title.genres
+          //duration: title.duration
+        }
+      }
+    }
+  };
+  collectionUsers.doc(idUser).update(favorite);
+  $store.commit("localStorage/USER_FAVORITE_ADD", favorite);
+
+  collectionVideos.doc(title.id).update({
+    favorites: fireModule.firestore.FieldValue.arrayUnion(idUser)
+  });
+}
+
+function removeFavorite(title, type) {
+  const idUser = $store.state.localStorage.user.id;
+  collectionUsers.doc(idUser).update({
+    ["favorites." +
+    type +
+    "." +
+    title.id]: fireModule.firestore.FieldValue.delete()
+  });
+  $store.commit("localStorage/USER_FAVORITE_REMOVE", { type, id: title.id });
+
+  collectionVideos.doc(title.id).update({
+    favorites: fireModule.firestore.FieldValue.arrayRemove(idUser)
+  });
 }
 
 function report(collection, id) {
@@ -259,6 +306,8 @@ export default async ({ $fire, $fireModule, $dateFns, store }, inject) => {
   inject("createReview", createReview);
   inject("createRecommendation", createRecommendation);
   inject("updateFlixlist", updateFlixlist);
+  inject("addFavorite", addFavorite);
+  inject("removeFavorite", removeFavorite);
   inject("report", report);
   inject("search", search);
   inject("categories", categories);

@@ -127,6 +127,7 @@ def upload(id, index, data):
     video['rank'] = None
     video['popularity'] = None
     video['followers'] = {}#{str(i): now for i in range(randint(0, 5))}
+    video['favorites'] = []
     video['exists'] = True
 
   search_videos(video, id, index)

@@ -1,19 +1,20 @@
 <template lang='pug'>
 v-container(fluid)
   v-row.header-border
-    v-col(cols='2')
+    v-col(lg='2')
       img(:src='user && user.image ? user.image : "/defaultUser.png"')
-    v-col(cols='7')
-      a.red-netflix--text {{ user.username }}
+    v-col(cols='10', lg='7')
+      nuxt-link(:to='"/profile/" + user.username')
+        a.red-netflix--text {{ user.username }}
       div(v-if='!preview')
         b {{ review.likes.length + " " }}
         span people found this review helpful
-    v-col.text-right(cols='3')
+    v-col.text-lg-right(cols='12', lg='3')
       div {{ postedOn }}
       //-div(v-if='title.summary.type === "show"') {{ review.episodes }} of {{ title.episodeCount }} episodes seen
       div Overall Rating: {{ review.ratings.Overall }}
   v-row
-    v-col(cols='3')
+    v-col(cols='12', lg='3')
       .ratings.pa-1
         .black-subheader.d-flex.justify-space-between
           span.px-3.py-1 Overall
@@ -24,7 +25,7 @@ v-container(fluid)
         )
           span.px-3.py-1 {{ name }}
           span.px-3.py-1 {{ rating }}
-    v-col(cols='9')
+    v-col(cols='12', lg='9')
       p(v-html='content')
       span.red-netflix--text.click.ml-1(
         v-if='content.length > 500 && expanded',
@@ -35,9 +36,9 @@ v-container(fluid)
         @click='expanded = true'
       ) show more
   v-row.section-border
-    v-col(cols='7', offset='3')
+    v-col(cols='9', lg='7', offset-lg='3')
       button.button-action(v-if='!preview') I found this review helpful
-    v-col.text-right(cols='2')
+    v-col.text-lg-right(cols='3', lg='2')
       //-span.small-action.click permalink
       //-span.small-action {{ " | " }}
       client-only

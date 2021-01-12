@@ -3,31 +3,34 @@ v-container(fluid)
   v-row
     v-col(cols='12', md='9')
       v-row
-        v-col(cols='12', md='3')
+        v-col(cols='10', offset='1', offset-md='0' md='3')
           card(
             title='SCORE',
             :content='title.score',
             :subtitle='title.numUsers + " users"'
           )
         v-col(cols='12', md='9')
-          .my-2
-            h2.d-inline.mr-10 {{ "Ranked #" + title.rank }}
-            h2.d-inline.mr-10 {{ "Popularity #" + title.popularity }}
-            h2.d-inline.mr-10 {{ "Following " + title.statistics.Followers }}
+          v-row
+            v-col(cols='12' lg='4')
+              h2 {{ "Ranked #" + title.rank }}
+            v-col(cols='12' lg='4')
+              h2 {{ "Popularity #" + title.popularity }}
+            v-col(cols='12' lg='4')
+              h2 {{ "Following " + title.statistics.Followers }}
           .white-font--text {{ title.releaseYear }} | {{ title.maturity }}
             span.white-font--text(v-if='title.seasonCount') {{ " | " + title.seasonCount + (title.seasonCount > 1 ? " Seasons" : " Season") }}
-          div(v-if='title.creators')
+          div(v-if='title.creators.length > 0')
             span.white-font--text Creators:
             span.ml-1 {{ title.creators.join(", ") }}
       v-row
         v-col
-    v-col(cols='12', md='3')
+    //-v-col(cols='12', md='3')
       video(:src='title.trailer')
   v-row
     v-col
       h3.title-border OFFICIAL SYNOPSIS
       p.pa-2(v-html='title.synopsis')
-  v-row
+  v-row(v-if='title.imdbCast')
     v-col
       h3.title-border CAST
       v-row

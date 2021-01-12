@@ -65,6 +65,30 @@ v-container(fluid)
             input.location(v-model='copy.location')
           v-col.py-1(cols='3')
             .white-font--text Ex: Anaheim, CA
+  v-container(fluid, v-if='currentTab === "FAVORITES"')
+    v-row
+      v-col(cols='6')
+        h4.subtitle-border TV SHOWS
+        v-row(v-for='(show, id) in copy.favorites.shows', :key='id')
+          v-col(cols='9')
+            h3 {{ show.title }}
+            .white-font--text {{ show.year + " " + show.maturity + " " + show.season + " Seasons" }}
+            .white-font--text {{ show.genres.map((genre) => genre.name).join(", ") }}
+          v-col.text-right(cols='3')
+            a.click.white-font--text(
+              @click='removeFavorite(copy.favorites.shows, id)'
+            ) REMOVE
+      v-col(cols='6')
+        h4.subtitle-border FILMS
+        v-row(v-for='(film, id) in copy.favorites.films', :key='id')
+          v-col(cols='9')
+            h3 {{ film.title }}
+            .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
+            .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
+          v-col.text-right(cols='3')
+            a.click.white-font--text(
+              @click='removeFavorite(copy.favorites.films, id)'
+            ) REMOVE
   v-container(fluid, v-if='currentTab === "ACCOUNT SETTINGS"')
     v-form(ref='form')
       v-row.subtitle-border
@@ -90,10 +114,8 @@ v-container(fluid)
               src='/Layer 127.png',
               @click='signInWithFacebook'
             )
-      v-row(:class='{"subtitle-border": !isSocial}')
-        template(
-          v-if='!isSocial'
-        )
+      v-row(:class='{ "subtitle-border": !isSocial }')
+        template(v-if='!isSocial')
           v-col(cols='4')
             .mb-5.subtitle-border Change Password
             v-text-field.my-2(
@@ -128,9 +150,7 @@ v-container(fluid)
           div
             .white-font--text - You may only change your username once every month.
             .white-font--text - If you change your username, all links that used to go to your old username will no longer work.
-      v-row(
-        v-if='!isSocial'
-      )
+      v-row(v-if='!isSocial')
         v-col(cols='4')
           v-text-field.my-2(
             type='password',
@@ -145,9 +165,7 @@ v-container(fluid)
       v-row.subtitle-border
         v-col Account Deletion
       v-row(align='center')
-        template(
-          v-if='!isSocial'
-        )
+        template(v-if='!isSocial')
           v-col(cols='2')
             v-text-field.my-2(
               color='red',
@@ -173,11 +191,11 @@ v-container(fluid)
 <script>
 import { listTimeZones } from 'timezone-support';
 import { formatToTimeZone } from 'date-fns-timezone';
-import merge from 'lodash.merge';
+import clonedeep from 'lodash.clonedeep';
 export default {
   methods: {
     validate() {
-      if (!this.$refs.form.validate()) {
+      if (this.$refs.form && !this.$refs.form.validate()) {
         return;
       }
       this.save(
@@ -187,6 +205,9 @@ export default {
         this.email,
         this.username
       );
+    },
+    removeFavorite(titles, id) {
+      this.$delete(titles, id);
     },
     isCurrentTab(tab) {
       return tab === this.currentTab;
@@ -285,7 +306,7 @@ export default {
     listTimeZones,
     formatToTimeZone,
     currentTab: 'EDIT PROFILE',
-    copy: null,
+    copy: {},
     passwordNew: '',
     passwordCurrent: '',
     email: '',
@@ -294,7 +315,7 @@ export default {
     deletionPassword: '',
   }),
   created() {
-    this.copy = merge({}, this.user);
+    this.copy = clonedeep(this.user);
     if (!this.copy.timeZone) {
       this.$set(
         this.copy,
@@ -306,7 +327,7 @@ export default {
   computed: {
     isSocial() {
       return Object.values(this.copy.providers).find(
-        (provider) => provider.id === copy.id
+        (provider) => provider.id === this.copy.id
       );
     },
     tabs() {

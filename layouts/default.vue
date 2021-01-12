@@ -1,91 +1,139 @@
 <template lang="pug">
-v-app
-  v-container.pa-0(fluid)
-    .blackHeader(app)
-      v-row(align='center')
-        v-col(cols='1')
-          nuxt-link(to='/')
-            img(src='/logo.png')
-        v-col(offset='3', cols='4')
-          search(:nav='true')
+v-app(app)
+  v-container(fluid)
+    v-row(align='center')
+      v-col.pr-0(cols='2', lg='1')
+        nuxt-link(to='/')
+          img(src='/logo.png')
+      v-col(cols='9', offset-lg='3', lg='4')
+        search(:nav='true')
+      template(v-if='$vuetify.breakpoint.mdAndUp')
         client-only
           v-col.d-flex.justify-end(cols='4')
-            div(v-if='!$store.state.localStorage.connected')
+            v-menu(v-if='$store.state.localStorage.connected')
+              template(v-slot:activator='{ on, attrs }')
+                div(v-bind='attrs', v-on='on') {{ user.username }}
+              v-list
+                v-list-item(
+                  v-for='item in items',
+                  :key='item.name',
+                  @click='item.hook'
+                )
+                  v-list-item-name {{ item.name }}
+            div(v-else)
               nuxt-link(to='/sign-in')
                 button.button.button-red.mr-5 SIGN IN
               nuxt-link(to='/register')
                 button.button REGISTER
-            div(v-else)
-              v-menu
-                template(v-slot:activator='{ on, attrs }')
-                  div(v-bind='attrs', v-on='on') {{ user.username || "username" }}
-                v-list
-                  v-list-item(
-                    v-for='(item, index) in items',
-                    :key='index',
-                    @click='item.hook'
-                  )
-                    v-list-item-title {{ item.title }}
-    .subHeader
-      v-row(align='center', style='height: inherit')
-        v-col.pa-0.text-center(cols='1', v-for='tab of tabs', :key='tab.name')
-          h3(
+        v-col.py-0
+          span.px-5.text-center(
+            v-for='tab of tabs',
+            :key='tab.name',
             :class='{ "tab-active": tab.route === currentTab, tab: true }',
-            @click='go(tab.name, tab.route)'
-          )
-            | {{ tab.name }}
-        v-col.text-right(offset='7', cols='2')
+            @click='tab.hook'
+          ) {{ tab.name }}
+        //-v-col.py-0.text-right
           a.mr-3(href='')
             img.logo-social(src='/facebook.png')
           a.mr-3(href='')
             img.logo-social(src='/twitter.png')
           a.mr-3(href='')
             img.logo-social(src='/rss.png')
-  v-main.blackBody(app)
+      v-col.pl-0(v-else, cols='1')
+        v-menu
+          template(v-slot:activator='{ on, attrs }')
+            v-btn(icon, v-bind='attrs', v-on='on')
+              v-icon mdi-dots-vertical
+          v-list
+            v-list-item(
+              v-for='item of itemsMobile',
+              :key='item.name',
+              @click='item.hook'
+            )
+              v-list-item-title(
+                :class='{ "tab-active": item.route === currentTab }'
+              ) {{ item.name }}
+  v-main.blackBody
     nuxt(v-if='!$slots.default')
     slot
   v-container.pa-0(fluid)
     footer
       .top
         v-row(align='center')
-          v-col(cols='1')
-            h4 CONTACT
-          v-col(cols='1')
-            h4 ADVERTISING
-          v-col(cols='1')
-            h4 PRIVACY POLICY
-          v-col(cols='1')
-            h4 TERMS & CONDITIONS
-          v-col(cols='1')
-            h4 EN
+          v-col(cols='12', lg='1')
+            nuxt-link(to='/contact')
+              span CONTACT
+          v-col(cols='12', lg='1')
+            span ADVERTISING
+          v-col(cols='12', lg='1')
+            nuxt-link(to='/privacy-policy')
+              span PRIVACY POLICY
+          v-col(cols='12', lg='1')
+            span TERMS & CONDITIONS
       .middle
         v-row(align='center')
-          v-col(cols='1')
+          v-col(cols='6', lg='1')
             img(src='/logo.png')
-          v-col(cols='1')
+          v-col(cols='6', lg='1')
             img(src='/inclusive.png')
-          v-col(cols='10')
+          v-col(lg='10')
             p MyFlix is not endorsed, moderated, owned by or affiliated with Netflix or any of its partners in any capacity. The authors of this site also have no affiliation with Netflix. MyFlix is a unofficial fansite for Netflix. All promotional material including but not limited to trailers, images and videos are all copyright to their respective owners. Netflix is a registered trademark of Netflix, Inc.
         v-row.bottom(justify='center')
           p All Rights Reserved. Copyright MyFlix {{ new Date().getFullYear() }}. MyFlix is a website of Inclusive Corp.
 </template>
-
 <script>
 export default {
   data: () => ({
     currentTab: 'index',
-    tabs: [
+    tabs: [],
+    items: [],
+    itemsMobileConnected: [],
+    itemsMobileDisconnected: [],
+  }),
+  computed: {
+    user() {
+      return this.$store.state.localStorage.user;
+    },
+    itemsMobile() {
+      return this.$store.getters['localStorage/CONNECTED']
+        ? this.itemsMobileConnected
+        : this.itemsMobileDisconnected;
+    },
+  },
+  methods: {
+    async signOut() {
+      await this.$fire.auth.signOut();
+      this.$store.commit('localStorage/USER_LOGOUT');
+      this.$router.push('/');
+    },
+  },
+  mounted() {
+    if (this.$route.params.path) {
+      this.currentTab = this.$route.params.path;
+    } else {
+      this.currentTab = this.$route.name;
+    }
+    this.tabs = [
       {
         name: 'HOME',
         route: 'index',
+        hook: () => {
+          this.$router.push({ name: 'index', params: { name: 'HOME' } });
+        },
       },
       {
         name: 'FILMS',
         route: 'films',
+        hook: () => {
+          this.$router.push({ name: 'films', params: { name: 'FILMS' } });
+        },
       },
       {
         name: 'TV SHOWS',
         route: 'tvshows',
+        hook: () => {
+          this.$router.push({ name: 'tvshows', params: { name: 'TV SHOWS' } });
+        },
       },
       /*         {
           name: 'NEWS',
@@ -94,34 +142,17 @@ export default {
       {
         name: 'NEW RELEASES',
         route: 'new-releases',
+        hook: () => {
+          this.$router.push({
+            name: 'new-releases',
+            params: { name: 'NEW RELEASES' },
+          });
+        },
       },
-    ],
-    items: [],
-  }),
-  computed: {
-    user() {
-      return this.$store.state.localStorage.user;
-    },
-  },
-  methods: {
-    go(path, name) {
-      this.$router.push({ name, params: { name } });
-    },
-    async signOut() {
-      await this.$fire.auth.signOut();
-      this.$store.commit('localStorage/USER_LOGOUT');
-      this.$router.push('/');
-    },
-  },
-  created() {
-    if (this.$route.params.path) {
-      this.currentTab = this.$route.params.path;
-    } else {
-      this.currentTab = this.$route.name;
-    }
+    ];
     this.items = [
       {
-        title: 'PROFILE',
+        name: 'PROFILE',
         hook: () => {
           this.$router.push(
             '/profile/' + this.$store.state.localStorage.user.username
@@ -129,27 +160,45 @@ export default {
         },
       },
       {
-        title: 'REVIEWS',
+        name: 'REVIEWS',
         hook: () => {
           this.$router.push('/reviews');
         },
       },
       {
-        title: 'RECOMMENDATIONS',
+        name: 'RECOMMENDATIONS',
         hook: () => {
           this.$router.push('/recommendations');
         },
       },
       {
-        title: 'ACCOUNT SETTINGS',
+        name: 'ACCOUNT SETTINGS',
         hook: () => {
           this.$router.push('/account-settings');
         },
       },
       {
-        title: 'LOGOUT',
+        name: 'LOGOUT',
         hook: () => this.signOut(),
       },
+    ];
+    this.itemsMobileConnected = [...this.tabs, ...this.items];
+    this.itemsMobileDisconnected = [
+      ...this.tabs,
+      ...[
+        {
+          name: 'SIGN IN',
+          hook: () => {
+            this.$router.push('/sign-in');
+          },
+        },
+        {
+          name: 'REGISTER',
+          hook: () => {
+            this.$router.push('/register');
+          },
+        },
+      ],
     ];
   },
   watch: {
@@ -169,12 +218,12 @@ export default {
   display: flex;
   align-items: center;
   padding: 5px 15px;
-  height: 60px;
+  //height: 60px;
 }
 .subHeader {
   background-color: $black-subheader;
   border-top: 3px solid $red-netflix;
-  height: 60px;
+  padding: 5px 20px;
   width: 100%;
 }
 .v-toolbar__content {

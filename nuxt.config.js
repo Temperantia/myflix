@@ -20,7 +20,8 @@ export default {
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
-    { src: "~/plugins/vue-toasted", mode: "client" }
+    { src: "~/plugins/vue-toasted", mode: "client" },
+    { src: "~/plugins/vue-scrollactive", mode: "client" }
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)

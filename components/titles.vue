@@ -1,14 +1,14 @@
 <template lang="pug">
 v-container(fluid)
   v-row.subtitle-border
-    v-col(cols='3')
+    v-col(cols='12', lg='3')
       h1 {{ show ? "TV SHOWS" : "FILMS" }}
-    v-col(cols='5')
+    v-col(cols='9', lg='5')
       input#search.border.white-font--border(
         v-model='search',
         :placeholder='"SEARCH " + (show ? "TV SHOWS" : "FILMS")'
       )
-    v-col.text-right(cols='4')
+    v-col.text-lg-right(cols='3', lg='4')
       a
         img.icon(@click='settings = !settings', src='/gear.png')
       .window.pa-2.border.white-font--border(v-if='settings')
@@ -34,21 +34,21 @@ v-container(fluid)
           v-if='show'
         )
   v-row
-    v-col(cols='2') Genre
+    v-col(cols='12', lg='2') Genre
       v-select(
         :items='["All", ...categories]',
         v-model='category',
         outlined,
         dense
       )
-    v-col(cols='2') Rating
+    v-col(cols='12',lg='2') Rating
       v-select(
         :items='["All", ...Object.values($maturities)]',
         v-model='maturity',
         outlined,
         dense
       )
-    v-col(cols='2') Sort
+    v-col(cols='12',lg='2') Sort
       v-select(
         :items='["Netflix Original", "Release date (Newest first)", "Release date (Oldest first)", "Alphabetical (A - Z)"]',
         v-model='sort',
@@ -89,7 +89,8 @@ export default {
           return (
             (this.show ? title.u : !title.u) &&
             (this.category === 'All' || title.c.includes(this.category)) &&
-            (this.maturity === 'All' || this.$maturities[title.v] === this.maturity) &&
+            (this.maturity === 'All' ||
+              this.$maturities[title.v] === this.maturity) &&
             (this.search === '' || title.t.startsWith(this.search)) &&
             (!this.original || title.o) &&
             (((!this.completed || title.status === 'Completed') &&
@@ -120,7 +121,6 @@ export default {
         });
     },
   },
-
 };
 </script>
 <style lang="scss" scoped>

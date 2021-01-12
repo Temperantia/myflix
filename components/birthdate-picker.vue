@@ -1,7 +1,7 @@
 <template lang="pug">
 v-row(align='center')
-  v-col.pr-0(cols='3')
-    v-select.mr-3(
+  v-col.pr-lg-0(cols='12', lg='3')
+    v-select.mr-lg-3(
       :items='days',
       outlined,
       dense,
@@ -9,8 +9,8 @@ v-row(align='center')
       @change='update',
       v-model='day'
     )
-  v-col.px-0(cols='3')
-    v-select.mr-3(
+  v-col.px-lg-0(cols='12', lg='3')
+    v-select.mr-lg-3(
       :items='months',
       outlined,
       dense,
@@ -18,8 +18,8 @@ v-row(align='center')
       @change='update',
       v-model='month'
     )
-  v-col.px-0(cols='3')
-    v-select.mr-3(
+  v-col.px-lg-0(cols='12', lg='3')
+    v-select.mr-lg-3(
       :items='years',
       outlined,
       dense,
@@ -27,7 +27,7 @@ v-row(align='center')
       @change='update',
       v-model='year'
     )
-  v-col.px-0(cols='3')
+  v-col.px-lg-0(cols='12', lg='3')
     .white-font--text mm/dd/yyyy
 </template>
 <script>

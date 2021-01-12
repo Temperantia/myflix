@@ -3,7 +3,7 @@ import { doc, get } from "./firebase";
 async function userExists(id, provider) {
   if (provider) {
     const user = await get(
-      collectionUsers.where("providers." + provider, "==", id)
+      collectionUsers.where("providers." + provider + ".id", "==", id)
     );
     if (user.length === 0) {
       return null;
@@ -87,6 +87,7 @@ async function register(id, email, username, photoURL, provider, token) {
     reviews: [],
     recommendations: [],
     flixlist: {},
+    favorites: { films: {}, shows: {} },
     created: fireModule.firestore.Timestamp.now(),
     providers: {}
   };

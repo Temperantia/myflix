@@ -14,9 +14,13 @@
     "chart.js": "2.9.4",
     "core-js": "^3.8.1",
     "date-fns-timezone": "0.1.4",
+    "lodash.clonedeep": "4.5.0",
     "lodash.merge": "4.6.2",
     "nuxt": "^2.14.10",
+    "slugify": "1.4.6",
     "vue-chartjs": "3.5.1",
+    "vue-object-merge": "0.1.8",
+    "vue-scrollactive": "0.9.3",
     "vue-toasted": "1.1.28"
   },
   "devDependencies": {

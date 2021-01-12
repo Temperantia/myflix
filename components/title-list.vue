@@ -5,13 +5,14 @@ v-container(fluid)
       v-col
         v-pagination(:length='pages', v-model='page', :total-visible='25')
   v-row.subtitle-border(v-for='title in titles', :key='title.id')
-    v-col(cols='1')
+    v-col(cols='12', lg='1')
       img(:src='title.i')
-    v-col(cols='11')
-      .d-flex.align-center
-        nuxt-link(:to='title.r')
-          h2.mr-5 {{ title.t }}
-        span.d-flex.align-center(v-if='title.o')
+    v-col(cols='12', lg='11')
+      v-row(align='center')
+        v-col(cols='12', lg='9')
+          nuxt-link(:to='title.r')
+            h2.mr-5 {{ title.t }}
+        v-col.d-flex.align-center(v-if='title.o', cols='12', lg='3')
           img.icon.mr-3(src='/netflix.png')
           span.white-font--text O R I G I N A L
       .my-1

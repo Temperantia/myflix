@@ -1,22 +1,22 @@
 <template lang="pug">
 v-container(v-if='preview', fluid)
   v-row.mt-5.title-border
-    v-col(cols='10')
+    v-col(cols='12', lg='10')
       h3 PREVIEW
-    v-col(cols='2')
-      h4.text-right {{ title.summary.type === "show" ? "TV SHOW" : "FILM" + " REVIEW" }}
+    v-col.text-lg-right(cols='12', lg='2')
+      h4 {{ title.summary.type === "show" ? "TV SHOW" : "FILM" + " REVIEW" }}
   review(:review='review', :title='title', :preview='true')
   v-row
-    v-col.text-right
-      button.red-netflix--text.mr-5(@click='preview = false; edition = false') CANCEL
-      button.button-action.mr-5.preview(@click='preview = false') BACK TO EDIT
+    v-col.text-center.text-lg-right
+      button.red-netflix--text.mr-lg-5(@click='preview = false; edition = false') CANCEL
+      button.button-action.mr-lg-5.preview(@click='preview = false') BACK TO EDIT
       button.button-action(@click='submit') SUBMIT REVIEW
 v-container(v-else-if='edition', fluid)
   v-row.mt-5.title-border
-    v-col(cols='10')
+    v-col(cols='12', lg='10')
       h3 {{ title.title.toUpperCase() }}
-    v-col(cols='2')
-      h4.text-right {{ title.summary.type === "show" ? "TV SHOW" : "FILM" + " REVIEW" }}
+    v-col(cols='12', lg='2')
+      h4.text-lg-right {{ title.summary.type === "show" ? "TV SHOW" : "FILM" + " REVIEW" }}
   v-row.section-border
     //-v-col(cols='10', v-if='title.summary.type === "show"')
       span.mr-2 At the time of writing this, how many episodes of {{ title.title }} have you seen?
@@ -27,7 +27,7 @@ v-container(v-else-if='edition', fluid)
       )
       button.red-netflix--text(@click='review.episodes = title.episodeCount') ALL
     //-v-col(offset='10', v-else)
-    v-col.text-right(offset='10' cols='2')
+    v-col.text-lg-right(cols='12', offset-lg='10', lg='2')
       button.red-netflix--text(@click='edition = false') CANCEL
   v-row.section-border.py-5
     v-col(cols='12')
@@ -35,26 +35,30 @@ v-container(v-else-if='edition', fluid)
     v-col(
       align='center',
       v-for='(rating, name) in review.ratings',
-      cols='2',
+      cols='10',
+      offset='1',
+      lg='4',
+      xl='2',
       :key='name'
     )
       h3 {{ name.toUpperCase() }}
       card(:content='rating', :subtitle='$ratings[rating]')
       v-rating.pa-0(
-        :value='review.ratings[name]',
+        v-if='name !== "Overall"',
+        :value='rating',
         length='10',
         size='15',
         color='white',
         background-color='white',
-        @input='(value) => { review.ratings[name] = value; }'
+        @input='(value) => updateRating(name, value)'
       )
   v-row.section-border.py-5
     v-col(cols='12')
       h4.mb-5 Write your review
     v-col(cols='12')
       textarea(v-model='review.content')
-    v-col.text-right(cols='12')
-      button.button-action.preview.mr-5(@click='preview = true') PREVIEW
+    v-col.text-center.text-lg-right(cols='12')
+      button.button-action.preview.mr-lg-5(@click='preview = true') PREVIEW
       button.button-action(@click='submit') SUBMIT REVIEW
   v-row
     v-col
@@ -70,11 +74,14 @@ v-container(v-else-if='edition', fluid)
         .white-font--text.mt-5 Note: this area is only to be used for posting a review of the series after you have seen it. This is not discussion area.
 v-container(v-else, fluid)
   v-row.mt-5.title-border
-    v-col(cols='8')
+    v-col(cols='12', lg='8')
       h3 "{{ title.title.toUpperCase() }}" REVIEWS
-    v-col.text-right(cols='4')
+    v-col.text-lg-right(cols='12', lg='4')
       client-only
-        button(v-if='$store.state.localStorage.connected', @click='edition = true') WRITE A REVIEW
+        button(
+          v-if='$store.state.localStorage.connected',
+          @click='edition = true'
+        ) WRITE A REVIEW
         div(v-else) SIGN IN TO WRITE A REVIEW
   review(
     :review='review',
@@ -109,6 +116,14 @@ export default {
       } else if (value > this.title.episodeCount) {
         this.review.episodes = this.title.episodeCount;
       }
+    },
+    updateRating(name, value) {
+      this.review.ratings[name] = value;
+      const scores = Object.values(this.review.ratings);
+      scores.pop();
+      this.review.ratings.Overall = Math.ceil(
+        scores.reduce((sum, score) => sum + score, 0) / 5
+      );
     },
     submit() {
       if (

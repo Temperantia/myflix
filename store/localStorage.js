@@ -1,13 +1,19 @@
 import Vue from "vue";
+import mergeState from "vue-object-merge";
 
 export const state = () => ({
-  user: {
-    reviews: [],
-    recommendations: [],
-    flixlist: null
-  },
+  user: null,
   connected: false
 });
+
+export const getters = {
+  USER: state => {
+    return state.user;
+  },
+  CONNECTED: state => {
+    return state.connected;
+  }
+};
 
 export const mutations = {
   USER_LOGIN(state, user) {
@@ -29,5 +35,11 @@ export const mutations = {
   },
   USER_FLIXLIST(state, { idTitle, data }) {
     Vue.set(state.user.flixlist, idTitle, data);
+  },
+  USER_FAVORITE_ADD(state, favorite) {
+    mergeState(state.user, favorite);
+  },
+  USER_FAVORITE_REMOVE(state, { type, id }) {
+    Vue.delete(state.user.favorites[type], id);
   }
 };

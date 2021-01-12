@@ -1,18 +1,18 @@
 <template lang="pug">
 v-container(v-if='edition', fluid)
   v-row.mt-5.title-border
-    v-col(cols='10')
+    v-col(cols='12', lg='10')
       h3 {{ title.title.toUpperCase() }}
-    v-col(cols='2')
-      h4.text-right {{ title.summary.type === "show" ? "TV SHOW" : "FILM" + " RECOMMENDATION" }}
+    v-col.text-lg-right(cols='12', lg='2')
+      h4 {{ title.summary.type === "show" ? "TV SHOW" : "FILM" + " RECOMMENDATION" }}
   v-row.section-border
-    v-col(cols='10')
+    v-col(cols='12', lg='10')
       h4 Choose a similar {{ title.summary.type === "show" ? "TV Show" : "Film" }} title
       search(
         :title='recommendation.similar',
-        @click='(title, image, route) => (recommendation.similar = { title, image, route })'
+        @click='(id, title, image, route) => (recommendation.similar = { id, title, image, route })'
       )
-    v-col.text-right(cols='2')
+    v-col.text-lg-right(cols='12', lg='2')
       button.red-netflix--text(@click='edition = false') CANCEL
   v-row.section-border.py-5
     v-col(cols='12')
@@ -20,7 +20,7 @@ v-container(v-if='edition', fluid)
     v-col(cols='12')
       textarea(v-model='recommendation.content')
       .white-font--text Tip: Don't recommend sequels or other related film/series
-    v-col.text-right(cols='12')
+    v-col.text-lg-right(cols='12')
       button.button-action(@click='submit') SUBMIT RECOMMENDATION
   v-row
     v-col
@@ -31,11 +31,14 @@ v-container(v-if='edition', fluid)
         .white-font--text - All recommendations are public.
 v-container(v-else, fluid)
   v-row.mt-5.title-border
-    v-col(cols='8')
+    v-col(cols='12', lg='8')
       h3 RECOMMENDATIONS
-    v-col.text-right(cols='4')
+    v-col.text-lg-right(cols='12', lg='4')
       client-only
-        button(v-if='$store.state.localStorage.connected', @click='edition = true') MAKE A RECOMMENDATION
+        button(
+          v-if='$store.state.localStorage.connected',
+          @click='edition = true'
+        ) MAKE A RECOMMENDATION
         div(v-else) SIGN IN TO MAKE A RECOMMENDATION
   recommendation(
     :recommendation='recommendation',
