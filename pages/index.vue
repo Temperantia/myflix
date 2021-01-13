@@ -22,7 +22,7 @@ div
             div
               span {{ "Score " }}
               span.red-netflix--text {{ item.z + "/10" }}
-            div(v-if='item.a') Released {{ $dateFns.format(item.a, "MMM d, yyyy") }}
+            div Released {{ item.a ? $dateFns.format(item.a, "MMM d, yyyy") : "-" }}
             div {{ item.f }} members watching this
           v-col(cols='3')
             client-only(v-if='favorites')
@@ -56,24 +56,29 @@ div
                   h3 {{ review.title.title }}
               v-col.text-right
                 div Overall Rating: {{ review.ratings.Overall }}
-            p(v-html='content(review.content, index)')
-            span.red-netflix--text.click.ml-1(
-              v-if='expanded[index] && review.content.length > 300',
-              @click='$set(expanded, index, false)'
-            ) show less
-            span.red-netflix--text.click.ml-1(
-              v-else-if='review.content.length > 300',
-              @click='$set(expanded, index, true)'
-            ) show more
-            client-only
-              nuxt-link(:to='"/profile/" + review.author.username')
-                span.red-netflix--text {{ " " + review.author.username }}
+            p
+              span(v-html='content(review.content, index)')
+              span.red-netflix--text.click.ml-1(
+                v-if='expanded[index] && review.content.length > 300',
+                @click='$set(expanded, index, false)'
+              ) show less
+              span.red-netflix--text.click.ml-1(
+                v-else-if='review.content.length > 300',
+                @click='$set(expanded, index, true)'
+              ) show more
+            div Review by
+              client-only
+                nuxt-link(
+                  :to='"/profile/" + review.author.username'
+                )
+                  span.red-netflix--text {{ " " + review.author.username }}
+              span {{ " - " + $dateFns.format(new Date(review.postedOn.seconds * 1000), "MMM d, yyyy").toUpperCase() }}
     v-row
       v-col
         h1.title-border RECOMMENDED GENRES
         v-row
           v-col(
-            cols='12'
+            cols='12',
             lg='4',
             v-for='category in $categories',
             :key='category.category',
@@ -93,15 +98,15 @@ div
         h1.title-border LATEST USER RECOMMENDATIONS
         v-row
           v-col(
-            cols='12'
+            cols='12',
             lg='4',
             v-for='recommendation in recommendationsLatest',
             :key='recommendation.id'
           )
             v-row
-              v-col(cols='4' lg='2')
+              v-col(cols='4', lg='2')
                 img(:src='recommendation.title.tallBoxArt')
-              v-col(cols='8' lg='4') If you liked
+              v-col(cols='8', lg='4') If you liked
                 .red-netflix--text {{ recommendation.title.title }}
                 client-only(v-if='favorites')
                   a.click(
@@ -112,9 +117,9 @@ div
                     v-else,
                     @click='addFavoriteFromId(recommendation.title.id)'
                   ) Add to Favorites
-              v-col(cols='4' lg='2')
+              v-col(cols='4', lg='2')
                 img(:src='recommendation.similar.image')
-              v-col(cols='8' lg='4') Then you might like...
+              v-col(cols='8', lg='4') Then you might like...
                 .red-netflix--text {{ recommendation.similar.title }}
                 client-only(v-if='favorites')
                   a.click(

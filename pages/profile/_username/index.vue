@@ -108,10 +108,8 @@ client-only(v-if='user')
                     span.white-font--text /{{ element.title.episodeCount }}
                   span.white-font--text {{ " • Scored " }}
                   span(
-                    v-if='element.score',
                     :class='textColor(element.title.summary.type, element.status)'
-                  ) {{ element.score }}
-                  span.white-font--text(v-else) -
+                  ) {{ element.score || "-" }}
               v-col(cols='12', lg='4') {{ $dateFns.format(element.postedOn.seconds * 1000, "MMM d, hh:ss a") }}
             h4.subtitle-border LATEST FILMS WATCHED
             v-row(
@@ -252,26 +250,39 @@ export default {
       );
     },
     tvShowsChartData() {
-      return {
-        datasets: [
-          {
-            backgroundColor: [
-              '#6dee76',
-              '#576bec',
-              '#f2921c',
-              '#f51c1f',
-              '#888888',
+      return this.tvShowsWatching.length ||
+        this.tvShowsCompleted.length ||
+        this.tvShowsOnHold.length ||
+        this.tvShowsDropped.length ||
+        this.tvShowsPlanToWatch.length
+        ? {
+            datasets: [
+              {
+                backgroundColor: [
+                  '#6dee76',
+                  '#576bec',
+                  '#f2921c',
+                  '#f51c1f',
+                  '#888888',
+                ],
+                data: [
+                  this.tvShowsWatching.length,
+                  this.tvShowsCompleted.length,
+                  this.tvShowsOnHold.length,
+                  this.tvShowsDropped.length,
+                  this.tvShowsPlanToWatch.length,
+                ],
+              },
             ],
-            data: [
-              this.tvShowsWatching.length,
-              this.tvShowsCompleted.length,
-              this.tvShowsOnHold.length,
-              this.tvShowsDropped.length,
-              this.tvShowsPlanToWatch.length,
+          }
+        : {
+            datasets: [
+              {
+                backgroundColor: ['#1b1b1b'],
+                data: [1],
+              },
             ],
-          },
-        ],
-      };
+          };
     },
     filmsStats() {
       return [
@@ -318,33 +329,44 @@ export default {
       return this.films.filter((element) => element.status === 'Plan to Watch');
     },
     filmsChartData() {
-      return {
-        datasets: [
-          {
-            backgroundColor: ['#576bec', '#f2921c', '#f51c1f', '#888888'],
-            data: [
-              this.filmsCompleted.length,
-              this.filmsRewatched.length,
-              this.filmsUnfinished.length,
-              this.filmsPlanToWatch.length,
+      return this.filmsCompleted.length ||
+        this.filmsRewatched.length ||
+        this.filmsUnfinished.length ||
+        this.filmsPlanToWatch.length
+        ? {
+            datasets: [
+              {
+                backgroundColor: ['#576bec', '#f2921c', '#f51c1f', '#888888'],
+                data: [
+                  this.filmsCompleted.length,
+                  this.filmsRewatched.length,
+                  this.filmsUnfinished.length,
+                  this.filmsPlanToWatch.length,
+                ],
+              },
             ],
-          },
-        ],
-      };
+          }
+        : {
+            datasets: [
+              {
+                backgroundColor: ['#1b1b1b'],
+                data: [1],
+              },
+            ],
+          };
     },
   },
   methods: {
     async save(copy, passwordNew, passwordCurrent, email, username) {
-      const error = await this.$updateUser(
-        copy,
-        passwordNew,
-        passwordCurrent,
-        email,
-        username
-      );
-      if (error) {
-        this.$toasted.error(error);
-      } else {
+      if (
+        await this.$updateUser(
+          copy,
+          passwordNew,
+          passwordCurrent,
+          email,
+          username
+        )
+      ) {
         this.edition = false;
       }
     },

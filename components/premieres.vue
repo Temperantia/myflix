@@ -9,7 +9,7 @@ v-container(fluid)
     v-carousel-item(v-for='item in premieres', :key='item.id')
       nuxt-link(:to='item.r')
         div(
-          :style='"height: 100%;  position: relative; background-size: contain; background-position: center; background-image: url(" + item.x + ");"'
+          :style='"height: 100%;  position: relative; background-size: cover; background-position: center; background-image: url(" + item.x + ");"'
         )
         div(
           style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))'

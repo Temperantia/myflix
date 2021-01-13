@@ -63,226 +63,249 @@ const statusesFilm = [
   "Unfinished"
 ];
 
-async function getTitle(id) {
-  const query = collectionVideos.doc(id);
-  const title = await doc(query);
-  const numUsers = String(Object.keys(title.scores).length);
-  const information = {
-    Type: title.summary.type === "show" ? "TV Show" : "Movie",
-    Seasons: title.seasonCount,
-    Episodes: title.episodeCount,
-    Renewed: title.summary.type == "show" ? "No" : null,
-    Premiered: title.availability.availabilityStartTime
-      ? dateFns.format(title.availability.availabilityStartTime, "MMM d, yyyy")
-      : null,
-    Producers: title.creators.join(", "),
-    Genres: title.genres.map(genre => genre.name).join(", "),
-    Duration: "idk",
-    Rating: title.maturity
-  };
-  const statistics = {
-    Score: title.score + " (scored by " + numUsers + " users)",
-    Ranked: "#" + title.rank,
-    Popularity: "#" + title.popularity,
-    Followers: String(Object.keys(title.followers).length),
-    Favorites: String(Object.keys(title.favorites).length)
-  };
+export default async (
+  { $fire, $fireModule, $dateFns, $toast, store },
+  inject
+) => {
+  const firestore = $fire.firestore;
+  const collectionData = firestore.collection("data");
+  const collectionUsers = firestore.collection("users");
+  const collectionVideos = firestore.collection("videos");
+  const collectionReviews = firestore.collection("reviews");
+  const collectionRecommendations = firestore.collection("recommendations");
 
-  if (!title.maturity) {
-    title.maturity = "AL";
-  } else {
-    title.maturity = maturities[title.maturity];
+  async function getTitle(id) {
+    const query = collectionVideos.doc(id);
+    const title = await doc(query);
+    const numUsers = String(Object.keys(title.scores).length);
+    const information = {
+      Type: title.summary.type === "show" ? "TV Show" : "Movie",
+      Seasons: title.seasonCount,
+      Episodes: title.episodeCount,
+      Renewed: title.summary.type == "show" ? "No" : null,
+      Premiered: title.availability.availabilityStartTime
+        ? $dateFns.format(
+            title.availability.availabilityStartTime,
+            "MMM d, yyyy"
+          )
+        : null,
+      Producers: title.creators.join(", "),
+      Genres: title.genres.map(genre => genre.name).join(", "),
+      Duration: "idk",
+      Rating: title.maturity
+    };
+    const statistics = {
+      Score: title.score + " (scored by " + numUsers + " users)",
+      Ranked: "#" + title.rank,
+      Popularity: "#" + title.popularity,
+      Followers: String(Object.keys(title.followers).length),
+      Favorites: String(Object.keys(title.favorites).length)
+    };
+
+    if (!title.maturity) {
+      title.maturity = "AL";
+    } else {
+      title.maturity = maturities[title.maturity];
+    }
+
+    return {
+      ...title,
+      information,
+      statistics,
+      numUsers
+    };
   }
 
-  return {
-    ...title,
-    information,
-    statistics,
-    numUsers
-  };
-}
+  async function getReviews(id) {
+    return await get(collectionReviews.where("title.id", "==", Number(id)));
+  }
 
-async function getReviews(id) {
-  return await get(collectionReviews.where("title.id", "==", Number(id)));
-}
+  async function getReviewsLatest() {
+    return await get(collectionReviews.orderBy("postedOn", "desc").limit(3));
+  }
 
-async function getReviewsLatest() {
-  return await get(collectionReviews.orderBy("postedOn", "desc").limit(3));
-}
+  async function getRecommendations(id) {
+    return await get(
+      collectionRecommendations.where("title.id", "==", Number(id))
+    );
+  }
 
-async function getRecommendations(id) {
-  return await get(
-    collectionRecommendations.where("title.id", "==", Number(id))
-  );
-}
+  async function getRecommendationsLatest() {
+    return await get(
+      collectionRecommendations.orderBy("postedOn", "desc").limit(3)
+    );
+  }
 
-async function getRecommendationsLatest() {
-  return await get(
-    collectionRecommendations.orderBy("postedOn", "desc").limit(3)
-  );
-}
+  async function getSearch() {
+    return (await get(collectionData))
+      .reduce((data, current) => [...data, ...JSON.parse(current.search)], [])
+      .filter(title => {
+        if (title.y === 0 || title.y >= 2030) {
+          return false;
+        }
+        return !title.title;
+      })
+      .map(title => {
+        if (title.u && !title.s) {
+          title.s = 1;
+        }
+        return title;
+      });
+  }
 
-async function getSearch() {
-  return (await get(collectionData))
-    .reduce((data, current) => [...data, ...JSON.parse(current.search)], [])
-    .filter(title => {
-      if (title.y === 0 || title.y >= 2030) {
-        return false;
-      }
-      return !title.title;
-    })
-    .map(title => {
-      if (title.u && !title.s) {
-        title.s = 1;
-      }
-      return title;
+  async function createReview(title, review, author) {
+    const data = {
+      author: {
+        username: author.username,
+        image: author.image
+      },
+      title: {
+        id: title.summary.id,
+        title: title.title,
+        boxArt: title.boxArt,
+        tallBoxArt: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
+        storyArt: title.storyArt
+      },
+      ...review,
+      reports: [],
+      likes: [],
+      postedOn: $fireModule.firestore.Timestamp.now()
+    };
+    const ref = await collectionReviews.add(data);
+    store.commit("title/CREATE_REVIEW", data);
+
+    data.id = ref.id;
+    collectionUsers.doc(author.id).update({
+      reviews: $fireModule.firestore.FieldValue.arrayUnion(data)
     });
-}
-
-async function createReview(title, review, author) {
-  const data = {
-    author: {
-      username: author.username,
-      image: author.image
-    },
-    title: {
-      id: title.summary.id,
-      title: title.title,
-      boxArt: title.boxArt,
-      tallBoxArt: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
-      storyArt: title.storyArt
-    },
-    ...review,
-    reports: [],
-    likes: [],
-    postedOn: fireModule.firestore.Timestamp.now()
-  };
-  const ref = await collectionReviews.add(data);
-  $store.commit("title/CREATE_REVIEW", data);
-
-  data.id = ref.id;
-  collectionUsers.doc(author.id).update({
-    reviews: fireModule.firestore.FieldValue.arrayUnion(data)
-  });
-  $store.commit("localStorage/USER_REVIEW", data);
-}
-
-async function createRecommendation(title, recommendation, author) {
-  const data = {
-    author: {
-      username: author.username,
-      image: author.image
-    },
-    title: {
-      id: title.summary.id,
-      title: title.title,
-      boxArt: title.boxArt,
-      tallBoxArt: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
-      storyArt: title.storyArt
-    },
-    ...recommendation,
-    reports: [],
-    postedOn: fireModule.firestore.Timestamp.now()
-  };
-  const ref = await collectionRecommendations.add(data);
-  $store.commit("title/CREATE_RECOMMENDATION", data);
-
-  data.id = ref.id;
-  collectionUsers.doc(author.id).update({
-    recommendations: fireModule.firestore.FieldValue.arrayUnion(data)
-  });
-  $store.commit("localStorage/USER_RECOMMENDATION", data);
-}
-
-function updateFlixlist(idUser, title, status, episodes, score) {
-  const data = {
-    status,
-    episodes,
-    score,
-    title,
-    postedOn: fireModule.firestore.Timestamp.now()
-  };
-  collectionUsers.doc(idUser).update({ [`flixlist.${title.id}`]: data });
-  $store.commit("localStorage/USER_FLIXLIST", { idTitle: title.id, data });
-
-  const video = { ["followers." + idUser]: new Date() };
-  if (score) {
-    video["scores." + idUser] = { time: new Date(), value: score };
+    store.commit("localStorage/USER_REVIEW", data);
   }
-  collectionVideos.doc(title.id).update(video);
-}
 
-function addFavorite(title, type) {
-  const idUser = $store.state.localStorage.user.id;
-  const favorite = {
-    favorites: {
-      [type]: {
-        [title.id]: {
-          image: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
-          title: title.title,
-          year: title.releaseYear,
-          maturity: title.maturity ? title.maturity : null,
-          season: title.seasonCount ? title.seasonCount : null,
-          genres: title.genres
-          //duration: title.duration
+  async function createRecommendation(title, recommendation, author) {
+    const data = {
+      author: {
+        username: author.username,
+        image: author.image
+      },
+      title: {
+        id: title.summary.id,
+        title: title.title,
+        boxArt: title.boxArt,
+        tallBoxArt: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
+        storyArt: title.storyArt
+      },
+      ...recommendation,
+      reports: [],
+      postedOn: $fireModule.firestore.Timestamp.now()
+    };
+    const ref = await collectionRecommendations.add(data);
+    store.commit("title/CREATE_RECOMMENDATION", data);
+
+    data.id = ref.id;
+    collectionUsers.doc(author.id).update({
+      recommendations: $fireModule.firestore.FieldValue.arrayUnion(data)
+    });
+    store.commit("localStorage/USER_RECOMMENDATION", data);
+  }
+
+  function updateFlixlist(title, status, episodes, score) {
+    if (!status) {
+      $toast.error("Select a status");
+      return;
+    }
+    const idUser = store.getters["localStorage/USER"].id;
+
+    const data = {
+      status,
+      episodes,
+      score,
+      title,
+      postedOn: $fireModule.firestore.Timestamp.now()
+    };
+    collectionUsers.doc(idUser).update({ [`flixlist.${title.id}`]: data });
+    store.commit("localStorage/USER_FLIXLIST", { idTitle: title.id, data });
+
+    const video = { ["followers." + idUser]: new Date() };
+    if (score) {
+      video["scores." + idUser] = { time: new Date(), value: score };
+    }
+    collectionVideos.doc(title.id).update(video);
+    $toast.success("Flixlist updated");
+  }
+
+  function addFavorite(title, type) {
+    const idUser = store.getters["localStorage/USER"].id;
+    const favorite = {
+      favorites: {
+        [type]: {
+          [title.id]: {
+            image: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
+            title: title.title,
+            year: title.releaseYear,
+            maturity: title.maturity ? title.maturity : null,
+            season: title.seasonCount ? title.seasonCount : null,
+            genres: title.genres
+            //duration: title.duration
+          }
         }
       }
-    }
-  };
-  collectionUsers.doc(idUser).update(favorite);
-  $store.commit("localStorage/USER_FAVORITE_ADD", favorite);
+    };
+    collectionUsers.doc(idUser).update(favorite);
+    store.commit("localStorage/USER_FAVORITE_ADD", favorite);
 
-  collectionVideos.doc(title.id).update({
-    favorites: fireModule.firestore.FieldValue.arrayUnion(idUser)
-  });
-}
-
-function removeFavorite(title, type) {
-  const idUser = $store.state.localStorage.user.id;
-  collectionUsers.doc(idUser).update({
-    ["favorites." +
-    type +
-    "." +
-    title.id]: fireModule.firestore.FieldValue.delete()
-  });
-  $store.commit("localStorage/USER_FAVORITE_REMOVE", { type, id: title.id });
-
-  collectionVideos.doc(title.id).update({
-    favorites: fireModule.firestore.FieldValue.arrayRemove(idUser)
-  });
-}
-
-function report(collection, id) {
-  firestore
-    .collection(collection)
-    .doc(id)
-    .update({
-      reports: fireModule.firestore.FieldValue.arrayUnion(
-        $store.state.localStorage.user.id
-      )
+    collectionVideos.doc(title.id).update({
+      favorites: $fireModule.firestore.FieldValue.arrayUnion(idUser)
     });
-}
+  }
 
-let firestore;
-let fireModule;
-let dateFns;
-let $store;
-let collectionData;
-let collectionUsers;
-let collectionVideos;
-let collectionReviews;
-let collectionRecommendations;
+  function removeFavorite(title, type) {
+    const idUser = store.getters["localStorage/USER"].id;
+    collectionUsers.doc(idUser).update({
+      ["favorites." +
+      type +
+      "." +
+      title.id]: $fireModule.firestore.FieldValue.delete()
+    });
+    store.commit("localStorage/USER_FAVORITE_REMOVE", { type, id: title.id });
 
-export default async ({ $fire, $fireModule, $dateFns, store }, inject) => {
-  firestore = $fire.firestore;
-  fireModule = $fireModule;
-  dateFns = $dateFns;
-  $store = store;
-  collectionData = firestore.collection("data");
-  collectionUsers = firestore.collection("users");
-  collectionVideos = firestore.collection("videos");
-  collectionReviews = firestore.collection("reviews");
-  collectionRecommendations = firestore.collection("recommendations");
+    collectionVideos.doc(title.id).update({
+      favorites: $fireModule.firestore.FieldValue.arrayRemove(idUser)
+    });
+  }
+
+  function like(id) {
+    const idUser = store.getters["localStorage/USER"].id;
+    collectionReviews.doc(id).update({
+      likes: $fireModule.firestore.FieldValue.arrayUnion(idUser)
+    });
+    store.commit("title/LIKE", {id, idUser});
+  }
+
+  function unlike(id) {
+    const idUser = store.getters["localStorage/USER"].id;
+    collectionReviews.doc(id).update({
+      likes: $fireModule.firestore.FieldValue.arrayRemove(idUser)
+    });
+    store.commit("title/UNLIKE", {id, idUser});
+  }
+
+  function report(collection, id) {
+    const idUser = store.getters["localStorage/USER"].id;
+    firestore
+      .collection(collection)
+      .doc(id)
+      .update({
+        reports: $fireModule.firestore.FieldValue.arrayUnion(idUser)
+      });
+    store.commit(
+      "title/REPORT_" + collection === "reviews" ? "REVIEW" : "RECOMMENDATION",
+      {
+        id,
+        idUser
+      }
+    );
+  }
+
   const search = await getSearch();
   let categories = {};
   for (const item of search) {
@@ -308,6 +331,8 @@ export default async ({ $fire, $fireModule, $dateFns, store }, inject) => {
   inject("updateFlixlist", updateFlixlist);
   inject("addFavorite", addFavorite);
   inject("removeFavorite", removeFavorite);
+  inject("like", like);
+  inject("unlike", unlike);
   inject("report", report);
   inject("search", search);
   inject("categories", categories);

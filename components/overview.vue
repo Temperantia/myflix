@@ -3,7 +3,7 @@ v-container(fluid)
   v-row
     v-col(cols='12', md='9')
       v-row
-        v-col(cols='10', offset='1', offset-md='0' md='3')
+        v-col(cols='10', offset='1', offset-md='0', md='3')
           card(
             title='SCORE',
             :content='title.score',
@@ -11,17 +11,17 @@ v-container(fluid)
           )
         v-col(cols='12', md='9')
           v-row
-            v-col(cols='12' lg='4')
+            v-col(cols='12', lg='4')
               h2 {{ "Ranked #" + title.rank }}
-            v-col(cols='12' lg='4')
+            v-col(cols='12', lg='4')
               h2 {{ "Popularity #" + title.popularity }}
-            v-col(cols='12' lg='4')
+            v-col(cols='12', lg='4')
               h2 {{ "Following " + title.statistics.Followers }}
           .white-font--text {{ title.releaseYear }} | {{ title.maturity }}
             span.white-font--text(v-if='title.seasonCount') {{ " | " + title.seasonCount + (title.seasonCount > 1 ? " Seasons" : " Season") }}
-          div(v-if='title.creators.length > 0')
+          div
             span.white-font--text Creators:
-            span.ml-1 {{ title.creators.join(", ") }}
+            span.ml-1 {{ title.creators.join(", ") || "-" }}
       v-row
         v-col
     //-v-col(cols='12', md='3')
@@ -61,7 +61,7 @@ v-container(fluid)
 export default {
   computed: {
     title() {
-      return this.$store.state.title.data;
+      return this.$store.getters['title/TITLE'];
     },
   },
 };

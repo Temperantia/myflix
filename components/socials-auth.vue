@@ -57,7 +57,7 @@ export default {
           this.token = cred.credential.accessToken;
         }
       } catch (error) {
-        this.$toasted.error(error);
+        this.$toast.error(error);
       }
     },
     async register() {

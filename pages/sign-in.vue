@@ -57,7 +57,7 @@ export default {
 
         this.$router.push('/');
       } catch (error) {
-        this.$toasted.error('Incorrect Email or Password');
+        this.$toast.error('Incorrect Email or Password');
       }
     },
   },

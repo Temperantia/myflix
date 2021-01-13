@@ -222,7 +222,7 @@ export default {
         file.type !== 'image/png' &&
         file.type !== 'image/gif'
       ) {
-        this.$toasted.error('Must be jpg, gif or png format.');
+        this.$toast.error('Must be jpg, gif or png format.');
         return;
       }
 
@@ -272,13 +272,10 @@ export default {
       if (!this.$refs.deletion.validate()) {
         return;
       }
-      const error = await this.$deleteUser(
+      await this.$deleteUser(
         this.deletionEmail,
         this.deletionPassword
       );
-      if (error) {
-        this.$toasted.error(error);
-      }
     },
     async link(provider, name) {
       try {
@@ -289,7 +286,7 @@ export default {
           token: cred.credential.accessToken,
         });
       } catch (error) {
-        this.$toasted.error(error);
+        this.$toast.error(error);
       }
     },
     signInWithGoogle() {

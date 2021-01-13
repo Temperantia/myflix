@@ -4,71 +4,69 @@ defaultLayout
     v-row
       //-v-col(cols='12', md='1')
       //- ad
-      v-col(cols='12', md='2')
-        img(:src='title.tallBoxArt')
-        client-only.mt-5(v-if='$store.state.localStorage.connected')
-          v-row.title-border
-            v-col
-              h3.text-h5 YOUR OVERVIEW
-            v-col.text-right
-              a.click(
-                v-if='isFavorite(title.id)',
-                @click='$removeFavorite(title, title.summary.type === "show" ? "shows" : "films")'
-              ) Remove from Favorites
-              a.click(
-                v-else,
-                @click='$addFavorite(title, title.summary.type === "show" ? "shows" : "films")'
-              ) Add to Favorites
-          v-row(align='center')
-            v-col(cols='4') Status:
-            v-col(cols='8')
-              v-select(
-                :items='title.summary.type === "show" ? $statusesTvShow : $statusesFilm',
-                outlined,
-                v-model='status',
-                dense,
-                :hide-details='true',
-                @change='updateStatus'
-              )
-          v-row(align='center', v-if='title.summary.type === "show"')
-            v-col(cols='4') Eps seen:
-            v-col(cols='3')
-              input(
-                type='number',
-                v-model='episodes',
-                @input='updateEpisodes'
-              )
-            v-col(cols='3') / {{ title.episodeCount }}
-          v-row(align='center')
-            v-col(cols='4') Your Score
-            v-col(cols='8')
-              v-select(
-                :items='Object.entries($ratings).map(([score, rating]) => `(${score}) ${rating}`)',
-                outlined,
-                v-model='score',
-                dense,
-                :hide-details='true'
-              )
-          v-row
-            v-col(offset='3', cols='6', align='center')
-              button.update(@click='update') UPDATE
-        .mt-5
-          h3.text-h5.title-border INFORMATION
-          .my-1(
-            v-if='data',
-            v-for='(data, name) in title.information',
-            :key='name'
-          )
-            b {{ name }}:
-            span.pl-1 {{ data }}
-        .mt-5
-          h3.title-border STATISTICS
-          .my-1(v-for='(data, name) in title.statistics', :key='name')
-            b {{ name }}:
-            span.pl-1 {{ data }}
+      client-only
+        v-col(cols='12', md='2')
+          img(:src='title.tallBoxArt')
+          .mt-5(v-if='$store.getters["localStorage/CONNECTED"]')
+            v-row.title-border
+              v-col
+                h3.text-h5 YOUR OVERVIEW
+              v-col.text-right
+                a.click(
+                  v-if='isFavorite(title.id)',
+                  @click='$removeFavorite(title, title.summary.type === "show" ? "shows" : "films")'
+                ) Remove from Favorites
+                a.click(
+                  v-else,
+                  @click='$addFavorite(title, title.summary.type === "show" ? "shows" : "films")'
+                ) Add to Favorites
+            v-row(align='center')
+              v-col(cols='4') Status:
+              v-col(cols='8')
+                v-select(
+                  :items='title.summary.type === "show" ? $statusesTvShow : $statusesFilm',
+                  outlined,
+                  v-model='status',
+                  dense,
+                  :hide-details='true',
+                  @change='updateStatus'
+                )
+            v-row(align='center', v-if='title.summary.type === "show"')
+              v-col(cols='4') Eps seen:
+              v-col(cols='3')
+                input(type='number', v-model='episodes', @input='updateEpisodes')
+              v-col(cols='3') / {{ title.episodeCount }}
+            v-row(align='center')
+              v-col(cols='4') Your Score
+              v-col(cols='8')
+                v-select(
+                  :items='Object.entries($ratings).map(([score, rating]) => `(${score}) ${rating}`)',
+                  outlined,
+                  v-model='score',
+                  dense,
+                  :hide-details='true'
+                )
+            v-row
+              v-col(offset='3', cols='6', align='center')
+                button.update(@click='update') UPDATE
+          .mt-5
+            h3.text-h5.title-border INFORMATION
+            .my-1(v-for='(data, name) in title.information', :key='name')
+              b {{ name }}:
+              span.pl-1 {{ data || "-" }}
+          .mt-5
+            h3.title-border STATISTICS
+            .my-1(v-for='(data, name) in title.statistics', :key='name')
+              b {{ name }}:
+              span.pl-1 {{ data }}
       v-col(cols='12', md='8')
         v-row.title-border
-          v-col(cols='12', lg='2', v-for='tab in tabs', :key='tab.name')
+          v-col(v-if='$vuetify.breakpoint.mdAndUp', md='12')
+            nuxt-link(:to='tab.route', v-for='tab in tabs', :key='tab.name')
+              h3.d-inline.mr-10(
+                :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
+              ) {{ tab.name }}
+          v-col(v-else, v-for='tab in tabs', :key='tab.name', cols='12')
             nuxt-link(:to='tab.route')
               h3.d-inline.mr-10(
                 :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
@@ -127,7 +125,7 @@ export default {
       return this.user.favorites;
     },
     title() {
-      return this.$store.state.title.data;
+      return this.$store.getters['title/TITLE'];
     },
     tabs() {
       const index = this.$route.path.lastIndexOf('/') + 1;
@@ -176,18 +174,12 @@ export default {
       return route === this.$route.path;
     },
     update() {
-      if (!this.status) {
-        this.$toasted.error('Select a status');
-        return;
-      }
       this.$updateFlixlist(
-        this.$store.state.localStorage.user.id,
         this.title,
         this.status,
         Number(this.episodes),
         this.score ? Number(this.score.match(/(([^()]+))/)[1]) : null
       );
-      this.$toasted.success('Flixlist updated');
     },
     updateStatus(value) {
       if (this.title.summary.type === 'show') {

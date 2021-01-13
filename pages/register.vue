@@ -68,7 +68,7 @@ export default {
       try {
         const user = await this.$getUser(this.username);
         if (user) {
-          this.$toasted.error('Username is taken');
+          this.$toast.error('Username is taken');
           return;
         }
 
@@ -80,8 +80,7 @@ export default {
         await this.$register(cred.user.uid, this.email, this.username);
         this.$router.push('/');
       } catch (error) {
-        console.error(error);
-        this.$toasted.error(error);
+        this.$toast.error(error);
       }
     },
   },

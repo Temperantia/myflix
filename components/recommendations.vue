@@ -61,13 +61,13 @@ export default {
         this.recommendation.content.length < 200 ||
         this.recommendation.content.length > 1000
       ) {
-        this.$toasted.error(
+        this.$toast.error(
           'Your recommendation needs between 200 and 1000 characters.'
         );
         return;
       }
       if (!this.recommendation.similar) {
-        this.$toasted.error('You need to pick a similar title');
+        this.$toast.error('You need to pick a similar title');
         return;
       }
       this.$createRecommendation(

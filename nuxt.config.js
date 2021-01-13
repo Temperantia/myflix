@@ -20,8 +20,7 @@ export default {
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
-    { src: "~/plugins/vue-toasted", mode: "client" },
-    { src: "~/plugins/vue-scrollactive", mode: "client" }
+    "~/plugins/vue-scrollactive"
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -60,8 +59,9 @@ export default {
         onFirebaseHosting: true
       }
     ],
-    ["nuxt-vuex-localstorage"],
-    "@nuxtjs/google-adsense"
+    "nuxt-vuex-localstorage",
+    "@nuxtjs/google-adsense",
+    ["@nuxtjs/toast", { duration: 5000, position: 'bottom-center' }]
   ],
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {

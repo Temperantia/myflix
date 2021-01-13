@@ -2,7 +2,7 @@
 v-carousel(:hide-delimiters='true', :hide-delimiters-background='true')
   v-carousel-item(v-for='item in trendingWeek', :key='item.id')
     div(
-      :style='"height: 100%; background-size: contain; background-position: center; background-image: url(" + item.b + ");"'
+      :style='"height: 100%; background-size: cover; background-position: center; background-image: url(" + item.b + ");"'
     )
     div(style='position: absolute; top: 0; left: 0')
       img(src='/title bg.png')

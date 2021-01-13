@@ -130,7 +130,7 @@ export default {
         this.review.content.length < 200 ||
         this.review.content.length > 1000
       ) {
-        this.$toasted.error(
+        this.$toast.error(
           'Your review needs between 200 and 1000 characters.'
         );
         return;

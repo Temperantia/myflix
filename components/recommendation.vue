@@ -36,10 +36,6 @@ export default {
     report() {
       this.$report('recommendations', this.recommendation.id);
       this.overlay = false;
-      this.$store.commit('title/REPORT_RECOMMENDATION', {
-        id: this.recommendation.id,
-        idUser: this.$store.state.localStorage.user.id,
-      });
     },
   },
 };

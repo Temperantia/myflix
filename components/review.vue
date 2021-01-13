@@ -4,8 +4,9 @@ v-container(fluid)
     v-col(lg='2')
       img(:src='user && user.image ? user.image : "/defaultUser.png"')
     v-col(cols='10', lg='7')
-      nuxt-link(:to='"/profile/" + user.username')
-        a.red-netflix--text {{ user.username }}
+      client-only
+        nuxt-link(:to='"/profile/" + user.username')
+          a.red-netflix--text {{ user.username }}
       div(v-if='!preview')
         b {{ review.likes.length + " " }}
         span people found this review helpful
@@ -35,13 +36,18 @@ v-container(fluid)
         v-else-if='content.length > 500',
         @click='expanded = true'
       ) show more
-  v-row.section-border
-    v-col(cols='9', lg='7', offset-lg='3')
-      button.button-action(v-if='!preview') I found this review helpful
-    v-col.text-lg-right(cols='3', lg='2')
-      //-span.small-action.click permalink
-      //-span.small-action {{ " | " }}
-      client-only
+  client-only
+    v-row.section-border
+      v-col(cols='9', lg='7', offset-lg='3')
+        template(v-if='!preview')
+          button.button-action.activated(
+            v-if='!$store.getters["localStorage/CONNECTED"] || review.likes.includes($store.getters["localStorage/USER"].id)',
+            @click='$unlike(review.id)'
+          ) {{ review.likes.length }} people found this review helpful
+          button.button-action(v-else, @click='$like(review.id)') I found this review helpful
+      v-col.text-lg-right(cols='3', lg='2')
+        //-span.small-action.click permalink
+        //-span.small-action {{ " | " }}
         span.small-action.click(
           v-if='$store.state.localStorage.connected && !review.reports.includes($store.state.localStorage.user.id)',
           @click='overlay = true'
@@ -86,10 +92,6 @@ export default {
     report() {
       this.$report('reviews', this.review.id);
       this.overlay = false;
-      this.$store.commit('title/REPORT_REVIEW', {
-        id: this.review.id,
-        idUser: this.$store.state.localStorage.user.id,
-      });
     },
   },
 };
@@ -105,6 +107,10 @@ export default {
   border: 1px solid white;
 }
 
+.activated {
+  background-color: white;
+  color: $grey-button;
+}
 .header-border {
   border-bottom: 1px solid $white-font;
 }

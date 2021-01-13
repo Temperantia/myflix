@@ -60,16 +60,17 @@ v-app(app)
     footer
       .top
         v-row(align='center')
-          v-col(cols='12', lg='1')
+          v-col(cols='12', md='3', lg='2')
             nuxt-link(to='/contact')
               span CONTACT
-          v-col(cols='12', lg='1')
+          //-v-col(cols='12', lg='2')
             span ADVERTISING
-          v-col(cols='12', lg='1')
+          v-col(cols='12', md='3', lg='2')
             nuxt-link(to='/privacy-policy')
               span PRIVACY POLICY
-          v-col(cols='12', lg='1')
-            span TERMS & CONDITIONS
+          v-col(cols='12', md='3', lg='2')
+            nuxt-link(to='/terms-and-conditions')
+              span TERMS & CONDITIONS
       .middle
         v-row(align='center')
           v-col(cols='6', lg='1')
