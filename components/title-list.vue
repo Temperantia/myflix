@@ -3,18 +3,26 @@ v-container(fluid)
   client-only(v-if='pages > 1')
     v-row(justify='center')
       v-col
-        v-pagination(:length='pages', v-model='page', :total-visible='25')
-  v-row.subtitle-border(v-for='title in titles', :key='title.id')
+        v-pagination(:length='pages', v-model='page', :total-visible='9')
+  v-row(v-if='gallery')
+  v-row.subtitle-border(v-else, v-for='title in titles', :key='title.id')
     v-col(cols='12', lg='1')
       img(:src='title.i')
     v-col(cols='12', lg='11')
-      v-row(align='center')
-        v-col(cols='12', lg='9')
+      v-row(v-if='$vuetify.breakpoint.smAndDown')
+        v-col(cols='12')
           nuxt-link(:to='title.r')
             h2.mr-5 {{ title.t }}
-        v-col.d-flex.align-center(v-if='title.o', cols='12', lg='3')
+        v-col.d-flex.align-center(v-if='title.o', cols='12')
           img.icon.mr-3(src='/netflix.png')
           span.white-font--text O R I G I N A L
+      v-row(v-else, align='center')
+        v-col(cols='12')
+          nuxt-link(:to='title.r')
+            h2.d-inline.mr-5 {{ title.t }}
+          .d-inline-flex.align-center(v-if='title.o')
+            img.icon.mr-3(src='/netflix.png')
+            span.white-font--text O R I G I N A L
       .my-1
         span.white-font--text.mr-2 {{ title.y }}
         span.white-font--text.mr-1.py-1.px-2.border.white-font--border {{ $maturities[title.v] }}
@@ -39,11 +47,11 @@ v-container(fluid)
   client-only(v-if='pages > 1')
     v-row(justify='center')
       v-col
-        v-pagination(:length='pages', v-model='page', :total-visible='25')
+        v-pagination(:length='pages', v-model='page', :total-visible='9')
 </template>
 <script>
 export default {
-  props: ['source'],
+  props: ['source', 'gallery'],
   data: () => ({ page: 1 }),
   computed: {
     flixlist() {

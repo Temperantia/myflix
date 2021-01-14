@@ -1,9 +1,6 @@
 export default {
-  // Target (https://go.nuxtjs.dev/config-target)
   target: "server",
-  // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    titleTemplate: "%s - myflix",
     title: "myflix",
     meta: [
       { charset: "utf-8" },
@@ -12,30 +9,22 @@ export default {
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
   },
-
-  // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: ["@/assets/main.scss"],
-
-  // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
-    "~/plugins/vue-scrollactive"
+    "~/plugins/vue-scrollactive",
+    "~/plugins/vue-awesome-slider"
   ],
-
-  // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
-
-  // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
-    // https://go.nuxtjs.dev/vuetify
     "@nuxtjs/vuetify",
     "@nuxtjs/date-fns",
     "nuxt-webfontloader",
-    "@nuxtjs/style-resources"
+    "@nuxtjs/style-resources",
+    "@nuxt/typescript-build",
+    "@nuxtjs/imagemin",
+    "@nuxtjs/pwa"
   ],
-
-  // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     [
       "@nuxtjs/firebase",
@@ -61,9 +50,11 @@ export default {
     ],
     "nuxt-vuex-localstorage",
     "@nuxtjs/google-adsense",
-    ["@nuxtjs/toast", { duration: 5000, position: 'bottom-center' }]
+    ["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
+    "@nuxtjs/robots",
+    "cookie-universal-nuxt"
   ],
-  // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
+  css: ["@/assets/main.scss", "@/node_modules/swiper/swiper-bundle.css"],
   vuetify: {
     customVariables: ["~/assets/variables.scss"],
     theme: {
@@ -91,7 +82,6 @@ export default {
       customProperties: true
     }
   },
-
   webfontloader: {
     google: {
       families: ["Roboto:400,700"] //Loads Roboto font with weights 400 and 700
@@ -102,8 +92,5 @@ export default {
   },
   "google-adsense": {
     id: "ca-pub-4080768963424465"
-  },
-
-  // Build Configuration (https://go.nuxtjs.dev/config-build)
-  build: {}
+  }
 };

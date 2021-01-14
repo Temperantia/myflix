@@ -1,6 +1,6 @@
 # myflix
 
-## Build Setup
+## Finally Find What To Watch Netflix
 
 ```bash
 # install dependencies

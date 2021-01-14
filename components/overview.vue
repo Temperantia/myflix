@@ -26,10 +26,11 @@ v-container(fluid)
         v-col
     //-v-col(cols='12', md='3')
       video(:src='title.trailer')
-  v-row
-    v-col
-      h3.title-border OFFICIAL SYNOPSIS
-      p.pa-2(v-html='title.synopsis')
+  client-only
+    v-row
+      v-col
+        h3.title-border OFFICIAL SYNOPSIS
+        p.pa-2(v-html='title.synopsis')
   v-row(v-if='title.imdbCast')
     v-col
       h3.title-border CAST
@@ -54,15 +55,37 @@ v-container(fluid)
           :key='category'
         )
           h4.mb-2 {{ category }}
-          div(v-for='credit in credits', :key='credit') {{ credit }}
+          template(v-if='Object.keys(credits).length > 5')
+            template(v-if='expanded[category]')
+              div(v-for='credit in credits', :key='credit') {{ credit }}
+            template(v-else)
+              div(v-for='credit in credits.slice(0, 5)', :key='credit') {{ credit }}
+            .red-netflix--text.click(
+              v-if='expanded[category]',
+              @click='$set(expanded, category, false)'
+            ) {{ " show less" }}
+            .red-netflix--text.click(
+              v-else,
+              @click='$set(expanded, category, true)'
+            ) {{ " show more" }}
+          div(v-else, v-for='credit in credits', :key='credit') {{ credit }}
 </template>
 
 <script>
 export default {
+  data: () => ({
+    expanded: {},
+  }),
+  mounted() {
+    for (const category in this.title.credits) {
+      this.expanded[category] = false;
+    }
+  },
   computed: {
     title() {
       return this.$store.getters['title/TITLE'];
     },
   },
+  methods: {},
 };
 </script>

@@ -1,15 +1,15 @@
 <template lang="pug">
 v-app(app)
-  v-container(fluid)
-    v-row(align='center')
+  v-container.py-0(fluid)
+    v-row.pa-0.blackHeader(align='center')
       v-col.pr-0(cols='2', lg='1')
         nuxt-link(to='/')
           img(src='/logo.png')
       v-col(cols='9', offset-lg='3', lg='4')
-        search(:nav='true')
+        search(nav)
       template(v-if='$vuetify.breakpoint.mdAndUp')
         client-only
-          v-col.d-flex.justify-end(cols='4')
+          v-col.d-flex.justify-end(md='4')
             v-menu(v-if='$store.state.localStorage.connected')
               template(v-slot:activator='{ on, attrs }')
                 div(v-bind='attrs', v-on='on') {{ user.username }}
@@ -25,11 +25,11 @@ v-app(app)
                 button.button.button-red.mr-5 SIGN IN
               nuxt-link(to='/register')
                 button.button REGISTER
-        v-col.py-0
+        v-col.subHeader
           span.px-5.text-center(
             v-for='tab of tabs',
             :key='tab.name',
-            :class='{ "tab-active": tab.route === currentTab, tab: true }',
+            :class='{ "red-netflix--text": tab.route === currentTab, tab: true }',
             @click='tab.hook'
           ) {{ tab.name }}
         //-v-col.py-0.text-right
@@ -51,7 +51,7 @@ v-app(app)
               @click='item.hook'
             )
               v-list-item-title(
-                :class='{ "tab-active": item.route === currentTab }'
+                :class='{ "red-netflix--text": item.route === currentTab }'
               ) {{ item.name }}
   v-main.blackBody
     nuxt(v-if='!$slots.default')
@@ -219,6 +219,7 @@ export default {
   display: flex;
   align-items: center;
   padding: 5px 15px;
+  background-color: $black-header;
   //height: 60px;
 }
 .subHeader {
@@ -239,9 +240,6 @@ export default {
 }
 .tab {
   cursor: pointer;
-}
-.tab-active {
-  color: $red-netflix;
 }
 footer {
   width: 100%;

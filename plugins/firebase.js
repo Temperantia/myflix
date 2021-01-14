@@ -2,24 +2,34 @@ function parse(doc) {
   return { id: doc.id, ...doc.data() };
 }
 
-export async function get(query) {
+export async function get(query, name, cookies) {
   const cache = await query.get({ source: "cache" });
-  if (cache.docs.length > 0) {
-    return cache.docs.map(doc => parse(doc));
+  if (!name || (name && (!cookies.get(name) || cache.docs.length === 0))) {
+    const data = await query.get({ source: "server" });
+    if (name) {
+      cookies.set(name, true, {
+        path: "/",
+        maxAge: 60 * 60 * 24
+      });
+    }
+    return data.docs.map(doc => parse(doc));
   }
-  const data = await query.get({ source: "server" });
-  const docs = data.docs.map(doc => parse(doc));
-  return docs;
+  return cache.docs.map(doc => parse(doc));
 }
 
-export async function doc(query) {
-  try {
-    const cache = await query.get({ source: "cache" });
-    return parse(cache);
-  } catch (error) {
+export async function doc(query, name, cookies) {
+  const cache = await query.get({ source: "cache" });
+  if (!name || (name && (!cookies.get(name) || cache.docs.length === 0))) {
     const data = await query.get({ source: "server" });
+    if (name) {
+      cookies.set(name, true, {
+        path: "/",
+        maxAge: 60 * 60 * 24
+      });
+    }
     return parse(data);
   }
+  return parse(cache);
 }
 
 const maturities = {
@@ -64,7 +74,7 @@ const statusesFilm = [
 ];
 
 export default async (
-  { $fire, $fireModule, $dateFns, $toast, store },
+  { $fire, $fireModule, $dateFns, $toast, store, $cookies },
   inject
 ) => {
   const firestore = $fire.firestore;
@@ -80,9 +90,6 @@ export default async (
     const numUsers = String(Object.keys(title.scores).length);
     const information = {
       Type: title.summary.type === "show" ? "TV Show" : "Movie",
-      Seasons: title.seasonCount,
-      Episodes: title.episodeCount,
-      Renewed: title.summary.type == "show" ? "No" : null,
       Premiered: title.availability.availabilityStartTime
         ? $dateFns.format(
             title.availability.availabilityStartTime,
@@ -91,9 +98,14 @@ export default async (
         : null,
       Producers: title.creators.join(", "),
       Genres: title.genres.map(genre => genre.name).join(", "),
-      Duration: "idk",
+      //Duration: "idk",
       Rating: title.maturity
     };
+    if (title.summary.type === "show") {
+      //Renewed: title.summary.type == "show" ? "No" : null,
+      information.Seasons = title.seasonCount;
+      information.Episodes = title.episodeCount;
+    }
     const statistics = {
       Score: title.score + " (scored by " + numUsers + " users)",
       Ranked: "#" + title.rank,
@@ -103,9 +115,9 @@ export default async (
     };
 
     if (!title.maturity) {
-      title.maturity = "AL";
+      information.Rating = "AL";
     } else {
-      title.maturity = maturities[title.maturity];
+      information.Rating = maturities[title.maturity];
     }
 
     return {
@@ -117,27 +129,39 @@ export default async (
   }
 
   async function getReviews(id) {
-    return await get(collectionReviews.where("title.id", "==", Number(id)));
+    return await get(
+      collectionReviews.where("title.id", "==", Number(id)),
+      "getReviews",
+      $cookies
+    );
   }
 
   async function getReviewsLatest() {
-    return await get(collectionReviews.orderBy("postedOn", "desc").limit(3));
+    return await get(
+      collectionReviews.orderBy("postedOn", "desc").limit(3),
+      "getReviewsLatest",
+      $cookies
+    );
   }
 
   async function getRecommendations(id) {
     return await get(
-      collectionRecommendations.where("title.id", "==", Number(id))
+      collectionRecommendations.where("title.id", "==", Number(id)),
+      "getRecommendations",
+      $cookies
     );
   }
 
   async function getRecommendationsLatest() {
     return await get(
-      collectionRecommendations.orderBy("postedOn", "desc").limit(3)
+      collectionRecommendations.orderBy("postedOn", "desc").limit(3),
+      "getRecommendationsLatest",
+      $cookies
     );
   }
 
   async function getSearch() {
-    return (await get(collectionData))
+    return (await get(collectionData, "getSearch", $cookies))
       .reduce((data, current) => [...data, ...JSON.parse(current.search)], [])
       .filter(title => {
         if (title.y === 0 || title.y >= 2030) {
@@ -278,7 +302,7 @@ export default async (
     collectionReviews.doc(id).update({
       likes: $fireModule.firestore.FieldValue.arrayUnion(idUser)
     });
-    store.commit("title/LIKE", {id, idUser});
+    store.commit("title/LIKE", { id, idUser });
   }
 
   function unlike(id) {
@@ -286,7 +310,7 @@ export default async (
     collectionReviews.doc(id).update({
       likes: $fireModule.firestore.FieldValue.arrayRemove(idUser)
     });
-    store.commit("title/UNLIKE", {id, idUser});
+    store.commit("title/UNLIKE", { id, idUser });
   }
 
   function report(collection, id) {

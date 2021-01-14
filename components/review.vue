@@ -43,7 +43,7 @@ v-container(fluid)
           button.button-action.activated(
             v-if='!$store.getters["localStorage/CONNECTED"] || review.likes.includes($store.getters["localStorage/USER"].id)',
             @click='$unlike(review.id)'
-          ) {{ review.likes.length }} people found this review helpful
+          ) I found this review helpful
           button.button-action(v-else, @click='$like(review.id)') I found this review helpful
       v-col.text-lg-right(cols='3', lg='2')
         //-span.small-action.click permalink

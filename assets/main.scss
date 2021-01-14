@@ -22,7 +22,7 @@
 
 .title-border {
   padding: 5px 0;
-  border-bottom: 3px solid $red-netflix;
+  border-bottom: 2px solid $red-netflix;
 }
 
 .subtitle-border {
@@ -88,16 +88,15 @@ img {
   width: 100%;
 }
 
-
-*::-webkit-scrollbar {
+.v-menu__content::-webkit-scrollbar {
   width: 1em;
 }
 
-*::-webkit-scrollbar-track {
+  .v-menu__content::-webkit-scrollbar-track {
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 
-*::-webkit-scrollbar-thumb {
+  .v-menu__content::-webkit-scrollbar-thumb {
   background-color: $red-netflix;
   outline: 1px solid  $red-netflix;
 }

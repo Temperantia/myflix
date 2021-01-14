@@ -2,15 +2,20 @@
 v-container(fluid)
   v-row.subtitle-border
     v-col(cols='12', lg='3')
-      h1 {{ show ? "TV SHOWS" : "FILMS" }}
+      h1 {{ show ? "TV SHOWS" : film ? "FILMS" : "TITLES" }}
     v-col(cols='9', lg='5')
       input#search.border.white-font--border(
         v-model='search',
-        :placeholder='"SEARCH " + (show ? "TV SHOWS" : "FILMS")'
+        :placeholder='"SEARCH " + (show ? "TV SHOWS" : film ? "FILMS" : "TITLES")'
       )
-    v-col.text-lg-right(cols='3', lg='4')
-      a
-        img.icon(@click='settings = !settings', src='/gear.png')
+    v-col.text-right(cols='3', lg='4')
+      img.click.icon.mr-2(
+        v-if='gallery',
+        @click='gallery = false',
+        src='/list.png'
+      )
+      img.click.icon.mr-2(v-else, @click='gallery = true', src='/gallery.png')
+      img.click.icon(@click='settings = !settings', src='/gear.png')
       .window.pa-2.border.white-font--border(v-if='settings')
         v-checkbox.my-1(
           label='Show completed',
@@ -24,14 +29,13 @@ v-container(fluid)
           v-model='watching',
           dense,
           hide-details,
-          v-if='show && flixlist'
+          v-if='(show || !film) && flixlist'
         )
         v-checkbox.my-1(
           label='Netflix Original only',
           v-model='original',
           dense,
-          hide-details,
-          v-if='show'
+          hide-details
         )
   v-row
     v-col(cols='12', lg='2') Genre
@@ -41,27 +45,31 @@ v-container(fluid)
         outlined,
         dense
       )
-    v-col(cols='12',lg='2') Rating
+    v-col(cols='12', lg='2') Rating
       v-select(
         :items='["All", ...Object.values($maturities)]',
         v-model='maturity',
         outlined,
         dense
       )
-    v-col(cols='12',lg='2') Sort
+    v-col(cols='12', lg='2') Sort
       v-select(
         :items='["Netflix Original", "Release date (Newest first)", "Release date (Oldest first)", "Alphabetical (A - Z)"]',
         v-model='sort',
         outlined,
         dense
       )
-  title-list(:source='source')
+  title-list(:source='source', :gallery='gallery')
 </template>
 <script>
 import categories from '~/netflix/data/categories';
 export default {
-  props: ['show'],
+  props: {
+    show: Boolean,
+    film: Boolean,
+  },
   data: () => ({
+    gallery: true,
     settings: false,
     category: 'All',
     maturity: 'All',
@@ -74,6 +82,11 @@ export default {
     now: Date.now(),
     nowYear: new Date().getFullYear(),
   }),
+  mounted() {
+    if (this.$route.params.category) {
+      this.category = this.$route.params.category;
+    }
+  },
   computed: {
     flixlist() {
       if (this.$store.state.localStorage.user) {
@@ -87,7 +100,7 @@ export default {
             return false;
           }
           return (
-            (this.show ? title.u : !title.u) &&
+            ((!this.show && !this.film) || this.show ? title.u : !title.u) &&
             (this.category === 'All' || title.c.includes(this.category)) &&
             (this.maturity === 'All' ||
               this.$maturities[title.v] === this.maturity) &&

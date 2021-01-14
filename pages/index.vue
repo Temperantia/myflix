@@ -1,21 +1,26 @@
 <template lang="pug">
 div
-  trending-week.title-border.pa-0
+  trending-week
   premieres
   v-container(fluid)
     v-row
       v-col(cols='12', lg='7')
         h1.title-border TOP 5 MOST POPULAR ONGOING SERIES
-        h2.subtitle.py-5 {{ $dateFns.format(new Date(), "MMM d, yyyy").toUpperCase() }}
+        h2.font-weight-light.subtitle.py-5 {{ $dateFns.format(new Date(), "MMM d, yyyy").toUpperCase() }}
         v-row.my-2(v-for='(item, index) in topSeries', :key='item.id')
           v-col.text-center(cols='1')
-            h1 {{ index + 1 }}
-          v-col(cols='11', lg='2')
+            h2 {{ index + 1 }}
+          v-col(cols='11', lg='3')
             nuxt-link(:to='item.r')
               img(:src='item.i')
-          v-col.py-0(offset='1', cols='11', offset-lg='0', lg='6')
+          v-col.py-0(
+            offset='1',
+            cols='11',
+            offset-lg='0',
+            :lg='favorites ? "5" : "8"'
+          )
             nuxt-link(:to='item.r')
-              h1 {{ item.t }}
+              h2 {{ item.t }}
             i
               span {{ item.s + " seasons" }}
               span(v-if='item.e') {{ ", " + item.e + " episodes" }}
@@ -23,9 +28,11 @@ div
               span {{ "Score " }}
               span.red-netflix--text {{ item.z + "/10" }}
             div Released {{ item.a ? $dateFns.format(item.a, "MMM d, yyyy") : "-" }}
-            div {{ item.f }} members watching this
-          v-col(cols='3')
-            client-only(v-if='favorites')
+            div
+              span.green-watching--text {{ item.f + " members " }}
+              span watching this
+          v-col(cols='3', v-if='favorites')
+            client-only
               a.click(
                 v-if='isFavorite(item.id)',
                 @click='removeFavorite(item)'
@@ -56,7 +63,7 @@ div
                   h3 {{ review.title.title }}
               v-col.text-right
                 div Overall Rating: {{ review.ratings.Overall }}
-            p
+            p.font-weight-light
               span(v-html='content(review.content, index)')
               span.red-netflix--text.click.ml-1(
                 v-if='expanded[index] && review.content.length > 300',
@@ -68,21 +75,20 @@ div
               ) show more
             div Review by
               client-only
-                nuxt-link(
-                  :to='"/profile/" + review.author.username'
-                )
+                nuxt-link(:to='"/profile/" + review.author.username')
                   span.red-netflix--text {{ " " + review.author.username }}
               span {{ " - " + $dateFns.format(new Date(review.postedOn.seconds * 1000), "MMM d, yyyy").toUpperCase() }}
     v-row
       v-col
         h1.title-border RECOMMENDED GENRES
         v-row
-          v-col(
+          v-col.click(
             cols='12',
             lg='4',
             v-for='category in $categories',
             :key='category.category',
-            style='position: relative'
+            style='position: relative',
+            @click='$router.push({ name: "titles", params: { category: category.category } })'
           )
             img(:src='category.image')
             div(
@@ -105,9 +111,15 @@ div
           )
             v-row
               v-col(cols='4', lg='2')
-                img(:src='recommendation.title.tallBoxArt')
+                nuxt-link(
+                  :to='$search.find((item) => Number(item.id) == recommendation.title.id).r'
+                )
+                  img(:src='recommendation.title.tallBoxArt')
               v-col(cols='8', lg='4') If you liked
-                .red-netflix--text {{ recommendation.title.title }}
+                nuxt-link(
+                  :to='$search.find((item) => Number(item.id) == recommendation.title.id).r'
+                )
+                  .red-netflix--text {{ recommendation.title.title }}
                 client-only(v-if='favorites')
                   a.click(
                     v-if='isFavorite(recommendation.title.id)',

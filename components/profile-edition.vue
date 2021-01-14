@@ -280,7 +280,6 @@ export default {
     async link(provider, name) {
       try {
         const cred = await this.$fire.auth.signInWithPopup(provider);
-        console.log(cred);
         this.$set(this.copy.providers, name, {
           id: cred.user.uid,
           token: cred.credential.accessToken,

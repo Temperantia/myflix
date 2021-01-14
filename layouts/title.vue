@@ -24,7 +24,7 @@ defaultLayout
               v-col(cols='4') Status:
               v-col(cols='8')
                 v-select(
-                  :items='title.summary.type === "show" ? $statusesTvShow : $statusesFilm',
+                  :items='title.summary.type === "show" ? $statusesTvShow.filter((status) => title.availability.isPlayable || status === "Unwatched" || status === "Plan to Watch") : $statusesFilm.filter((status) => title.availability.isPlayable || status === "Unwatched" || status === "Plan to Watch")',
                   outlined,
                   v-model='status',
                   dense,
@@ -34,7 +34,11 @@ defaultLayout
             v-row(align='center', v-if='title.summary.type === "show"')
               v-col(cols='4') Eps seen:
               v-col(cols='3')
-                input(type='number', v-model='episodes', @input='updateEpisodes')
+                input(
+                  type='number',
+                  v-model='episodes',
+                  @input='updateEpisodes'
+                )
               v-col(cols='3') / {{ title.episodeCount }}
             v-row(align='center')
               v-col(cols='4') Your Score

@@ -16,7 +16,7 @@ v-autocomplete(
         v-row
           v-col(cols='5')
             img(:src='getImage(item)')
-          v-col(cols='7') {{item}}
+          v-col(cols='7') {{ item }}
 v-autocomplete(
   v-else,
   :items='items',
@@ -42,7 +42,7 @@ export default {
     selected: '',
     items: [],
   }),
-  props: ['nav', 'title'],
+  props: { nav: Boolean, title: Object },
   methods: {
     click(value) {
       this.similar = value;

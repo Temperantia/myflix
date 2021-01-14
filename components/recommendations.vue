@@ -39,7 +39,7 @@ v-container(v-else, fluid)
           v-if='$store.state.localStorage.connected',
           @click='edition = true'
         ) MAKE A RECOMMENDATION
-        div(v-else) SIGN IN TO MAKE A RECOMMENDATION
+        button(v-else, @click='$router.push("/sign-in")') SIGN IN TO MAKE A RECOMMENDATION
   recommendation(
     :recommendation='recommendation',
     v-for='recommendation in recommendations',

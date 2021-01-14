@@ -8,7 +8,9 @@ v-container(v-if='preview', fluid)
   review(:review='review', :title='title', :preview='true')
   v-row
     v-col.text-center.text-lg-right
-      button.red-netflix--text.mr-lg-5(@click='preview = false; edition = false') CANCEL
+      button.red-netflix--text.mr-lg-5(
+        @click='preview = false; edition = false'
+      ) CANCEL
       button.button-action.mr-lg-5.preview(@click='preview = false') BACK TO EDIT
       button.button-action(@click='submit') SUBMIT REVIEW
 v-container(v-else-if='edition', fluid)
@@ -82,7 +84,7 @@ v-container(v-else, fluid)
           v-if='$store.state.localStorage.connected',
           @click='edition = true'
         ) WRITE A REVIEW
-        div(v-else) SIGN IN TO WRITE A REVIEW
+        button(v-else, @click='$router.push("/sign-in")') SIGN IN TO WRITE A REVIEW
   review(
     :review='review',
     :title='title',
@@ -130,9 +132,7 @@ export default {
         this.review.content.length < 200 ||
         this.review.content.length > 1000
       ) {
-        this.$toast.error(
-          'Your review needs between 200 and 1000 characters.'
-        );
+        this.$toast.error('Your review needs between 200 and 1000 characters.');
         return;
       }
       this.$createReview(

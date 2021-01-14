@@ -1,3 +1,3 @@
 <template lang="pug">
-titles(film)
+titles
 </template>
