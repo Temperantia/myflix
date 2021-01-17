@@ -1,6 +1,6 @@
 <template lang="pug">
 client-only
-  v-container
+  v-container(fluid)
     v-row
       v-col(cols='3')
         client-only

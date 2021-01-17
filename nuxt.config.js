@@ -1,9 +1,6 @@
-module.exports = {
-  buildDir: "./prod/server/nuxt",
+export default {
   build: {
-    publicPath: "/assets/",
-    cache: true,
-    extractCSS: true
+    cache: true
   },
   plugins: [
     "~/plugins/firebase",

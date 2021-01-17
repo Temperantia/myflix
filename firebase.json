@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "prod/client",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -10,8 +10,5 @@
       "source": "**",
       "function": "nuxtssr"
     }]
-  },
-  "functions": {
-    "source": "prod/server"
   }
 }

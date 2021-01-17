@@ -4,16 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "build": "nuxt build && npm run clean && npm run copyassets",
-    "serve": "firebase serve --only functions,hosting",
-    "deploy": "firebase deploy",
-    "predeploy": "npm run build",
-    "setup": "npm i && npm run setup:server",
-    "setup:server": "cd \"prod/server\" && npm i",
-    "copyassets": "npm run copydist && npm run copystatic",
-    "copydist": "cp -R prod/server/nuxt/dist/ prod/client/assets",
-    "copystatic": "cp -R static/ prod/client",
-    "clean": "rimraf prod/client/assets/*"
+    "prod": "npm run generate && firebase deploy",
+    "generate": "nuxt generate",
+    "deploy": "firebase deploy"
   },
   "dependencies": {
     "chart.js": "2.9.4",
