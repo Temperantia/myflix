@@ -1,14 +1,15 @@
 <template lang="pug">
 v-container(fluid)
   v-row.subtitle-border
-    v-col(cols='12', lg='3')
-      h1 {{ show ? "TV SHOWS" : film ? "FILMS" : "TITLES" }}
-    v-col(cols='9', lg='5')
-      input#search.border.white-font--border(
+    v-col.pr-0(cols='12', lg='2')
+      h1.pageSubHead {{ show ? "TV SHOWS" : film ? "FILMS" : "TITLES" }}
+      h2.pageSubHead_1 123,456 titles currently  available on Netflix
+    v-col.searchContainer(cols='8', offset-lg='2', lg='4')
+      input#search.titlePageSearch(
         v-model='search',
         :placeholder='"SEARCH " + (show ? "TV SHOWS" : film ? "FILMS" : "TITLES")'
       )
-    v-col.d-flex.align-center.justify-end(cols='3', lg='4')
+    v-col#titleSettingIcons.d-flex.align-center.justify-end(cols='3', lg='4')
       img.click.icon.mr-2(
         v-if='gallery',
         @click='gallery = false',
@@ -142,5 +143,36 @@ export default {
   top: 0;
   right: 50px;
   background-color: $black-body;
+}
+.titlePageSearch {
+  width: 100%;
+  background-color: #0F0F0F;
+  color: $grey-light;
+  border: none;
+  padding: 0px 12px;
+  height:  40px;
+  line-height: 40px;
+  border-radius: 3px;
+  text-align: center;
+}
+.pageSubHead {
+  font-size: 55px;
+  line-height: 55px;
+}
+.pageSubHead_1 {
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 16px;
+  color: #555555;
+}
+.searchContainer {
+  vertical-align: text-bottom;
+}
+.subtitle-border {
+  padding-bottom: 12px;
+}
+#titleSettingIcons {
+  padding-top: 18px;
 }
 </style>

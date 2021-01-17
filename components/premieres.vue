@@ -5,7 +5,7 @@ v-container(fluid)
       h1.title-border TOP UPCOMING PREMIERES OF {{ new Date().getFullYear() }}
       h2.font-weight-light.subtitle.py-5 {{ $moment().format("MMMM").toUpperCase() }}
     v-col(cols='5')
-  div(v-swiper='swiperOption', style='height: 450px')
+  div(v-swiper='swiperOption', style='height: 370px')
     .swiper-wrapper
       .swiper-slide(v-for='item in premieres', :key='item.id')
         nuxt-link(:to='item.r')
@@ -33,7 +33,7 @@ export default {
     swiperOption: {
       freeMode: true,
       loop: true,
-      slidesPerView: 2,
+      slidesPerView: 3,
       spaceBetween: 30,
     },
   }),

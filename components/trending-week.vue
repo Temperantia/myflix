@@ -5,7 +5,7 @@ div
     div(style='position: absolute; top: 0; left: 0; padding-left: 20px')
       h2 WHAT'S TRENDING THIS WEEK?
       h4.font-weight-light {{ getWeek() }}
-  div(v-swiper='swiperOption', style='height: 700px; z-index: 0')
+  div(v-swiper='swiperOption', style='height: 600px; z-index: 0')
     .swiper-wrapper
       .swiper-slide(
         v-for='item in trendingWeek',
