@@ -6,7 +6,7 @@ div
     v-row
       v-col(cols='12', lg='7')
         h1.title-border TOP 5 MOST POPULAR ONGOING SERIES
-        h2.font-weight-light.subtitle.py-5 {{ $dateFns.format(new Date(), "MMM d, yyyy").toUpperCase() }}
+        h2.font-weight-light.subtitle.py-5 {{ $moment().format("MMM D, yyyy").toUpperCase() }}
         v-row.my-2(v-for='(item, index) in topSeries', :key='item.id')
           v-col.text-center(cols='1')
             h2 {{ index + 1 }}
@@ -27,7 +27,7 @@ div
             div
               span {{ "Score " }}
               span.red-netflix--text {{ item.z + "/10" }}
-            div Released {{ item.a ? $dateFns.format(item.a, "MMM d, yyyy") : "-" }}
+            div Released {{ item.a ? $moment(item.a).format("MMM D, yyyy") : "-" }}
             div
               span.green-watching--text {{ item.f + " members " }}
               span watching this
@@ -77,7 +77,7 @@ div
               client-only
                 nuxt-link(:to='"/profile/" + review.author.username')
                   span.red-netflix--text {{ " " + review.author.username }}
-              span {{ " - " + $dateFns.format(new Date(review.postedOn.seconds * 1000), "MMM d, yyyy").toUpperCase() }}
+              span {{ " - " + $moment(review.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
     v-row
       v-col
         h1.title-border RECOMMENDED GENRES
@@ -151,7 +151,7 @@ div
                       :to='"/profile/" + recommendation.author.username'
                     )
                       span.red-netflix--text {{ " " + recommendation.author.username }}
-                  span {{ " - " + $dateFns.format(new Date(recommendation.postedOn.seconds * 1000), "MMM d, yyyy").toUpperCase() }}
+                  span {{ " - " + $moment(recommendation.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
 </template>
 <script>
 export default {

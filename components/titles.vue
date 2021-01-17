@@ -8,7 +8,7 @@ v-container(fluid)
         v-model='search',
         :placeholder='"SEARCH " + (show ? "TV SHOWS" : film ? "FILMS" : "TITLES")'
       )
-    v-col.text-right(cols='3', lg='4')
+    v-col.d-flex.align-center.justify-end(cols='3', lg='4')
       img.click.icon.mr-2(
         v-if='gallery',
         @click='gallery = false',
@@ -69,7 +69,7 @@ export default {
     film: Boolean,
   },
   data: () => ({
-    gallery: true,
+    gallery: false,
     settings: false,
     category: 'All',
     maturity: 'All',

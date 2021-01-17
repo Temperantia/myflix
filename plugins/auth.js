@@ -1,6 +1,6 @@
 import { doc, get } from "./firebase";
 
-export default ({ $fire, $fireModule, store, $dateFns, app }, inject) => {
+export default ({ $fire, $fireModule, store, $moment, app }, inject) => {
   const collectionUsers = $fire.firestore.collection("users");
 
   async function userExists(id, provider) {
@@ -134,12 +134,7 @@ export default ({ $fire, $fireModule, store, $dateFns, app }, inject) => {
     }
 
     if (username) {
-      if (
-        $dateFns.isBefore(
-          new Date(),
-          $dateFns.addMonths(new Date(user.usernameCoolDown), 1)
-        )
-      ) {
+      if ($moment().isBefore($moment(user.usernameCoolDown).add(1, "M"))) {
         $toast.error("You may only change your username once every month.");
         return false;
       }

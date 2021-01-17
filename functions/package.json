@@ -1,21 +1,8 @@
 {
-  "name": "myflix",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "nuxt",
-    "build": "nuxt build && npm run clean && npm run copyassets",
-    "serve": "firebase serve --only functions,hosting",
-    "deploy": "firebase deploy",
-    "predeploy": "npm run build",
-    "setup": "npm i && npm run setup:server",
-    "setup:server": "cd \"prod/server\" && npm i",
-    "copyassets": "npm run copydist && npm run copystatic",
-    "copydist": "cp -R prod/server/nuxt/dist/ prod/client/assets",
-    "copystatic": "cp -R static/ prod/client",
-    "clean": "rimraf prod/client/assets/*"
-  },
   "dependencies": {
+    "express": "4.17.1",
+    "firebase-admin": "9.4.2",
+    "firebase-functions": "3.13.1",
     "chart.js": "2.9.4",
     "cookie-universal-nuxt": "2.1.4",
     "core-js": "^3.8.1",
@@ -38,9 +25,7 @@
     "vue-class-component": "7.2.6",
     "vue-object-merge": "0.1.8",
     "vue-property-decorator": "9.1.2",
-    "vue-scrollactive": "0.9.3"
-  },
-  "devDependencies": {
+    "vue-scrollactive": "0.9.3",
     "@nuxt/types": "2.14.12",
     "@nuxt/typescript-build": "2.0.3",
     "@nuxtjs/firebase": "7.1.2",
@@ -52,10 +37,11 @@
     "@nuxtjs/style-resources": "1.0.0",
     "@nuxtjs/toast": "3.3.1",
     "@nuxtjs/vuetify": "1.11.2",
-    "express": "4.17.1",
-    "firebase-admin": "9.4.2",
-    "firebase-functions": "3.13.1",
     "nuxt-vuex-localstorage": "1.2.7",
     "nuxt-webfontloader": "1.1.0"
+  },
+  "scripts": {
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
   }
 }

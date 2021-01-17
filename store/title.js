@@ -5,9 +5,7 @@ export const state = () => ({
 });
 
 export const getters = {
-  TITLE: state => {
-    return state.data;
-  }
+  TITLE: state => state.data
 };
 
 export const mutations = {

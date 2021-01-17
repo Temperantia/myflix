@@ -18,8 +18,14 @@ export async function get(query, name, cookies) {
 }
 
 export async function doc(query, name, cookies) {
-  const cache = await query.get({ source: "cache" });
-  if (!name || (name && (!cookies.get(name) || cache.docs.length === 0))) {
+  let cache;
+  let e;
+  try {
+    cache = await query.get({ source: "cache" });
+  } catch (error) {
+    e = error;
+  }
+  if (!name || (name && (!cookies.get(name) || e))) {
     const data = await query.get({ source: "server" });
     if (name) {
       cookies.set(name, true, {
@@ -74,7 +80,7 @@ const statusesFilm = [
 ];
 
 export default async (
-  { $fire, $fireModule, $dateFns, $toast, store, $cookies },
+  { $fire, $fireModule, $moment, $toast, store, $cookies },
   inject
 ) => {
   const firestore = $fire.firestore;
@@ -91,10 +97,7 @@ export default async (
     const information = {
       Type: title.summary.type === "show" ? "TV Show" : "Movie",
       Premiered: title.availability.availabilityStartTime
-        ? $dateFns.format(
-            title.availability.availabilityStartTime,
-            "MMM d, yyyy"
-          )
+        ? $moment(title.availability.availabilityStartTime, "MMM d, yyyy")
         : null,
       Producers: title.creators.join(", "),
       Genres: title.genres.map(genre => genre.name).join(", "),
@@ -144,6 +147,12 @@ export default async (
     );
   }
 
+  async function getReviewsProfile(username) {
+    return await get(
+      collectionReviews.where("author.username", "==", username)
+    );
+  }
+
   async function getRecommendations(id) {
     return await get(
       collectionRecommendations.where("title.id", "==", Number(id)),
@@ -157,6 +166,12 @@ export default async (
       collectionRecommendations.orderBy("postedOn", "desc").limit(3),
       "getRecommendationsLatest",
       $cookies
+    );
+  }
+
+  async function getRecommendationsProfile(username) {
+    return await get(
+      collectionRecommendations.where("author.username", "==", username)
     );
   }
 
@@ -348,8 +363,10 @@ export default async (
   inject("getTitle", getTitle);
   inject("getReviews", getReviews);
   inject("getReviewsLatest", getReviewsLatest);
+  inject("getReviewsProfile", getReviewsProfile);
   inject("getRecommendations", getRecommendations);
   inject("getRecommendationsLatest", getRecommendationsLatest);
+  inject("getRecommendationsProfile", getRecommendationsProfile);
   inject("createReview", createReview);
   inject("createRecommendation", createRecommendation);
   inject("updateFlixlist", updateFlixlist);

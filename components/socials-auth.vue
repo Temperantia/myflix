@@ -29,6 +29,15 @@ v-container(fluid)
       label='Email',
       required
     )
+    .pt-5.pb-10.d-flex.justify-center
+      v-checkbox(color='red', v-model='agreed')
+        template(v-slot:label)
+          | I have read and agree to the
+          nuxt-link(to='/terms-and-conditions')
+            b.px-1 Terms and Conditions
+          | and
+          nuxt-link(to='/privacy-policy')
+            b.px-1 Privacy Policy
     button.button-red.px-8.py-3.rounded-lg(type='submit') Create Account
 </template>
 <script>
@@ -41,6 +50,7 @@ export default {
     image: '',
     name: '',
     token: '',
+    agreed: false,
   }),
   methods: {
     async signIn(provider) {

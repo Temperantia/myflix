@@ -1,6 +1,6 @@
 <template lang="pug">
 v-app(app)
-  v-container.py-0(fluid)
+  v-container(fluid)
     v-row.pa-0.blackHeader(align='center')
       v-col.pr-0(cols='2', lg='1')
         nuxt-link(to='/')
@@ -163,13 +163,21 @@ export default {
       {
         name: 'REVIEWS',
         hook: () => {
-          this.$router.push('/reviews');
+          this.$router.push(
+            '/profile/' +
+              this.$store.state.localStorage.user.username +
+              '/reviews'
+          );
         },
       },
       {
         name: 'RECOMMENDATIONS',
         hook: () => {
-          this.$router.push('/recommendations');
+          this.$router.push(
+            '/profile/' +
+              this.$store.state.localStorage.user.username +
+              '/recommendations'
+          );
         },
       },
       {

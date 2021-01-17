@@ -1,8 +1,7 @@
 module.exports = {
-  buildDir: "./prod/server/nuxt",
+  //buildDir: "./functions/.nuxt",
+  //modulesDir: "./functions/node_modules",
   build: {
-    publicPath: "/assets/",
-    cache: true,
     extractCSS: true
   },
   plugins: [
@@ -104,8 +103,9 @@ module.exports = {
   hooks: {
     render: {
       errorMiddleware(app) {
+        console.log('here');
         app.use((error, _req, _res, next) => {
-          console.log("here");
+          console.log(_res);
           if (error) {
             console.log("Logged in errorMiddleware", error);
           }

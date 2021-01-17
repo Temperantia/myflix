@@ -58,6 +58,7 @@ export default {
     email: '',
     username: '',
     password: '',
+    sub: false,
     agreed: false,
   }),
   methods: {
@@ -77,7 +78,7 @@ export default {
           this.password
         );
 
-        await this.$register(cred.user.uid, this.email, this.username);
+        await this.$register(cred.user.uid, this.email, this.username, this.sub);
         this.$router.push('/');
       } catch (error) {
         this.$toast.error(error);

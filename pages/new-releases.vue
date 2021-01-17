@@ -56,21 +56,10 @@ export default {
   }),
   methods: {
     getWeek() {
-      const d = new Date();
-      const weekBefore = new Date();
-      weekBefore.setDate(weekBefore.getDate() - 7);
       const week =
-        this.$dateFns.format(
-          this.$dateFns.startOfWeek(weekBefore, {
-            weekStartsOn: 1,
-          }),
-          'MMM d'
-        ) +
+        this.$moment().subtract(7, 'days').startOf('isoWeek').format('MMM D') +
         ' - ' +
-        this.$dateFns.format(
-          this.$dateFns.endOfWeek(d, { weekStartsOn: 1 }),
-          'MMM d'
-        );
+        this.$moment().endOf('isoWeek').format('MMM D');
       return week;
     },
   },
