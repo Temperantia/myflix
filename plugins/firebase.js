@@ -85,10 +85,21 @@ export default async (
 ) => {
   const firestore = $fire.firestore;
   const collectionData = firestore.collection("data");
+  const collectionGlobals = firestore.collection("globals");
   const collectionUsers = firestore.collection("users");
   const collectionVideos = firestore.collection("videos");
   const collectionReviews = firestore.collection("reviews");
   const collectionRecommendations = firestore.collection("recommendations");
+
+  async function getGlobals() {
+    const globals = await doc(collectionGlobals.doc("globals"));
+    let contentRequests = [];
+    for (const idsUser of Object.values(globals.contentRequests)) {
+      contentRequests = [...contentRequests, ...idsUser];
+    }
+    globals.contentRequests = contentRequests;
+    return globals;
+  }
 
   async function getTitle(id) {
     const query = collectionVideos.doc(id);
@@ -195,6 +206,7 @@ export default async (
   async function createReview(title, review, author) {
     const data = {
       author: {
+        id: author.id,
         username: author.username,
         image: author.image
       },
@@ -223,6 +235,7 @@ export default async (
   async function createRecommendation(title, recommendation, author) {
     const data = {
       author: {
+        id: author.id,
         username: author.username,
         image: author.image
       },
@@ -345,6 +358,15 @@ export default async (
     );
   }
 
+  function requestContent(country) {
+    const idUser = store.getters["localStorage/USER"].id;
+    collectionGlobals.doc("globals").update({
+      ["contentRequests." +
+      country]: $fireModule.firestore.FieldValue.arrayUnion(idUser)
+    });
+  }
+
+  const globals = await getGlobals();
   const search = await getSearch();
   let categories = {};
   for (const item of search) {
@@ -375,6 +397,8 @@ export default async (
   inject("like", like);
   inject("unlike", unlike);
   inject("report", report);
+  inject("requestContent", requestContent);
+  inject("globals", globals);
   inject("search", search);
   inject("categories", categories);
   inject("ratings", ratings);

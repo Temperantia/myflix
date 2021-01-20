@@ -39,7 +39,7 @@ v-container(fluid)
   client-only
     v-row.section-border
       v-col(cols='9', lg='7', offset-lg='3')
-        template(v-if='!preview')
+        template(v-if='!preview && !$store.getters["profile/SELF"]')
           button.button-action.activated(
             v-if='!$store.getters["localStorage/CONNECTED"] || review.likes.includes($store.getters["localStorage/USER"].id)',
             @click='$unlike(review.id)'
@@ -49,7 +49,7 @@ v-container(fluid)
         //-span.small-action.click permalink
         //-span.small-action {{ " | " }}
         span.small-action.click(
-          v-if='$store.state.localStorage.connected && !review.reports.includes($store.state.localStorage.user.id)',
+          v-if='$store.state.localStorage.connected && !$store.getters["profile/SELF"] && !review.reports.includes($store.state.localStorage.user.id)',
           @click='overlay = true'
         ) report
   report(

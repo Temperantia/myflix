@@ -70,15 +70,16 @@ v-container(fluid)
             ) {{ " show more" }}
           div(v-else, v-for='credit in credits', :key='credit') {{ credit }}
 </template>
-
 <script>
 export default {
   data: () => ({
     expanded: {},
   }),
   mounted() {
-    for (const category in this.title.credits) {
-      this.expanded[category] = false;
+    if (this.title.credits) {
+      for (const category in this.title.credits) {
+        this.expanded[category] = false;
+      }
     }
   },
   computed: {
@@ -86,6 +87,5 @@ export default {
       return this.$store.getters['title/TITLE'];
     },
   },
-  methods: {},
 };
 </script>

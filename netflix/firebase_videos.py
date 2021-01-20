@@ -122,17 +122,16 @@ def upload(id, index, data):
   video = data[id]
   if not 'exists' in video:
     #random = round(uniform(7.5, 9.8), 1)
-    video['scores'] = {}#{'1': random}
-    #video['score'] = random
+    video['scores'] = {}  # {'1': random}
+    video['score'] = None  # random
     video['rank'] = None
     video['popularity'] = None
-    video['followers'] = {}#{str(i): now for i in range(randint(0, 5))}
+    video['followers'] = {}  # {str(i): now for i in range(randint(0, 5))}
     video['favorites'] = []
     video['exists'] = True
 
   search_videos(video, id, index)
   video_collection.document(id).set(video, merge=True)
-  video['followers'] = None  # to save locally via json
 
 
 def upload_search():

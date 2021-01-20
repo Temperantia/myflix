@@ -1,11 +1,14 @@
 export default {
-  build: {
-    cache: true
+  target: "static",
+  generate: {
+    dir: "public",
+    crawler: false
   },
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
-    "~/plugins/vue-scrollactive"
+    "~/plugins/vue-scrollactive",
+    "~/plugins/ad.client"
   ],
   components: true,
   buildModules: [
@@ -18,34 +21,46 @@ export default {
     "@nuxtjs/pwa"
   ],
   modules: [
-    [
-      "@nuxtjs/firebase",
-      {
-        config: {
-          apiKey: "AIzaSyAZ4mK0FX2Iaj656xIGONrv0iTISDreNY8",
-          authDomain: "my-flix-91e46.firebaseapp.com",
-          databaseURL: "https://my-flix-91e46.firebaseio.com/",
-          projectId: "my-flix-91e46",
-          storageBucket: "my-flix-91e46.appspot.com",
-          messagingSenderId: "586880609683",
-          appId: "1:586880609683:web:0cbcb01a1db9121152cc66",
-          measurementId: "G-QG7LKFWBJR"
-        },
-        services: {
-          firestore: {
-            enablePersistence: true
-          },
-          auth: true
-        },
-        onFirebaseHosting: true
-      }
-    ],
+    "@nuxtjs/firebase",
     "nuxt-vuex-localstorage",
     "@nuxtjs/google-adsense",
     ["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
     "@nuxtjs/robots",
     "cookie-universal-nuxt"
   ],
+  firebase: {
+    /* config: {
+      apiKey: "AIzaSyCUYPpn9MwXRg5bTohGcJEfeC5A9WMSEGc",
+      authDomain: "myflix-prod.firebaseapp.com",
+      databaseURL: "https://myflix-prod.firebaseio.com/",
+      projectId: "myflix-prod",
+      storageBucket: "myflix-prod.appspot.com",
+      messagingSenderId: "512304943565",
+      appId: "1:512304943565:web:2e0507e8a0dc807fc8f484",
+      measurementId: "G-S0Y1CVJVWP"
+    }, */
+    config: {
+      apiKey: "AIzaSyAZ4mK0FX2Iaj656xIGONrv0iTISDreNY8",
+      authDomain: "my-flix-91e46.firebaseapp.com",
+      databaseURL: "https://my-flix-91e46.firebaseio.com/",
+      projectId: "my-flix-91e46",
+      storageBucket: "my-flix-91e46.appspot.com",
+      messagingSenderId: "586880609683",
+      appId: "1:586880609683:web:0cbcb01a1db9121152cc66",
+      measurementId: "G-QG7LKFWBJR"
+    },
+    services: {
+      firestore: {
+        enablePersistence: true
+      },
+      auth: {
+        initialize: {
+          onAuthStateChangedMutation: "ON_AUTH_STATE_CHANGED_MUTATION",
+        }
+      }
+    },
+    onFirebaseHosting: true
+  },
   css: ["@/assets/main.scss", "@/node_modules/swiper/swiper-bundle.css"],
   head: {
     title: "myflix",
@@ -77,9 +92,6 @@ export default {
           "grey-flixlist": "#1b1b1b"
         }
       }
-    },
-    options: {
-      customProperties: true
     }
   },
   webfontloader: {
@@ -97,18 +109,5 @@ export default {
   },
   "google-adsense": {
     id: "ca-pub-4080768963424465"
-  },
-  hooks: {
-    render: {
-      errorMiddleware(app) {
-        app.use((error, _req, _res, next) => {
-          console.log("here");
-          if (error) {
-            console.log("Logged in errorMiddleware", error);
-          }
-          next(error);
-        });
-      }
-    }
   }
 };

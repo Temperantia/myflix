@@ -7,37 +7,38 @@ div
       v-col(cols='12', lg='7')
         h1.title-border TOP 5 MOST POPULAR ONGOING SERIES
         h2.font-weight-light.subtitle.py-5 {{ $moment().format("MMM D, yyyy").toUpperCase() }}
-        v-row.my-2(v-for='(item, index) in topSeries', :key='item.id')
-          v-col.text-center(cols='1')
-            h2 {{ index + 1 }}
-          v-col(cols='11', lg='3')
-            nuxt-link(:to='item.r')
-              img(:src='item.i')
-          v-col.py-0(
-            offset='1',
-            cols='11',
-            offset-lg='0',
-            :lg='favorites ? "5" : "8"'
-          )
-            nuxt-link(:to='item.r')
-              h2 {{ item.t }}
-            i
-              span {{ item.s + " seasons" }}
-              span(v-if='item.e') {{ ", " + item.e + " episodes" }}
-            div
-              span {{ "Score " }}
-              span.red-netflix--text {{ item.z + "/10" }}
-            div Released {{ item.a ? $moment(item.a).format("MMM D, yyyy") : "-" }}
-            div
-              span.green-watching--text {{ item.f + " members " }}
-              span watching this
-          v-col(cols='3', v-if='favorites')
-            client-only
-              a.click(
-                v-if='isFavorite(item.id)',
-                @click='removeFavorite(item)'
-              ) Remove from Favorites
-              a.click(v-else, @click='addFavorite(item)') Add to Favorites
+        client-only
+          v-row.my-2(v-for='(item, index) in topSeries', :key='item.id')
+            v-col.text-center(cols='1')
+              h2 {{ index + 1 }}
+            v-col(cols='11', lg='3')
+              nuxt-link(:to='item.r')
+                img(:src='item.i')
+            v-col.py-0(
+              offset='1',
+              cols='11',
+              offset-lg='0',
+              :lg='favorites ? "5" : "8"'
+            )
+              nuxt-link(:to='item.r')
+                h2 {{ item.t }}
+              i
+                span {{ item.s + " seasons" }}
+                span(v-if='item.e') {{ ", " + item.e + " episodes" }}
+              div
+                span {{ "Score " }}
+                span.red-netflix--text {{ item.z + "/10" }}
+              div Released {{ item.a ? $moment(item.a).format("MMM D, yyyy") : "-" }}
+              div
+                span.green-watching--text {{ item.f + " members " }}
+                span watching this
+            v-col(cols='3', v-if='favorites')
+              client-only
+                a.click(
+                  v-if='isFavorite(item.id)',
+                  @click='removeFavorite(item)'
+                ) Remove from Favorites
+                a.click(v-else, @click='addFavorite(item)') Add to Favorites
       v-col(cols='12', lg='5')
         h1.title-border.mb-5 LATEST USER REVIEWS
         v-row.my-2(v-for='(review, index) in reviewsLatest', :key='review.id')

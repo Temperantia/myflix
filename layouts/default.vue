@@ -61,8 +61,8 @@ v-app(app)
       .top
         v-row(align='center')
           v-col(cols='12', md='3', lg='2')
-            nuxt-link(to='/contact')
-              span CONTACT
+            nuxt-link(to='/faq')
+              span FAQ
           //-v-col(cols='12', lg='2')
             span ADVERTISING
           v-col(cols='12', md='3', lg='2')

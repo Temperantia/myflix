@@ -14,7 +14,7 @@ v-container.section-border(fluid)
         v-col.text-lg-right
           client-only
             span.small-action.click(
-              v-if='$store.state.localStorage.connected && !recommendation.reports.includes($store.state.localStorage.user.id)',
+              v-if='$store.state.localStorage.connected && !$store.getters["profile/SELF"] && !recommendation.reports.includes($store.state.localStorage.user.id)',
               @click='overlay = true'
             ) report
   report(

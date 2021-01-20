@@ -12,6 +12,9 @@ export const getters = {
   },
   CONNECTED: state => {
     return state.connected;
+  },
+  USER_ID: state => {
+    return state.user && state.user.id;
   }
 };
 

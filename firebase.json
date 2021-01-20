@@ -1,14 +1,17 @@
 {
   "hosting": {
-    "public": "dist",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "rewrites": [{
-      "source": "**",
-      "function": "nuxtssr"
-    }]
+    ]
+  },
+  "rewrites": [{
+    "source": "**"
+  }],
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }

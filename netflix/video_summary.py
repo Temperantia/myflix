@@ -8,7 +8,6 @@ from video_ids import get_ids
 
 
 def fetch_video(id, shows_with_summary):
-  #print('Collecting ' + id)
   data = {
       "path": """["videos", """ + id + """, "summary"]"""}
   try:

@@ -6,7 +6,7 @@ export const getters = {
   PROFILE: state => state.profile,
   SELF: (state, getters, rootState, rootGetters) => {
     const user = rootGetters["localStorage/USER"];
-    return user && user.username === state.profile.username;
+    return user && state.profile && user.id === state.profile.id;
   },
   TVSHOWS: state =>
     Object.values(state.profile.flixlist).filter(

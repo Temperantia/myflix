@@ -151,14 +151,14 @@ export default {
         name: 'NEWS',
         route: routeTitle + 'news',
       }, */
-        /*  {
-        name: 'MERCHANDISE',
-        route: routeTitle + 'merchandise',
-      },
+        {
+          name: 'GOODS',
+          route: routeTitle + 'goods',
+        } /*
       {
         name: 'MEDIA',
         route: routeTitle + 'media',
-      }, */
+      }, */,
       ];
     },
   },

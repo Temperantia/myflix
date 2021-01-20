@@ -105,8 +105,8 @@ def fetch_video(id, shows, genre_dict):
 def get_videos():
   genre_dict = load(open('data/genres.json', 'r', encoding='utf-8'))
 
-  #shows = merge(get_summary(), load(open('data/videos.json', 'r', encoding='utf-8')))
-  shows = merge({}, load(open('data/video_summary.json', 'r', encoding='utf-8')))
+  shows = merge(get_summary(), load(open('data/videos.json', 'r', encoding='utf-8')))
+  #shows = merge({}, load(open('data/video_summary.json', 'r', encoding='utf-8')))
   showCount = 0
   movieCount = 0
   count = 0
