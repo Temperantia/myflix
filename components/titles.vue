@@ -3,7 +3,7 @@ v-container(fluid)
   v-row.subtitle-border
     v-col.pr-0(cols='12', lg='2')
       h1.pageSubHead {{ show ? "TV SHOWS" : film ? "FILMS" : "TITLES" }}
-      h2.pageSubHead_1 123,456 titles currently  available on Netflix
+      h2.pageSubHead_1 123,456 titles currently available on Netflix
     v-col.searchContainer(cols='8', offset-lg='2', lg='4')
       input#search.titlePageSearch(
         v-model='search',

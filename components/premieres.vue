@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(fluid)
+v-container.px-10(fluid)
   v-row
     v-col(cols='12', lg='7')
       h1.title-border TOP UPCOMING PREMIERES OF {{ new Date().getFullYear() }}

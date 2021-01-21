@@ -17,7 +17,7 @@ v-container(fluid)
           color='red',
           v-model='email',
           :rules='[(v) => !!v || "Required"]',
-          label='email',
+          label='Email',
           required
         )
         v-text-field(

@@ -2,157 +2,162 @@
 div
   trending-week
   premieres
-  v-container(fluid)
+  v-container.px-10(fluid)
     v-row
       v-col(cols='12', lg='7')
         h1.title-border TOP 5 MOST POPULAR ONGOING SERIES
         h2.font-weight-light.subtitle.py-5 {{ $moment().format("MMM D, yyyy").toUpperCase() }}
         client-only
-          v-row.my-2(v-for='(item, index) in topSeries', :key='item.id')
-            v-col.text-center(cols='1')
-              h2 {{ index + 1 }}
-            v-col(cols='11', lg='3')
-              nuxt-link(:to='item.r')
-                img(:src='item.i')
-            v-col.py-0(
-              offset='1',
-              cols='11',
-              offset-lg='0',
-              :lg='favorites ? "5" : "8"'
-            )
-              nuxt-link(:to='item.r')
-                h2 {{ item.t }}
-              i
-                span {{ item.s + " seasons" }}
-                span(v-if='item.e') {{ ", " + item.e + " episodes" }}
-              div
-                span {{ "Score " }}
-                span.red-netflix--text {{ item.z + "/10" }}
-              div Released {{ item.a ? $moment(item.a).format("MMM D, yyyy") : "-" }}
-              div
-                span.green-watching--text {{ item.f + " members " }}
-                span watching this
-            v-col(cols='3', v-if='favorites')
-              client-only
-                a.click(
-                  v-if='isFavorite(item.id)',
-                  @click='removeFavorite(item)'
-                ) Remove from Favorites
-                a.click(v-else, @click='addFavorite(item)') Add to Favorites
+          v-container(fluid)
+            v-row.my-2(v-for='(item, index) in topSeries', :key='item.id')
+              v-col.text-center(cols='1')
+                h2 {{ index + 1 }}
+              v-col(cols='11', lg='3')
+                nuxt-link(:to='item.r')
+                  img(:src='item.i')
+              v-col.py-0(
+                offset='1',
+                cols='11',
+                offset-lg='0',
+                :lg='favorites ? "5" : "8"'
+              )
+                nuxt-link(:to='item.r')
+                  h2 {{ item.t }}
+                i
+                  span {{ item.s + " seasons" }}
+                  span(v-if='item.e') {{ ", " + item.e + " episodes" }}
+                div
+                  span {{ "Score " }}
+                  span.red-netflix--text {{ item.z + "/10" }}
+                div Released {{ item.a ? $moment(item.a).format("MMM D, yyyy") : "-" }}
+                div
+                  span.green-watching--text {{ item.f + " members " }}
+                  span watching this
+              v-col(cols='3', v-if='favorites')
+                client-only
+                  a.click(
+                    v-if='isFavorite(item.id)',
+                    @click='removeFavorite(item)'
+                  ) Remove from Favorites
+                  a.click(v-else, @click='addFavorite(item)') Add to Favorites
       v-col(cols='12', lg='5')
         h1.title-border.mb-5 LATEST USER REVIEWS
-        v-row.my-2(v-for='(review, index) in reviewsLatest', :key='review.id')
-          v-col(cols='3')
-            nuxt-link(
-              :to='$search.find((item) => Number(item.id) == review.title.id).r'
-            )
-              img(
-                :src='review.title.tallBoxArt ? review.title.tallBoxArt : review.title.boxArt'
+        v-container(fluid)
+          v-row.my-2(
+            v-for='(review, index) in reviewsLatest',
+            :key='review.id'
+          )
+            v-col(cols='3')
+              nuxt-link(
+                :to='$search.find((item) => Number(item.id) == review.title.id).r'
               )
-            client-only(v-if='favorites')
-              a.click(
-                v-if='isFavorite(review.title.id)',
-                @click='removeFavoriteFromId(review.title.id)'
-              ) Remove from Favorites
-              a.click(v-else, @click='addFavoriteFromId(review.title.id)') Add to Favorites
-          v-col.py-0(cols='9')
-            v-row
-              v-col
-                nuxt-link(
-                  :to='$search.find((item) => Number(item.id) == review.title.id).r'
+                img(
+                  :src='review.title.tallBoxArt ? review.title.tallBoxArt : review.title.boxArt'
                 )
-                  h3 {{ review.title.title }}
-              v-col.text-right
-                div Overall Rating: {{ review.ratings.Overall }}
-            p.font-weight-light
-              span(v-html='content(review.content, index)')
-              span.red-netflix--text.click.ml-1(
-                v-if='expanded[index] && review.content.length > 300',
-                @click='$set(expanded, index, false)'
-              ) show less
-              span.red-netflix--text.click.ml-1(
-                v-else-if='review.content.length > 300',
-                @click='$set(expanded, index, true)'
-              ) show more
-            div Review by
-              client-only
-                nuxt-link(:to='"/profile/" + review.author.username')
-                  span.red-netflix--text {{ " " + review.author.username }}
-              span {{ " - " + $moment(review.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
+              client-only(v-if='favorites')
+                a.click(
+                  v-if='isFavorite(review.title.id)',
+                  @click='removeFavoriteFromId(review.title.id)'
+                ) Remove from Favorites
+                a.click(v-else, @click='addFavoriteFromId(review.title.id)') Add to Favorites
+            v-col.py-0(cols='9')
+              v-row
+                v-col
+                  nuxt-link(
+                    :to='$search.find((item) => Number(item.id) == review.title.id).r'
+                  )
+                    h3 {{ review.title.title }}
+                v-col.text-right
+                  div Overall Rating: {{ review.ratings.Overall }}
+              p.font-weight-light
+                span(v-html='content(review.content, index)')
+                span.red-netflix--text.click.ml-1(
+                  v-if='expanded[index] && review.content.length > 300',
+                  @click='$set(expanded, index, false)'
+                ) show less
+                span.red-netflix--text.click.ml-1(
+                  v-else-if='review.content.length > 300',
+                  @click='$set(expanded, index, true)'
+                ) show more
+              div Review by
+                client-only
+                  nuxt-link(:to='"/profile/" + review.author.username')
+                    span.red-netflix--text {{ " " + review.author.username }}
+                span {{ " - " + $moment(review.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
     v-row
       v-col
         h1.title-border RECOMMENDED GENRES
-        v-row
-          v-col.click(
-            cols='12',
-            lg='4',
-            v-for='category in $categories',
-            :key='category.category',
-            style='position: relative',
-            @click='$router.push({ name: "titles", params: { category: category.category } })'
-          )
-            img(:src='category.image')
-            div(
-              style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))'
+        v-container(fluid)
+          v-row
+            v-col.click(
+              cols='12',
+              lg='4',
+              v-for='category in $categories',
+              :key='category.category',
+              style='position: relative',
+              @click='$router.push({ name: "titles", params: { category: category.category } })'
             )
-            div(
-              style='position: absolute; bottom: 30%; left: 0; padding: 30px'
-            )
-              h1 {{ category.category }}
-              div {{ category.value }} Titles
+              img(:src='category.image')
+              div(
+                style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))'
+              )
+              div(
+                style='position: absolute; bottom: 30%; left: 0; padding: 30px'
+              )
+                h1 {{ category.category }}
+                div {{ category.value }} Titles
     v-row
-      v-col
+      v-col(cols='12', lg='5')
         h1.title-border LATEST USER RECOMMENDATIONS
-        v-row
-          v-col(
-            cols='12',
-            lg='4',
-            v-for='recommendation in recommendationsLatest',
-            :key='recommendation.id'
-          )
-            v-row
-              v-col(cols='4', lg='2')
-                nuxt-link(
-                  :to='$search.find((item) => Number(item.id) == recommendation.title.id).r'
-                )
-                  img(:src='recommendation.title.tallBoxArt')
-              v-col(cols='8', lg='4') If you liked
-                nuxt-link(
-                  :to='$search.find((item) => Number(item.id) == recommendation.title.id).r'
-                )
-                  .red-netflix--text {{ recommendation.title.title }}
-                client-only(v-if='favorites')
-                  a.click(
-                    v-if='isFavorite(recommendation.title.id)',
-                    @click='removeFavoriteFromId(recommendation.title.id)'
-                  ) Remove from Favorites
-                  a.click(
-                    v-else,
-                    @click='addFavoriteFromId(recommendation.title.id)'
-                  ) Add to Favorites
-              v-col(cols='4', lg='2')
-                img(:src='recommendation.similar.image')
-              v-col(cols='8', lg='4') Then you might like...
-                .red-netflix--text {{ recommendation.similar.title }}
-                client-only(v-if='favorites')
-                  a.click(
-                    v-if='isFavorite(recommendation.similar.id)',
-                    @click='removeFavoriteFromId(recommendation.similar.id)'
-                  ) Remove from Favorites
-                  a.click(
-                    v-else,
-                    @click='addFavoriteFromId(recommendation.similar.id)'
-                  ) Add to Favorites
-            v-row
-              v-col
-                p {{ recommendation.content }}
-                div Recommendation by
-                  client-only
-                    nuxt-link(
-                      :to='"/profile/" + recommendation.author.username'
-                    )
-                      span.red-netflix--text {{ " " + recommendation.author.username }}
-                  span {{ " - " + $moment(recommendation.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
+    v-row
+      v-col(
+        cols='12',
+        lg='4',
+        v-for='recommendation in recommendationsLatest',
+        :key='recommendation.id'
+      )
+        v-container(fluid)
+          v-row
+            v-col(cols='4', lg='2')
+              nuxt-link(
+                :to='$search.find((item) => Number(item.id) == recommendation.title.id).r'
+              )
+                img(:src='recommendation.title.tallBoxArt')
+            v-col(cols='8', lg='4') If you liked
+              nuxt-link(
+                :to='$search.find((item) => Number(item.id) == recommendation.title.id).r'
+              )
+                .red-netflix--text {{ recommendation.title.title }}
+              client-only(v-if='favorites')
+                a.click(
+                  v-if='isFavorite(recommendation.title.id)',
+                  @click='removeFavoriteFromId(recommendation.title.id)'
+                ) Remove from Favorites
+                a.click(
+                  v-else,
+                  @click='addFavoriteFromId(recommendation.title.id)'
+                ) Add to Favorites
+            v-col(cols='4', lg='2')
+              img(:src='recommendation.similar.image')
+            v-col(cols='8', lg='4') Then you might like...
+              .red-netflix--text {{ recommendation.similar.title }}
+              client-only(v-if='favorites')
+                a.click(
+                  v-if='isFavorite(recommendation.similar.id)',
+                  @click='removeFavoriteFromId(recommendation.similar.id)'
+                ) Remove from Favorites
+                a.click(
+                  v-else,
+                  @click='addFavoriteFromId(recommendation.similar.id)'
+                ) Add to Favorites
+          v-row
+            v-col
+              p {{ recommendation.content }}
+              div Recommendation by
+                client-only
+                  nuxt-link(:to='"/profile/" + recommendation.author.username')
+                    span.red-netflix--text {{ " " + recommendation.author.username }}
+                span {{ " - " + $moment(recommendation.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
 </template>
 <script>
 export default {
