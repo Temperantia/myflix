@@ -39,10 +39,10 @@ export async function doc(query, name, cookies) {
 }
 
 const maturities = {
-  AL: "PG",
   "Kids OK": "TV-Y7",
   6: "TV-Y7",
   9: "G",
+  AL: "PG",
   12: "PG-13",
   14: "PG-13",
   16: "TV-MA",
@@ -50,34 +50,42 @@ const maturities = {
 };
 
 const ratings = {
-  1: "Terrible",
-  2: "Very Bad",
-  3: "Bad",
-  4: "Below Average",
+  1: "Horrible",
+  2: "Awful",
+  3: "Terrible",
+  4: "Bad",
   5: "Average",
   6: "Fine",
   7: "Good",
-  8: "Very Good",
-  9: "Great",
-  10: "Outstanding"
+  8: "Outstanding",
+  9: "Special",
+  10: "Masterpiece"
 };
 
 const statusesTvShow = [
-  "Unwatched",
-  "Plan to Watch",
   "Watching",
-  "Completed",
+  "Dropped",
+  "Save for Later",
   "On-Hold",
-  "Dropped"
+  "Completed"
 ];
 
-const statusesFilm = [
-  "Unwatched",
-  "Plan to Watch",
-  "Completed",
-  "Rewatched",
-  "Unfinished"
-];
+const statusesFilm = ["Save for Later", "Completed", "Rewatched", "Unfinished"];
+
+function titleStatusColor(status) {
+  if (status === "Watching") {
+    return "green-watching--text";
+  } else if (status === "Dropped") {
+    return "red-dropped--text";
+  } else if (status === "Save for Later") {
+    return "grey-save-for-later--text";
+  } else if (status === "On-Hold") {
+    return "yellow-on-hold--text";
+  } else if (status === "Completed") {
+    return "blue-completed--text";
+  }
+  return "grey-button--text";
+}
 
 export default async (
   { $fire, $fireModule, $moment, $toast, store, $cookies },
@@ -260,10 +268,10 @@ export default async (
     store.commit("localStorage/USER_RECOMMENDATION", data);
   }
 
-  function updateFlixlist(title, status, episodes, score) {
+  async function updateFlixlist(title, status, episodes, score, bingeworthy) {
     if (!status) {
       $toast.error("Select a status");
-      return;
+      return false;
     }
     const idUser = store.getters["localStorage/USER"].id;
 
@@ -281,8 +289,12 @@ export default async (
     if (score) {
       video["scores." + idUser] = { time: new Date(), value: score };
     }
+    video.bingeworthiness = bingeworthy
+      ? $fireModule.firestore.FieldValue.arrayUnion(idUser)
+      : $fireModule.firestore.FieldValue.arrayRemove(idUser);
     collectionVideos.doc(title.id).update(video);
     $toast.success("Flixlist updated");
+    return true;
   }
 
   function addFavorite(title, type) {
@@ -382,6 +394,7 @@ export default async (
     .sort((a, b) => b.value - a.value)
     .slice(0, 3);
 
+  inject("titleStatusColor", titleStatusColor);
   inject("getTitle", getTitle);
   inject("getReviews", getReviews);
   inject("getReviewsLatest", getReviewsLatest);

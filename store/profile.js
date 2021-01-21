@@ -10,13 +10,11 @@ export const getters = {
   },
   TVSHOWS: state =>
     Object.values(state.profile.flixlist).filter(
-      element =>
-        element.status !== "Unwatched" && element.title.summary.type === "show"
+      element => element.title.summary.type === "show"
     ),
   FILMS: state =>
     Object.values(state.profile.flixlist).filter(
-      element =>
-        element.status !== "Unwatched" && element.title.summary.type === "movie"
+      element => element.title.summary.type === "movie"
     )
 };
 

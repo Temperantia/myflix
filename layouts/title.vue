@@ -2,7 +2,7 @@
 defaultLayout
   v-container(fluid)
     v-row
-      //-v-col(cols='12', md='1')
+      v-col(cols='12', md='1')
       //- ad
       client-only
         v-col(cols='12', md='2')
@@ -24,35 +24,41 @@ defaultLayout
               v-col(cols='4') Status:
               v-col(cols='8')
                 v-select(
-                  :items='title.summary.type === "show" ? $statusesTvShow.filter((status) => title.availability.isPlayable || status === "Unwatched" || status === "Plan to Watch") : $statusesFilm.filter((status) => title.availability.isPlayable || status === "Unwatched" || status === "Plan to Watch")',
+                  :items='statuses',
                   outlined,
                   v-model='status',
                   dense,
                   :hide-details='true',
                   @change='updateStatus'
                 )
-            v-row(align='center', v-if='title.summary.type === "show"')
-              v-col(cols='4') Eps seen:
-              v-col(cols='3')
-                input(
-                  type='number',
-                  v-model='episodes',
-                  @input='updateEpisodes'
-                )
-              v-col(cols='3') / {{ title.episodeCount }}
             v-row(align='center')
               v-col(cols='4') Your Score
               v-col(cols='8')
                 v-select(
-                  :items='Object.entries($ratings).map(([score, rating]) => `(${score}) ${rating}`)',
+                  :items='Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`)',
                   outlined,
                   v-model='score',
                   dense,
                   :hide-details='true'
                 )
+            v-row(align='center', v-if='title.summary.type === "show"')
+              v-col
+                v-btn.mr-3(
+                  color='black-search',
+                  @click='bingeworthy = !bingeworthy; saved = false'
+                )
+                  v-icon(
+                    :class='bingeworthy ? "green-watching--text" : "greyButton--text"',
+                    left
+                  ) mdi-check
+                  span.font-weight-light(
+                    :class='bingeworthy ? "white--text" : "white-font--text"'
+                  ) Would you binge-watch this series?
             v-row
               v-col(offset='3', cols='6', align='center')
-                button.update(@click='update') UPDATE
+                button.update(@click='update')
+                  v-icon(color='green-watching', v-if='saved') mdi-check
+                  span(v-else) UPDATE
           .mt-5
             h3.text-h5.title-border INFORMATION
             .my-1(v-for='(data, name) in title.information', :key='name')
@@ -101,6 +107,8 @@ export default {
     status: '',
     episodes: 0,
     score: '',
+    saved: false,
+    bingeworthy: false,
   }),
   components: { DefaultLayout },
   created() {
@@ -112,13 +120,22 @@ export default {
         this.episodes = this.flixlist.episodes;
       }
       if (this.flixlist.score) {
-        this.score = `(${this.flixlist.score}) ${
+        this.score = `${this.flixlist.score} - ${
           this.$ratings[this.flixlist.score]
         }`;
       }
     }
   },
   computed: {
+    statuses() {
+      const statuses = this.$statusesTvShow;
+      return [
+        ...(this.title.availability.isPlayable
+          ? statuses
+          : statuses.filter((status) => status === 'Save for Later')),
+        'Remove from List',
+      ];
+    },
     user() {
       return this.$store.getters['localStorage/USER'];
     },
@@ -177,40 +194,48 @@ export default {
     isCurrentTab(route) {
       return route === this.$route.path;
     },
-    update() {
-      this.$updateFlixlist(
-        this.title,
-        this.status,
-        Number(this.episodes),
-        this.score ? Number(this.score.match(/(([^()]+))/)[1]) : null
-      );
+    async update() {
+      if (
+        !this.saved &&
+        (await this.$updateFlixlist(
+          this.title,
+          this.status,
+          Number(this.episodes),
+          this.score ? Number(this.score.split('-')[0]) : null,
+          this.bingeworthy
+        ))
+      ) {
+        this.saved = true;
+      }
     },
     updateStatus(value) {
+      if (value === 'Remove from List') {
+        this.status = '';
+        return;
+      }
       if (this.title.summary.type === 'show') {
         if (this.status === 'Completed') {
           this.episodes = this.title.episodeCount;
-        } else if (
-          this.status === 'Unwatched' ||
-          (this.episodes === this.title.episodeCount &&
-            this.status !== 'Completed')
-        ) {
+        } else if (!this.status || this.episodes === this.title.episodeCount) {
           this.episodes = 0;
         }
       }
+      this.saved = false;
     },
     updateEpisodes(event) {
       const value = event.target.value;
       if (value <= 0) {
         this.episodes = 0;
-        this.status = 'Unwatched';
+        this.status = '';
       } else if (value >= this.title.episodeCount) {
         this.episodes = this.title.episodeCount;
         this.status = 'Completed';
       } else {
-        if (this.status === 'Completed' || this.status === 'Unwatched') {
+        if (this.status === 'Completed' || !this.status) {
           this.status = 'Watching';
         }
       }
+      this.saved = false;
     },
   },
 };

@@ -22,22 +22,23 @@ v-col(cols='12', lg='2')
       nuxt-link(:to='"/flixlist/" + user.username')
         button.button.flixlist FlixList
   h3.title-border INFORMATION
-  v-row
-    v-col.pt-1.pb-0
-      b Reviews:
-    v-col.pt-1.pb-0.text-right {{ user.reviews.length }}
-  v-row
-    v-col.pt-1.pb-0
-      b Recommendations:
-    v-col.pt-1.pb-0.text-right {{ user.recommendations.length }}
-  v-row
-    v-col.pt-1.pb-0
-      b Films:
-    v-col.pt-1.pb-0.text-right {{ films.length }}
-  v-row
-    v-col.pt-1.pb-0
-      b TV Shows:
-    v-col.pt-1.pb-0.text-right {{ tvShows.length }}
+  v-container(fluid)
+    v-row
+      v-col.pt-1.pb-0
+        b Reviews:
+      v-col.pt-1.pb-0.text-right {{ user.reviews.length }}
+    v-row
+      v-col.pt-1.pb-0
+        b Recommendations:
+      v-col.pt-1.pb-0.text-right {{ user.recommendations.length }}
+    v-row
+      v-col.pt-1.pb-0
+        b Films:
+      v-col.pt-1.pb-0.text-right {{ films.length }}
+    v-row
+      v-col.pt-1.pb-0
+        b TV Shows:
+      v-col.pt-1.pb-0.text-right {{ tvShows.length }}
 </template>
 <script>
 export default {

@@ -123,8 +123,8 @@ export default {
           return 'yellow-on-hold--text';
         } else if (status === 'Dropped') {
           return 'red-dropped--text';
-        } else if (status === 'Plan to Watch') {
-          return 'grey-plan-to-watch--text';
+        } else if (status === 'Save for Later') {
+          return 'grey-save-for-later--text';
         }
       }
       if (status === 'Completed') {
@@ -133,8 +133,8 @@ export default {
         return 'yellow-on-hold--text';
       } else if (status === 'Unfinished') {
         return 'red-dropped--text';
-      } else if (status === 'Plan to Watch') {
-        return 'grey-plan-to-watch--text';
+      } else if (status === 'Save for Later') {
+        return 'grey-save-for-later--text';
       }
     },
   },

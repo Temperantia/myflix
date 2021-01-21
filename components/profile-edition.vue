@@ -25,46 +25,47 @@ v-container(fluid)
         .mb-3 You can remove this picture by clicking the button below. Don't forget to upload another though, or else you will have a default image in its place.
         button.button-action(@click='copy.image = null') Remove
       v-col(cols='5')
-        v-row(align='center')
-          v-col.py-1(cols='3')
-            h5 Time Zone
-          v-col.py-1(cols='5')
-            v-select(
-              :items='listTimeZones()',
-              outlined,
-              dense,
-              :hide-details='true',
-              @change='updateTimeZone',
-              v-model='copy.timeZone'
-            )
-          v-col.py-1(cols='3')
-            .white-font--text Time: {{ time }}
-        v-row(align='center')
-          v-col.py-1(cols='3')
-            h5 Gender
-          v-col.py-1(cols='5')
-            v-select(
-              :items='["Male", "Female"]',
-              v-model='copy.gender',
-              outlined,
-              dense,
-              :hide-details='true'
-            )
-        v-row(align='center')
-          v-col.py-1(cols='3')
-            h5 Birthday
-          v-col.py-1(cols='9')
-            birthdate-picker(
-              :birthdate='copy.birthdate',
-              :onUpdate='updateBirthdate'
-            )
-        v-row(align='center')
-          v-col.py-1(cols='3')
-            h5 Location
-          v-col.py-1(cols='6')
-            input.location(v-model='copy.location')
-          v-col.py-1(cols='3')
-            .white-font--text Ex: Anaheim, CA
+        v-container(fluid)
+          v-row(align='center')
+            v-col(cols='3')
+              h5 Time Zone
+            v-col(cols='5')
+              v-select(
+                :items='listTimeZones()',
+                outlined,
+                dense,
+                :hide-details='true',
+                @change='updateTimeZone',
+                v-model='copy.timeZone'
+              )
+            v-col(cols='3')
+              .white-font--text Time: {{ time }}
+          v-row(align='center')
+            v-col(cols='3')
+              h5 Gender
+            v-col(cols='5')
+              v-select(
+                :items='["Male", "Female"]',
+                v-model='copy.gender',
+                outlined,
+                dense,
+                :hide-details='true'
+              )
+          v-row(align='center')
+            v-col(cols='3')
+              h5 Birthday
+            v-col(cols='9')
+              birthdate-picker(
+                :birthdate='copy.birthdate',
+                :onUpdate='updateBirthdate'
+              )
+          v-row(align='center')
+            v-col(cols='3')
+              h5 Location
+            v-col(cols='6')
+              input.location(v-model='copy.location')
+            v-col(cols='3')
+              .white-font--text Ex: Anaheim, CA
   v-container(fluid, v-if='currentTab === "FAVORITES"')
     v-row
       v-col(cols='6')

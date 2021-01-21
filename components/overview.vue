@@ -23,12 +23,72 @@ v-container(fluid)
             span.white-font--text Creators:
             span.ml-1 {{ title.creators.join(", ") || "-" }}
       v-row
+        v-col(cols='12', lg='4')
+          client-only
+            div(style='position: relative')
+              v-select(
+                :items='statuses',
+                outlined,
+                v-model='status',
+                dense,
+                placeholder='Change status',
+                :hide-details='true',
+                @change='updateStatus'
+              )
+                template(v-slot:selection='{ item }')
+                  span(
+                    v-if='item !== "Remove from List"',
+                    :class='$titleStatusColor(item)'
+                  ) {{ item }}
+              client-only
+                span.d-flex.align-center(
+                  style='position: absolute; top: 0; bottom: 0; right: 40px'
+                )
+                  input.pr-1.border.white-font--border.text-right(
+                    :class='$titleStatusColor(status)',
+                    style='width: 30px',
+                    type='number',
+                    v-model='episodes',
+                    @input='updateEpisodes'
+                  )
+                  span.ml-1 {{ " / " + title.episodeCount }}
+        v-col(cols='12', lg='4')
+          client-only
+            v-select(
+              :items='Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`)',
+              outlined,
+              v-model='score',
+              dense,
+              placeholder='Rate this title',
+              :hide-details='true',
+              @change='saved = false'
+            )
+        v-col(cols='12', lg='4')
+          v-btn(color='blue-completed', @click='vpn = true') GET IT IN YOUR COUNTRY
+      v-row.my-1
         v-col
+          v-btn.mr-3(
+            color='black-search',
+            @click='bingeworthy = !bingeworthy; saved = false'
+          )
+            v-icon(
+              :class='bingeworthy ? "green-watching--text" : "greyButton--text"',
+              left
+            ) mdi-check
+            span.font-weight-light(
+              :class='bingeworthy ? "white--text" : "white-font--text"'
+            ) Would you binge-watch this series?
+          button.mr-3.button.white--text(@click='update')
+            v-icon(color='green-watching', v-if='saved') mdi-check
+            span(v-else) UPDATE
+          v-btn(color='black-search')
+            v-icon mdi-share-variant
+            span Share this page
     //-v-col(cols='12', md='3')
       video(:src='title.trailer')
-  client-only
-    v-row
-      v-col
+  v-row
+    v-col
+      client-only
         h3.title-border OFFICIAL SYNOPSIS
         p.pa-2(v-html='title.synopsis')
   v-row(v-if='title.imdbCast')
@@ -74,6 +134,12 @@ v-container(fluid)
 export default {
   data: () => ({
     expanded: {},
+    vpn: false,
+    bingeworthy: false,
+    status: '',
+    episodes: 0,
+    score: '',
+    saved: false,
   }),
   mounted() {
     if (this.title.credits) {
@@ -82,9 +148,84 @@ export default {
       }
     }
   },
+  created() {
+    if (this.flixlist) {
+      if (this.flixlist.status) {
+        this.status = this.flixlist.status;
+      }
+      if (this.flixlist.episodes) {
+        this.episodes = this.flixlist.episodes;
+      }
+      if (this.flixlist.score) {
+        this.score = `${this.flixlist.score} - ${
+          this.$ratings[this.flixlist.score]
+        }`;
+      }
+    }
+  },
   computed: {
+    user() {
+      return this.$store.getters['localStorage/USER'];
+    },
+    flixlist() {
+      return this.user ? this.user.flixlist[this.title.id] : null;
+    },
     title() {
       return this.$store.getters['title/TITLE'];
+    },
+    statuses() {
+      const statuses = this.$statusesTvShow;
+      return [
+        ...(this.title.availability.isPlayable
+          ? statuses
+          : statuses.filter((status) => status === 'Save for Later')),
+        'Remove from List',
+      ];
+    },
+  },
+  methods: {
+    async update() {
+      if (
+        !this.saved &&
+        (await this.$updateFlixlist(
+          this.title,
+          this.status,
+          Number(this.episodes),
+          this.score ? Number(this.score.split('-')[0]) : null,
+          this.bingeworthy
+        ))
+      ) {
+        this.saved = true;
+      }
+    },
+    updateStatus(value) {
+      if (value === 'Remove from List') {
+        this.status = '';
+        return;
+      }
+      if (this.title.summary.type === 'show') {
+        if (this.status === 'Completed') {
+          this.episodes = this.title.episodeCount;
+        } else if (!this.status || this.episodes === this.title.episodeCount) {
+          this.episodes = 0;
+        }
+      }
+      this.saved = false;
+    },
+    updateEpisodes(event) {
+      const value = event.target.value;
+      if (value <= 0) {
+        this.episodes = 0;
+        this.status = '';
+      } else if (value >= this.title.episodeCount) {
+        this.episodes = this.title.episodeCount;
+        this.status = 'Completed';
+      } else {
+        if (this.status === 'Completed' || !this.status) {
+          this.status = 'Watching';
+        }
+      }
+      this.saved = false;
     },
   },
 };

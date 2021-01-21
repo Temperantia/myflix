@@ -48,7 +48,6 @@ client-only(v-if='user')
 </template>
 <script>
 export default {
-  //middleware: ['auth'],
   async asyncData({ route, $getUser, store }) {
     const username = route.params.username;
     const userOther = await $getUser(username);
@@ -67,9 +66,9 @@ export default {
       return user;
     },
     flixlist() {
-      return Object.values(this.user.flixlist)
-        .filter((element) => element.status !== 'Unwatched')
-        .sort((a, b) => (a.postedOn.seconds > b.postedOn.seconds ? -1 : 1));
+      return Object.values(this.user.flixlist).sort((a, b) =>
+        a.postedOn.seconds > b.postedOn.seconds ? -1 : 1
+      );
     },
   },
   methods: {
@@ -83,8 +82,8 @@ export default {
           return 'yellow-on-hold--border';
         } else if (status === 'Dropped') {
           return 'red-dropped--border';
-        } else if (status === 'Plan to Watch') {
-          return 'grey-plan-to-watch--border';
+        } else if (status === 'Save for Later') {
+          return 'grey-save-for-later--border';
         }
       }
       if (status === 'Completed') {
@@ -93,8 +92,8 @@ export default {
         return 'yellow-on-hold--border';
       } else if (status === 'Unfinished') {
         return 'red-dropped--border';
-      } else if (status === 'Plan to Watch') {
-        return 'grey-plan-to-watch--border';
+      } else if (status === 'Save for Later') {
+        return 'grey-save-for-later--border';
       }
     },
     textColor(type, status) {
@@ -107,8 +106,8 @@ export default {
           return 'yellow-on-hold--text';
         } else if (status === 'Dropped') {
           return 'red-dropped--text';
-        } else if (status === 'Plan to Watch') {
-          return 'grey-plan-to-watch--text';
+        } else if (status === 'Save for Later') {
+          return 'grey-save-for-later--text';
         }
       }
       if (status === 'Completed') {
@@ -117,8 +116,8 @@ export default {
         return 'yellow-on-hold--text';
       } else if (status === 'Unfinished') {
         return 'red-dropped--text';
-      } else if (status === 'Plan to Watch') {
-        return 'grey-plan-to-watch--text';
+      } else if (status === 'Save for Later') {
+        return 'grey-save-for-later--text';
       }
     },
   },

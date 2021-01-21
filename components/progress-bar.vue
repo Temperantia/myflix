@@ -72,7 +72,7 @@ export default {
         color = '#f2921c';
       } else if (status === 'Dropped') {
         color = '#f51c1f';
-      } else if (status === 'Plan to Watch') {
+      } else if (status === 'Save for Later') {
         color = '#888888';
       }
       return {

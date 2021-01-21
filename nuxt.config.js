@@ -26,7 +26,8 @@ export default {
     "@nuxtjs/google-adsense",
     ["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
     "@nuxtjs/robots",
-    "cookie-universal-nuxt"
+    "cookie-universal-nuxt",
+    "vue-social-sharing/nuxt"
   ],
   firebase: {
     /* config: {
@@ -55,7 +56,7 @@ export default {
       },
       auth: {
         initialize: {
-          onAuthStateChangedMutation: "ON_AUTH_STATE_CHANGED_MUTATION",
+          onAuthStateChangedMutation: "ON_AUTH_STATE_CHANGED_MUTATION"
         }
       }
     },
@@ -79,6 +80,7 @@ export default {
         dark: {
           primary: "#e30914",
           blackHeader: "#191919",
+          "black-search": "#0f0f0f",
           "black-subheader": "#252525",
           blackBody: "#141414",
           greyButton: "#363636",
@@ -88,11 +90,12 @@ export default {
           "blue-completed": "#576bec",
           "yellow-on-hold": "#f2921c",
           "red-dropped": "#f51c1f",
-          "grey-plan-to-watch": "#888888",
+          "grey-save-for-later": "#888888",
           "grey-flixlist": "#1b1b1b"
         }
       }
-    }
+    },
+    treeShake: true
   },
   webfontloader: {
     google: {
