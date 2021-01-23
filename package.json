@@ -4,16 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "build": "nuxt build && npm run clean && npm run copyassets",
-    "serve": "firebase serve --only functions,hosting",
-    "deploy": "firebase deploy",
-    "predeploy": "npm run build",
-    "setup": "npm i && npm run setup:server",
-    "setup:server": "cd \"prod/server\" && npm i",
-    "copyassets": "npm run copydist && npm run copystatic",
-    "copydist": "cp -R prod/server/nuxt/dist/ prod/client/assets",
-    "copystatic": "cp -R static/ prod/client",
-    "clean": "rimraf prod/client/assets/*"
+    "build": "nuxt build",
+    "build:firebase": "npm run clean && cd \"functions\" && npm i && cd \"..\" && npm run build && npm run copy ",
+
+    "clean": "npm run clean:public && npm run clean:functions && npm run clean:static",
+    "clean:functions": "rimraf \"functions/node_modules\" && rimraf \"functions/.nuxt\"",
+    "clean:public": "rimraf \"public/**/*.*!(md)\" && rimraf \"public/_nuxt\"",
+    "clean:static": "rimraf \"static/sw.js\"",
+
+    "copy": "npm run copy:nuxt && npm run copy:static",
+    "copy:nuxt": "xcopy \"functions\\.nuxt\\dist\\*\" \"public\\_nuxt\\\" /E /Y",
+    "copy:static": "xcopy \"static\\*\" \"public\\\" /E /Y",
+
+    "start:firebase": "firebase serve --only functions,hosting",
+
+    "deploy": "firebase deploy --only functions,hosting"
   },
   "dependencies": {
     "chart.js": "2.9.4",

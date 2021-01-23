@@ -1,10 +1,11 @@
 module.exports = {
-  buildDir: "./prod/server/nuxt",
+  buildDir: "functions/.nuxt",
   build: {
     publicPath: "/assets/",
     cache: true,
     extractCSS: true
   },
+  ssr: false,
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
