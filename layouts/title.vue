@@ -97,17 +97,17 @@ defaultLayout
             v-row
               v-col
                 table(v-for='(data, name) in title.information', :key='name')
-                  th.b {{ name }}:
-                  td.pl-1 {{ data || "-" }}
+                  th {{ name }}:
+                  td {{ data || "-" }}
           v-container(fluid)
             v-row.title-border(align='center')
               v-col
                 h3 STATISTICS
             v-row
               v-col
-                .my-1(v-for='(data, name) in title.statistics', :key='name')
-                  b {{ name }}:
-                  span.pl-1 {{ data }}
+                table(v-for='(data, name) in title.statistics', :key='name')
+                  th {{ name }}:
+                  td {{ data }}
       v-col(cols='12', md='6')
         v-container(fluid)
           v-row.title-border
