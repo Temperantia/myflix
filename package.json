@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
     "prod": "npm run generate && firebase deploy",
     "generate": "nuxt generate",
     "deploy": "firebase deploy"

@@ -5,13 +5,17 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
     ]
   },
-  "rewrites": [{
-    "source": "**"
-  }],
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  }
+  "rewrites": [
+    {
+      "source": "**"
+    }
+  ]
 }

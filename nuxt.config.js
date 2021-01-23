@@ -1,9 +1,24 @@
+import shows from "./netflix/data/videos.json";
+import slugify from "slugify";
+
+let dynamicRoutes = Object.values(shows).reduce((acc, show) => {
+  return acc.concat(
+    `/tvshows/${slugify(show.title, {
+      lower: true,
+      strict: true
+    })}/overview`
+  );
+}, []);
+
 export default {
-  target: "static",
-  generate: {
+  target: "server",
+  buildDir: "public",
+  ssr: false,
+  /*  generate: {
+    crawler: false,
     dir: "public",
-    crawler: false
-  },
+    routes: ["/", ...dynamicRoutes]
+  }, */
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
@@ -99,7 +114,7 @@ export default {
   },
   webfontloader: {
     google: {
-      families: ["Roboto:400,700"] //Loads Roboto font with weights 400 and 700
+      families: ["Roboto:400,700"]
     }
   },
   styleResources: {

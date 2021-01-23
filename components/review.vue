@@ -81,7 +81,9 @@ export default {
     },
     postedOn() {
       return this.$moment(
-        this.preview ? new Date() : new Date(this.review.postedOn.seconds)
+        this.preview
+          ? new Date()
+          : new Date(this.review.postedOn.seconds * 1000)
       ).format('MMM D, yyyy');
     },
   },

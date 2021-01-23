@@ -281,13 +281,7 @@ export default async (
       status,
       episodes,
       score,
-      title: {
-        title: title.title,
-        tallBoxArt: title.tallBoxArt,
-        releaseYear: title.releaseYear,
-        maturity: title.maturity,
-        episodeCount: title.episodeCount,
-      },
+      title,
       postedOn: $fireModule.firestore.Timestamp.now()
     };
     collectionUsers.doc(idUser).update({ [`flixlist.${title.id}`]: data });
@@ -301,6 +295,7 @@ export default async (
       ? $fireModule.firestore.FieldValue.arrayUnion(idUser)
       : $fireModule.firestore.FieldValue.arrayRemove(idUser);
     collectionVideos.doc(title.id).update(video);
+    store.commit('title/UPDATE_SAVED', true);
     $toast.success("Flixlist updated");
     return true;
   }

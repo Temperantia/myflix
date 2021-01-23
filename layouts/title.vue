@@ -2,7 +2,7 @@
 defaultLayout
   v-container.mt-4(fluid)
     v-row
-      v-col(cols='12', md='2')
+      v-col(cols='12', lg='1', xl='2')
       //- ad
       client-only
         v-col(cols='12', md='2')
@@ -31,7 +31,7 @@ defaultLayout
                       v-select(
                         :items='statuses',
                         outlined,
-                        v-model='status',
+                        :value='$store.state.title.status',
                         dense,
                         :hide-details='true',
                         @change='updateStatus'
@@ -42,14 +42,14 @@ defaultLayout
                             :class='$titleStatusColor(item)'
                           ) {{ item }}
                       span.d-flex.align-center(
-                        v-if='title.summary.type === "show" && status && status !== "Save for Later"',
+                        v-if='title.summary.type === "show" && $store.state.title.status && $store.state.title.status !== "Save for Later"',
                         style='position: absolute; top: 0; bottom: 0; right: 35px'
                       )
                         input.pr-1.border.white-font--border.text-right(
-                          :class='$titleStatusColor(status)',
+                          :class='$titleStatusColor($store.state.title.status)',
                           style='width: 30px',
                           type='number',
-                          v-model='episodes',
+                          :value='$store.state.title.episodes',
                           @input='updateEpisodes'
                         )
                         span.ml-1 {{ " / " + title.episodeCount }}
@@ -59,27 +59,31 @@ defaultLayout
                   v-select(
                     :items='Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`).reverse()',
                     outlined,
-                    v-model='score',
+                    :value='$store.state.title.score',
                     dense,
-                    :hide-details='true'
+                    :hide-details='true',
+                    @change='(value) => $store.commit("title/UPDATE_SCORE", value)'
                   )
               v-row(align='center', v-if='title.summary.type === "show"')
                 v-col
                   v-btn(
                     color='black-search',
-                    @click='bingeworthy = !bingeworthy; saved = false'
+                    @click='$store.commit("title/UPDATE_BINGEWORTHY", !$store.state.title.bingeworthy)'
                   )
                     v-icon(
-                      :class='bingeworthy ? "green-watching--text" : "greyButton--text"',
+                      :class='$store.state.title.bingeworthy ? "green-watching--text" : "greyButton--text"',
                       left
                     ) mdi-check
                     span.font-weight-light(
-                      :class='bingeworthy ? "white--text" : "white-font--text"'
+                      :class='$store.state.title.bingeworthy ? "white--text" : "white-font--text"'
                     ) Would you binge-watch this series?
               v-row(align='center')
                 v-col.d-flex.justify-center
                   button.update(@click='update')
-                    v-icon(color='green-watching', v-if='saved') mdi-check
+                    v-icon(
+                      color='green-watching',
+                      v-if='$store.state.title.saved'
+                    ) mdi-check
                     span(v-else) UPDATE
           v-container(fluid)
             v-row.title-border(align='center')
@@ -108,7 +112,7 @@ defaultLayout
                 table(v-for='(data, name) in title.statistics', :key='name')
                   th {{ name }}:
                   td {{ data }}
-      v-col(cols='12', md='6')
+      v-col(cols='12', lg='8', xl='6')
         v-container(fluid)
           v-row.title-border
             v-col(v-if='$vuetify.breakpoint.mdAndUp', md='12')
@@ -144,27 +148,10 @@ export default {
       return redirect(route.path + '/overview');
     }
   },
-  data: () => ({
-    status: '',
-    episodes: 0,
-    score: '',
-    saved: false,
-    bingeworthy: false,
-  }),
   components: { DefaultLayout },
   created() {
     if (this.flixlist) {
-      if (this.flixlist.status) {
-        this.status = this.flixlist.status;
-      }
-      if (this.flixlist.episodes) {
-        this.episodes = this.flixlist.episodes;
-      }
-      if (this.flixlist.score) {
-        this.score = `${this.flixlist.score} - ${
-          this.$ratings[this.flixlist.score]
-        }`;
-      }
+      this.$store.commit('title/LOAD_FLIXLIST', this.flixlist);
     }
   },
   computed: {
@@ -179,7 +166,7 @@ export default {
       return this.user ? this.user.flixlist[this.title.id] : null;
     },
     favorites() {
-      return this.user.favorites;
+      return this.user ? this.user.favorites : null;
     },
     title() {
       return this.$store.getters['title/TITLE'];
@@ -231,47 +218,33 @@ export default {
       return route === this.$route.path;
     },
     async update() {
-      if (
-        !this.saved &&
-        (await this.$updateFlixlist(
-          this.title,
-          this.status,
-          Number(this.episodes),
-          this.score ? Number(this.score.split('-')[0]) : null,
-          this.bingeworthy
-        ))
-      ) {
-        this.saved = true;
+      if (!this.$store.state.title.saved) {
+        await this.$updateFlixlist(
+          {
+            title: this.title.title,
+            tallBoxArt: this.title.tallBoxArt,
+            releaseYear: this.title.releaseYear,
+            maturity: this.title.maturity,
+            episodeCount: this.title.episodeCount,
+          },
+          this.$store.state.title.status,
+          Number(this.$store.state.title.episodes),
+          this.$store.state.title.score
+            ? Number(this.$store.state.title.score.split('-')[0])
+            : null,
+          this.$store.state.title.bingeworthy
+        );
       }
     },
     updateStatus(value) {
-      if (value === 'Remove from List') {
-        this.status = '';
-        return;
-      }
-      if (this.title.summary.type === 'show') {
-        if (this.status === 'Completed') {
-          this.episodes = this.title.episodeCount;
-        } else if (!this.status || this.episodes === this.title.episodeCount) {
-          this.episodes = 0;
-        }
-      }
-      this.saved = false;
+      this.$store.commit('title/UPDATE_STATUS', {
+        value,
+        title: this.title,
+      });
     },
     updateEpisodes(event) {
       const value = event.target.value;
-      if (value <= 0) {
-        this.episodes = 0;
-        this.status = '';
-      } else if (value >= this.title.episodeCount) {
-        this.episodes = this.title.episodeCount;
-        this.status = 'Completed';
-      } else {
-        if (this.status === 'Completed' || !this.status) {
-          this.status = 'Watching';
-        }
-      }
-      this.saved = false;
+      this.$store.commit('title/UPDATE_EPISODES', { value, title: this.title });
     },
   },
 };
