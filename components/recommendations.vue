@@ -29,22 +29,28 @@ v-container(v-if='edition', fluid)
         .white-font--text - Recommendations should contain persuasive arguments based on opinion and not solely on fact.
         .white-font--text - No spoilers.
         .white-font--text - All recommendations are public.
-v-container(v-else, fluid)
-  v-row.mt-5.title-border
-    v-col(cols='12', lg='8')
-      h3 RECOMMENDATIONS
-    v-col.text-lg-right(cols='12', lg='4')
-      client-only
-        button(
-          v-if='$store.state.localStorage.connected',
-          @click='edition = true'
-        ) MAKE A RECOMMENDATION
-        button(v-else, @click='$router.push("/sign-in")') SIGN IN TO MAKE A RECOMMENDATION
-  recommendation(
-    :recommendation='recommendation',
-    v-for='recommendation in recommendations',
-    :key='recommendation.id'
-  )
+div(v-else)
+  v-container(fluid)
+    v-row.title-border
+      v-col(cols='12', lg='8')
+        h3 RECOMMENDATIONS
+      v-col.text-lg-right(cols='12', lg='4')
+        client-only
+          button(
+            v-if='$store.state.localStorage.connected',
+            @click='edition = true'
+          ) MAKE A RECOMMENDATION
+          button(v-else, @click='$router.push("/sign-in")') SIGN IN TO MAKE A RECOMMENDATION
+  template(v-if='recommendations.length > 0')
+    recommendation(
+      :recommendation='recommendation',
+      v-for='recommendation in recommendations',
+      :key='recommendation.id'
+    )
+  v-container(v-else, fluid)
+    v-row
+      v-col
+        p No recommendations yet
 </template>
 <script>
 export default {

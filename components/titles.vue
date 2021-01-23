@@ -82,11 +82,28 @@ export default {
     categories,
     now: Date.now(),
     nowYear: new Date().getFullYear(),
+    map: {
+      a: 'á|à|ã|â|À|Á|Ã|Â',
+      e: 'é|è|ê|É|È|Ê',
+      i: 'í|ì|î|Í|Ì|Î',
+      o: 'ó|ò|ô|õ|Ó|Ò|Ô|Õ',
+      u: 'ú|ù|û|ü|Ú|Ù|Û|Ü',
+      c: 'ç|Ç',
+      n: 'ñ|Ñ',
+    },
   }),
   mounted() {
     if (this.$route.params.category) {
       this.category = this.$route.params.category;
     }
+  },
+  methods: {
+    slugify(str) {
+      for (const pattern in this.map) {
+        str = str.replace(new RegExp(this.map[pattern], 'g'), pattern);
+      }
+      return str;
+    },
   },
   computed: {
     flixlist() {
@@ -95,6 +112,7 @@ export default {
       }
     },
     source() {
+      const search = this.slugify(this.search).toLocaleLowerCase();
       return this.$search
         .filter((title) => {
           if (title.y === 0 || title.a > this.now || title.y > this.nowYear) {
@@ -104,8 +122,9 @@ export default {
             ((!this.show && !this.film) || this.show ? title.u : !title.u) &&
             (this.category === 'All' || title.c.includes(this.category)) &&
             (this.maturity === 'All' ||
-              this.$maturities[title.v] === this.maturity) &&
-            (this.search === '' || title.t.startsWith(this.search)) &&
+              this.$maturitiesEurope[title.v] === this.maturity) &&
+            (this.search === '' ||
+              this.slugify(title.t).toLocaleLowerCase().indexOf(search) > -1) &&
             (!this.original || title.o) &&
             (((!this.completed || title.status === 'Completed') &&
               (!this.watching || title.status === 'Watching')) ||
@@ -146,11 +165,11 @@ export default {
 }
 .titlePageSearch {
   width: 100%;
-  background-color: #0F0F0F;
+  background-color: #0f0f0f;
   color: $grey-light;
   border: none;
   padding: 0px 12px;
-  height:  40px;
+  height: 40px;
   line-height: 40px;
   border-radius: 3px;
   text-align: center;

@@ -1,8 +1,10 @@
 <template lang="pug">
-.pa-2
-  nuxt-link(:to='typeRoute') {{ typeName + " " }}
-  nuxt-link(:to='titleRoute') > {{ titleName + " " }}
-  nuxt-link(:to='tabRoute') > {{ tabName }}
+v-container(fluid)
+  v-row
+    v-col
+      nuxt-link(:to='typeRoute') {{ typeName + " " }}
+      nuxt-link(:to='titleRoute') > {{ titleName + " " }}
+      nuxt-link(:to='tabRoute') > {{ tabName }}
 </template>
 
 <script>

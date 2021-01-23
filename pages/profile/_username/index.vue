@@ -1,114 +1,134 @@
 <template lang="pug">
 v-col(cols='12', lg='10')
-  v-row.title-border
-    v-col
-      h3 STATISTICS
-    v-col.text-right(v-if='self')
-      a(@click='$nuxt.$emit("edit", true)') EDIT
-  v-row
-    v-col(cols='12', lg='6')
-      h4.subtitle-border TV SHOWS
-      v-container(fluid)
-        v-row
-          v-col(cols='12', lg='5')
-            doughnut-chart(
-              :chartdata='tvShowsChartData',
-              :options='optionsDoughnut'
-            )
-          v-col(cols='12', lg='7')
-            .d-flex.justify-space-between(
-              v-for='(stat, index) in tvShowsStats',
-              :class='{ even: index % 2 === 1 }',
-              :key='stat.name'
-            )
-              div {{ stat.name }}
-              div(:class='stat.class ? stat.class : ""') {{ stat.value }}
-      h4.subtitle-border FILMS
-      v-container(fluid)
-        v-row
-          v-col(cols='12', lg='5')
-            doughnut-chart(
-              :chartdata='filmsChartData',
-              :options='optionsDoughnut'
-            )
-          v-col(cols='12', lg='7')
-            .d-flex.justify-space-between(
-              v-for='(stat, index) in filmsStats',
-              :class='{ even: index % 2 === 1 }',
-              :key='stat.name'
-            )
-              div {{ stat.name }}
-              div(:class='stat.class ? stat.class : ""') {{ stat.value }}
-    v-col(cols='12', lg='6')
-      h4.subtitle-border LATEST TV SHOWS WATCHED
-      v-container(fluid)
-        v-row(
-          align='center',
-          v-for='element in tvShows.slice(0, 3)',
-          :key='element.title.id'
-        )
-          v-col(cols='12', lg='2')
-            img(:src='element.title.tallBoxArt')
-          v-col(cols='12', lg='6')
-            h2 {{ element.title.title }}
-            .white-font--text {{ element.title.releaseYear }} {{ element.title.maturity }} {{ element.title.seasonCount }} Season
-            progress-bar(
-              :status='element.status',
-              :episodes='element.episodes',
-              :episodeCount='element.title.episodeCount',
-              :width='200'
-            )
-            div
-              span.white-font--text {{ element.status }}
-              span(v-if='element.status !== "Save for Later"')
-                span(:class='$titleStatusColor(element.status)') {{ " " + element.episodes }}
-                span.white-font--text /{{ element.title.episodeCount }}
-              span.white-font--text {{ " • Scored " }}
-              span(:class='$titleStatusColor(element.status)') {{ element.score || "-" }}
-          v-col(cols='12', lg='4') {{ $moment(element.postedOn.seconds * 1000).format("MMM D, hh:ss a") }}
-      h4.subtitle-border LATEST FILMS WATCHED
-      v-container(fluid)
-        v-row(
-          align='center',
-          v-for='element in films.slice(0, 3)',
-          :key='element.title.id'
-        )
-          v-col(cols='12', lg='2')
-            img(:src='element.title.tallBoxArt')
-          v-col(cols='12', lg='6')
-            h2 {{ element.title.title }}
-            .white-font--text {{ element.title.releaseYear }} {{ element.title.maturity }}
-            div
-              span.white-font--text(:class='$titleStatusColor(element.status)') {{ element.status }}
-              span.white-font--text {{ " • Scored " }}
-              span(:class='$titleStatusColor(element.status)') {{ element.score || "-" }}
-          v-col(cols='12', lg='4') {{ $moment(element.postedOn.seconds * 1000).format("MMM D, hh:ss a") }}
-  v-row.title-border
-    v-col
-      h3 FAVORITES
-  v-row
-    v-col(cols='12', lg='6')
-      h4.subtitle-border TV SHOWS
-      v-container(fluid)
-        v-row(v-for='(show, id) in user.favorites.shows', :key='id')
-          v-col(cols='12', lg='3')
-            img(:src='show.image')
-          v-col(cols='12', lg='9')
-            h3 {{ show.title }}
-            .white-font--text
-              span {{ show.year + " " + show.maturity }}
-              span {{ " " + show.season + " Seasons" }}
-            .white-font--text {{ show.genres.map((genre) => genre.name).join(", ") }}
-    v-col(cols='12', lg='6')
-      h4.subtitle-border FILMS
-      v-container(fluid)
-        v-row(v-for='(film, id) in user.favorites.films', :key='id')
-          v-col(cols='12', lg='3')
-            img(:src='film.image')
-          v-col(cols='12', lg='9')
-            h3 {{ film.title }}
-            .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
-            .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
+  v-container(fluid)
+    v-row.title-border
+      v-col
+        h3 STATISTICS
+      v-col.text-right(v-if='self')
+        a(@click='$nuxt.$emit("edit", true)') EDIT
+  v-container(fluid)
+    v-row
+      v-col(cols='12', lg='6')
+        h4.subtitle-border TV SHOWS
+        v-container(fluid)
+          v-row
+            v-col(cols='12', lg='5')
+              doughnut-chart(
+                :chartdata='tvShowsChartData',
+                :options='optionsDoughnut'
+              )
+            v-col(cols='12', lg='7')
+              .d-flex.justify-space-between(
+                v-for='(stat, index) in tvShowsStats',
+                :class='{ even: index % 2 === 1 }',
+                :key='stat.name'
+              )
+                div {{ stat.name }}
+                div(:class='stat.class ? stat.class : ""') {{ stat.value }}
+        h4.subtitle-border FILMS
+        v-container(fluid)
+          v-row
+            v-col(cols='12', lg='5')
+              doughnut-chart(
+                :chartdata='filmsChartData',
+                :options='optionsDoughnut'
+              )
+            v-col(cols='12', lg='7')
+              .d-flex.justify-space-between(
+                v-for='(stat, index) in filmsStats',
+                :class='{ even: index % 2 === 1 }',
+                :key='stat.name'
+              )
+                div {{ stat.name }}
+                div(:class='stat.class ? stat.class : ""') {{ stat.value }}
+      v-col(cols='12', lg='6')
+        h4.subtitle-border LATEST TV SHOWS WATCHED
+        v-container(v-if='tvShows.length > 0', fluid)
+          v-row(
+            align='center',
+            v-for='element in tvShows.slice(0, 3)',
+            :key='element.title.id'
+          )
+            v-col(cols='12', lg='2')
+              img(:src='element.title.tallBoxArt')
+            v-col(cols='12', lg='6')
+              h2 {{ element.title.title }}
+              .white-font--text {{ element.title.releaseYear }} {{ element.title.maturity }} {{ element.title.seasonCount }} Season
+              progress-bar(
+                :status='element.status',
+                :episodes='element.episodes',
+                :episodeCount='element.title.episodeCount',
+                :width='200'
+              )
+              div
+                span.white-font--text {{ element.status }}
+                span(v-if='element.status !== "Save for Later"')
+                  span(:class='$titleStatusColor(element.status)') {{ " " + element.episodes }}
+                  span.white-font--text /{{ element.title.episodeCount }}
+                span.white-font--text {{ " • Scored " }}
+                span(:class='$titleStatusColor(element.status)') {{ element.score || "-" }}
+            v-col(cols='12', lg='4') {{ $moment(element.postedOn.seconds * 1000).format("MMM D, hh:ss a") }}
+        v-container(v-else, fluid, style='height: 227px')
+          v-row
+            v-col
+              p You have no recent tv shows
+        h4.subtitle-border LATEST FILMS WATCHED
+        v-container(v-if='films.length > 0', fluid)
+          v-row(
+            align='center',
+            v-for='element in films.slice(0, 3)',
+            :key='element.title.id'
+          )
+            v-col(cols='12', lg='2')
+              img(:src='element.title.tallBoxArt')
+            v-col(cols='12', lg='6')
+              h2 {{ element.title.title }}
+              .white-font--text {{ element.title.releaseYear }} {{ element.title.maturity }}
+              div
+                span.white-font--text(:class='$titleStatusColor(element.status)') {{ element.status }}
+                span.white-font--text {{ " • Scored " }}
+                span(:class='$titleStatusColor(element.status)') {{ element.score || "-" }}
+            v-col(cols='12', lg='4') {{ $moment(element.postedOn.seconds * 1000).format("MMM D, hh:ss a") }}
+        v-container(v-else, fluid, style='height: 227px')
+          v-row
+            v-col
+              p You have no recent films
+  v-container(fluid)
+    v-row.title-border
+      v-col
+        h3 FAVORITES
+  v-container(fluid)
+    v-row
+      v-col(cols='12', lg='6')
+        h4.subtitle-border TV SHOWS
+        v-container(v-if='Object.keys(user.favorites.shows).length > 0', fluid)
+          v-row(v-for='(show, id) in user.favorites.shows', :key='id')
+            v-col(cols='12', lg='3')
+              img(:src='show.image')
+            v-col(cols='12', lg='9')
+              h3 {{ show.title }}
+              .white-font--text
+                span {{ show.year + " " + show.maturity }}
+                span {{ " " + show.season + " Seasons" }}
+              .white-font--text {{ show.genres.map((genre) => genre.name).join(", ") }}
+        v-container(v-else, fluid, style='height: 227px')
+          v-row
+            v-col
+              p No favorites yet
+      v-col(cols='12', lg='6')
+        h4.subtitle-border FILMS
+        v-container(v-if='Object.keys(user.favorites.films).length > 0', fluid)
+          v-row(v-for='(film, id) in user.favorites.films', :key='id')
+            v-col(cols='12', lg='3')
+              img(:src='film.image')
+            v-col(cols='12', lg='9')
+              h3 {{ film.title }}
+              .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
+              .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
+        v-container(v-else, fluid, style='height: 227px')
+          v-row
+            v-col
+              p No favorites yet
 </template>
 <script>
 export default {

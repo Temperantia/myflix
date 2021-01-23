@@ -6,8 +6,11 @@ v-autocomplete(
   dense,
   :hide-details='true',
   append-icon='mdi-magnify',
+  :search-input='input',
+  :filter='search',
   background-color='#0f0f0f',
   placeholder='SEARCH FOR TITLES',
+  cache-items,
   width='0'
 )
   template(v-slot:item='{ item }')
@@ -25,6 +28,9 @@ v-autocomplete(
   outlined,
   dense,
   :hide-details='true',
+  cache-items,
+  :search-input='input',
+  :filter='search',
   append-icon='mdi-magnify',
   background-color='#0f0f0f'
 )
@@ -40,7 +46,17 @@ export default {
   data: () => ({
     similar: '',
     selected: '',
+    input: '',
     items: [],
+    map: {
+      a: 'á|à|ã|â|À|Á|Ã|Â',
+      e: 'é|è|ê|É|È|Ê',
+      i: 'í|ì|î|Í|Ì|Î',
+      o: 'ó|ò|ô|õ|Ó|Ò|Ô|Õ',
+      u: 'ú|ù|û|ü|Ú|Ù|Û|Ü',
+      c: 'ç|Ç',
+      n: 'ñ|Ñ',
+    },
   }),
   props: { nav: Boolean, title: Object },
   methods: {
@@ -63,6 +79,19 @@ export default {
     },
     getId(title) {
       return this.$search.find((item) => item.t === title).id;
+    },
+    search(item, queryText, itemText) {
+      return (
+        this.slugify(itemText)
+          .toLocaleLowerCase()
+          .indexOf(this.slugify(queryText).toLocaleLowerCase()) > -1
+      );
+    },
+    slugify(str) {
+      for (const pattern in this.map) {
+        str = str.replace(new RegExp(this.map[pattern], 'g'), pattern);
+      }
+      return str;
     },
   },
   created() {

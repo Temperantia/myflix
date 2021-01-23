@@ -41,7 +41,7 @@ v-container(fluid)
               ) {{ title.status }}
           .mb-2
             span.white-font--text {{ title.y + " " }}
-            span.py-1.px-2.white-font--text.white-font--border.border {{ $maturities[title.v] }}
+            span.py-1.px-2.white-font--text.white-font--border.border {{ $maturitiesEurope[title.v] }}
             span.white-font--text(v-if='title.s') {{ " " + title.s + " SEASONS" }}
           .mb-2(
             v-html='title.d.length < 100 ? title.d : title.d.substring(0, 100) + "..."'
@@ -69,8 +69,8 @@ v-container(fluid)
             span.white-font--text O R I G I N A L
       .my-1
         span.white-font--text.mr-2 {{ title.y }}
-        span.white-font--text.mr-1.py-1.px-2.border.white-font--border {{ $maturities[title.v] }}
-        span.white-font--text.mr-1 {{ title.s ? title.s : 1 }} SEASON
+        span.white-font--text.mr-1.py-1.px-2.border.white-font--border {{ $maturitiesEurope[title.v] }}
+        span.white-font--text.mr-1(v-if='title.s') {{ title.s }} SEASONS
         b(v-if='flixlist')
           i.green-watching--text(v-if='title.status === "Watching"') {{ title.episodes }}
             span {{ " / " + title.e }}

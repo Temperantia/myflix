@@ -19,7 +19,7 @@ v-app(app)
                   :key='item.name',
                   @click='item.hook'
                 )
-                  v-list-item-name {{ item.name }}
+                  v-list-item-title {{ item.name }}
             div(v-else)
               nuxt-link(to='/sign-in')
                 button.button.button-red.mr-5 SIGN IN

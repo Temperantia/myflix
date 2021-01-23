@@ -18,7 +18,7 @@ div
         )
       v-col(cols='12', lg='2') User Score
         v-select(
-          :items='[ "All",...Object.entries($ratings).map(([score, rating]) => `(${score}) ${rating}`).reverse(), ]',
+          :items='[ "All",...Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`).reverse(), ]',
           v-model='score',
           hide-details,
           outlined,

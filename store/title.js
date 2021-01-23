@@ -1,5 +1,10 @@
 export const state = () => ({
   data: null,
+  status: "",
+  episodes: "",
+  score: "",
+  bingeworthy: false,
+  saved: false,
   reviews: [],
   recommendations: []
 });
@@ -11,6 +16,21 @@ export const getters = {
 export const mutations = {
   LOAD_TITLE(state, data) {
     state.data = data;
+  },
+  UPDATE_STATUS(state, status) {
+    state.status = status;
+  },
+  UPDATE_EPISODES(state, episodes) {
+    state.episodes = episodes;
+  },
+  UPDATE_SCORE(state, score) {
+    state.score = score;
+  },
+  UPDATE_BINGEWORTHY(state, bingeworthy) {
+    state.bingeworthy = bingeworthy;
+  },
+  UPDATE_SAVED(state, saved) {
+    state.saved = saved;
   },
   LOAD_REVIEWS(state, reviews) {
     state.reviews = reviews;

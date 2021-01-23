@@ -38,28 +38,30 @@ export async function doc(query, name, cookies) {
   return parse(cache);
 }
 
-const maturities = {
+const maturitiesEurope = {
+  AL: "PG",
   "Kids OK": "TV-Y7",
   6: "TV-Y7",
   9: "G",
-  AL: "PG",
   12: "PG-13",
   14: "PG-13",
   16: "TV-MA",
   18: "TV-MA"
 };
 
+const maturities = ["TV-Y7", "G", "PG", "PG-13", "TV-MA"];
+
 const ratings = {
-  1: "Horrible",
-  2: "Awful",
-  3: "Terrible",
-  4: "Bad",
-  5: "Average",
-  6: "Fine",
-  7: "Good",
-  8: "Outstanding",
+  10: "Masterpiece",
   9: "Special",
-  10: "Masterpiece"
+  8: "Outstanding",
+  7: "Good",
+  6: "Fine",
+  5: "Average",
+  4: "Bad",
+  3: "Terrible",
+  2: "Awful",
+  1: "Horrible"
 };
 
 const statusesTvShow = [
@@ -279,7 +281,13 @@ export default async (
       status,
       episodes,
       score,
-      title,
+      title: {
+        title: title.title,
+        tallBoxArt: title.tallBoxArt,
+        releaseYear: title.releaseYear,
+        maturity: title.maturity,
+        episodeCount: title.episodeCount,
+      },
       postedOn: $fireModule.firestore.Timestamp.now()
     };
     collectionUsers.doc(idUser).update({ [`flixlist.${title.id}`]: data });
@@ -307,7 +315,7 @@ export default async (
             title: title.title,
             year: title.releaseYear,
             maturity: title.maturity ? title.maturity : null,
-            season: title.seasonCount ? title.seasonCount : null,
+            season: title.seasonCount ? title.seasonCount : 1,
             genres: title.genres
             //duration: title.duration
           }
@@ -415,6 +423,7 @@ export default async (
   inject("search", search);
   inject("categories", categories);
   inject("ratings", ratings);
+  inject("maturitiesEurope", maturitiesEurope);
   inject("maturities", maturities);
   inject("statusesTvShow", statusesTvShow);
   inject("statusesFilm", statusesFilm);

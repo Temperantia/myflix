@@ -40,22 +40,22 @@ v-container(fluid)
                     v-if='item !== "Remove from List"',
                     :class='$titleStatusColor(item)'
                   ) {{ item }}
-              client-only
-                span.d-flex.align-center(
-                  style='position: absolute; top: 0; bottom: 0; right: 40px'
+              span.d-flex.align-center(
+                v-if='title.summary.type === "show" && status && status !== "Save for Later"',
+                style='position: absolute; top: 0; bottom: 0; right: 35px'
+              )
+                input.pr-1.border.white-font--border.text-right(
+                  :class='$titleStatusColor(status)',
+                  style='width: 30px',
+                  type='number',
+                  v-model='episodes',
+                  @input='updateEpisodes'
                 )
-                  input.pr-1.border.white-font--border.text-right(
-                    :class='$titleStatusColor(status)',
-                    style='width: 30px',
-                    type='number',
-                    v-model='episodes',
-                    @input='updateEpisodes'
-                  )
-                  span.ml-1 {{ " / " + title.episodeCount }}
+                span.ml-1 {{ " / " + title.episodeCount }}
         v-col(cols='12', lg='4')
           client-only
             v-select(
-              :items='Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`)',
+              :items='Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`).reverse()',
               outlined,
               v-model='score',
               dense,
@@ -90,45 +90,61 @@ v-container(fluid)
     v-col
       client-only
         h3.title-border OFFICIAL SYNOPSIS
-        p.pa-2(v-html='title.synopsis')
+        v-container(fluid)
+          v-row
+            v-col
+              p(v-html='title.synopsis ? title.synopsis : "Not Available"')
   v-row(v-if='title.imdbCast')
     v-col
       h3.title-border CAST
-      v-row
-        v-col(v-for='actor in title.cast', cols='6', md='2', :key='actor.name')
-          v-row
-            v-col(cols='3')
-              img(:src='actor.image')
-            v-col.pl-1.pt-1(cols='9')
-              div {{ actor.name }}
-              div as
-                span.red-netflix--text.pl-2 {{ actor.character }}
-              div(v-if='title.summary.type === "show"') {{ actor.episodes }}
+      v-container(fluid)
+        v-row
+          v-col(
+            v-if='title.cast',
+            v-for='actor in title.cast',
+            cols='6',
+            md='2',
+            :key='actor.name'
+          )
+            v-row
+              v-col(cols='3')
+                img(:src='actor.image')
+              v-col.pl-1.pt-1(cols='9')
+                div {{ actor.name }}
+                div as
+                  span.red-netflix--text.pl-2 {{ actor.character }}
+                div(v-if='title.summary.type === "show"') {{ actor.episodes }}
+          v-col(v-else)
+            p Not Available
   v-row
     v-col
       h3.title-border CREDITS
-      v-row
-        v-col(
-          v-for='(credits, category) in title.credits',
-          cols='12',
-          md='4',
-          :key='category'
-        )
-          h4.mb-2 {{ category }}
-          template(v-if='Object.keys(credits).length > 5')
-            template(v-if='expanded[category]')
-              div(v-for='credit in credits', :key='credit') {{ credit }}
-            template(v-else)
-              div(v-for='credit in credits.slice(0, 5)', :key='credit') {{ credit }}
-            .red-netflix--text.click(
-              v-if='expanded[category]',
-              @click='$set(expanded, category, false)'
-            ) {{ " show less" }}
-            .red-netflix--text.click(
-              v-else,
-              @click='$set(expanded, category, true)'
-            ) {{ " show more" }}
-          div(v-else, v-for='credit in credits', :key='credit') {{ credit }}
+      v-container(fluid)
+        v-row
+          v-col(
+            v-if='title.credits',
+            v-for='(credits, category) in title.credits',
+            cols='12',
+            md='4',
+            :key='category'
+          )
+            h4.mb-2 {{ category }}
+            template(v-if='Object.keys(credits).length > 5')
+              template(v-if='expanded[category]')
+                div(v-for='credit in credits', :key='credit') {{ credit }}
+              template(v-else)
+                div(v-for='credit in credits.slice(0, 5)', :key='credit') {{ credit }}
+              .red-netflix--text.click(
+                v-if='expanded[category]',
+                @click='$set(expanded, category, false)'
+              ) {{ " show less" }}
+              .red-netflix--text.click(
+                v-else,
+                @click='$set(expanded, category, true)'
+              ) {{ " show more" }}
+            div(v-else, v-for='credit in credits', :key='credit') {{ credit }}
+          v-col(v-else)
+            p Not Available
 </template>
 <script>
 export default {
@@ -175,12 +191,7 @@ export default {
     },
     statuses() {
       const statuses = this.$statusesTvShow;
-      return [
-        ...(this.title.availability.isPlayable
-          ? statuses
-          : statuses.filter((status) => status === 'Save for Later')),
-        'Remove from List',
-      ];
+      return [...statuses, 'Remove from List'];
     },
   },
   methods: {

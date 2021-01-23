@@ -1,16 +1,21 @@
 <template lang="pug">
 v-col(cols='12', lg='10')
-  v-row.title-border
-    v-col
-      h3 {{ user.username.toUpperCase() + "'S RECOMMENDATIONS" }}
-    v-col.text-right
-      .click(@click='$router.push("/profile/" + user.username)') BACK TO PROFILE
   v-container(fluid)
+    v-row.title-border
+      v-col
+        h3 {{ user.username.toUpperCase() + "'S RECOMMENDATIONS" }}
+      v-col.text-right
+        .click(@click='$router.push("/profile/" + user.username)') BACK TO PROFILE
+  v-container(v-if='recommendations.length > 0', fluid)
     recommendation(
       :recommendation='recommendation',
       v-for='recommendation in recommendations',
       :key='recommendation.id'
     )
+  v-container(v-else, fluid)
+    v-row
+      v-col
+        p No recommendations yet
 </template>
 <script>
 export default {

@@ -6,12 +6,84 @@ defaultLayout
       //- ad
       client-only
         v-col(cols='12', md='2')
-          img(:src='title.tallBoxArt')
-          .mt-5(v-if='$store.getters["localStorage/CONNECTED"]')
-            v-row.title-border
+          v-container(fluid)
+            img(:src='title.tallBoxArt')
+            .mt-5(v-if='!isCurrentTab(tabs[0].route) && $store.getters["localStorage/CONNECTED"]')
+              v-row.title-border(align='center')
+                v-col
+                  h3 YOUR OVERVIEW
+                v-col.text-right
+                  a.click(
+                    v-if='isFavorite(title.id)',
+                    @click='$removeFavorite(title, title.summary.type === "show" ? "shows" : "films")'
+                  ) Remove from Favorites
+                  a.click(
+                    v-else,
+                    @click='$addFavorite(title, title.summary.type === "show" ? "shows" : "films")'
+                  ) Add to Favorites
+              v-row(align='center')
+                v-col(cols='12', xl='4') Status
+                v-col(cols='12', xl='8')
+                  client-only
+                    div(style='position: relative')
+                      v-select(
+                        :items='statuses',
+                        outlined,
+                        v-model='status',
+                        dense,
+                        :hide-details='true',
+                        @change='updateStatus'
+                      )
+                        template(v-slot:selection='{ item }')
+                          span(
+                            v-if='item !== "Remove from List"',
+                            :class='$titleStatusColor(item)'
+                          ) {{ item }}
+                      span.d-flex.align-center(
+                        v-if='title.summary.type === "show" && status && status !== "Save for Later"',
+                        style='position: absolute; top: 0; bottom: 0; right: 35px'
+                      )
+                        input.pr-1.border.white-font--border.text-right(
+                          :class='$titleStatusColor(status)',
+                          style='width: 30px',
+                          type='number',
+                          v-model='episodes',
+                          @input='updateEpisodes'
+                        )
+                        span.ml-1 {{ " / " + title.episodeCount }}
+              v-row(align='center')
+                v-col(cols='12', xl='4') Your Score
+                v-col(cols='12', xl='8')
+                  v-select(
+                    :items='Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`).reverse()',
+                    outlined,
+                    v-model='score',
+                    dense,
+                    :hide-details='true'
+                  )
+              v-row(align='center', v-if='title.summary.type === "show"')
+                v-col
+                  v-btn(
+                    color='black-search',
+                    @click='bingeworthy = !bingeworthy; saved = false'
+                  )
+                    v-icon(
+                      :class='bingeworthy ? "green-watching--text" : "greyButton--text"',
+                      left
+                    ) mdi-check
+                    span.font-weight-light(
+                      :class='bingeworthy ? "white--text" : "white-font--text"'
+                    ) Would you binge-watch this series?
+              v-row(align='center')
+                v-col.d-flex.justify-center
+                  button.update(@click='update')
+                    v-icon(color='green-watching', v-if='saved') mdi-check
+                    span(v-else) UPDATE
+          v-container(fluid)
+            v-row.title-border(align='center')
               v-col
-                h3.text-h5 YOUR OVERVIEW
-              v-col.text-right
+                h3 INFORMATION
+              v-col.text-right(v-if='isCurrentTab(tabs[0].route)')
                 a.click(
                   v-if='isFavorite(title.id)',
                   @click='$removeFavorite(title, title.summary.type === "show" ? "shows" : "films")'
@@ -20,67 +92,33 @@ defaultLayout
                   v-else,
                   @click='$addFavorite(title, title.summary.type === "show" ? "shows" : "films")'
                 ) Add to Favorites
-            v-row(align='center')
-              v-col(cols='4') Status:
-              v-col(cols='8')
-                v-select(
-                  :items='statuses',
-                  outlined,
-                  v-model='status',
-                  dense,
-                  :hide-details='true',
-                  @change='updateStatus'
-                )
-            v-row(align='center')
-              v-col(cols='4') Your Score
-              v-col(cols='8')
-                v-select(
-                  :items='Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`)',
-                  outlined,
-                  v-model='score',
-                  dense,
-                  :hide-details='true'
-                )
-            v-row(align='center', v-if='title.summary.type === "show"')
-              v-col
-                v-btn.mr-3(
-                  color='black-search',
-                  @click='bingeworthy = !bingeworthy; saved = false'
-                )
-                  v-icon(
-                    :class='bingeworthy ? "green-watching--text" : "greyButton--text"',
-                    left
-                  ) mdi-check
-                  span.font-weight-light(
-                    :class='bingeworthy ? "white--text" : "white-font--text"'
-                  ) Would you binge-watch this series?
             v-row
-              v-col(offset='3', cols='6', align='center')
-                button.update(@click='update')
-                  v-icon(color='green-watching', v-if='saved') mdi-check
-                  span(v-else) UPDATE
-          .mt-5
-            h3.text-h5.title-border INFORMATION
-            .my-1(v-for='(data, name) in title.information', :key='name')
-              b {{ name }}:
-              span.pl-1 {{ data || "-" }}
-          .mt-5
-            h3.title-border STATISTICS
-            .my-1(v-for='(data, name) in title.statistics', :key='name')
-              b {{ name }}:
-              span.pl-1 {{ data }}
+              v-col
+                .my-1(v-for='(data, name) in title.information', :key='name')
+                  b {{ name }}:
+                  span.pl-1 {{ data || "-" }}
+          v-container(fluid)
+            v-row.title-border(align='center')
+              v-col
+                h3 STATISTICS
+            v-row
+              v-col
+                .my-1(v-for='(data, name) in title.statistics', :key='name')
+                  b {{ name }}:
+                  span.pl-1 {{ data }}
       v-col(cols='12', md='8')
-        v-row.title-border
-          v-col(v-if='$vuetify.breakpoint.mdAndUp', md='12')
-            nuxt-link(:to='tab.route', v-for='tab in tabs', :key='tab.name')
-              h3.d-inline.mr-10(
-                :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
-              ) {{ tab.name }}
-          v-col(v-else, v-for='tab in tabs', :key='tab.name', cols='12')
-            nuxt-link(:to='tab.route')
-              h3.d-inline.mr-10(
-                :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
-              ) {{ tab.name }}
+        v-container(fluid)
+          v-row.title-border
+            v-col(v-if='$vuetify.breakpoint.mdAndUp', md='12')
+              nuxt-link(:to='tab.route', v-for='tab in tabs', :key='tab.name')
+                h3.d-inline.mr-10(
+                  :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
+                ) {{ tab.name }}
+            v-col(v-else, v-for='tab in tabs', :key='tab.name', cols='12')
+              nuxt-link(:to='tab.route')
+                h3.d-inline.mr-10(
+                  :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
+                ) {{ tab.name }}
         breadcrumb(:titleName='title.title')
         nuxt
 </template>
@@ -129,12 +167,7 @@ export default {
   computed: {
     statuses() {
       const statuses = this.$statusesTvShow;
-      return [
-        ...(this.title.availability.isPlayable
-          ? statuses
-          : statuses.filter((status) => status === 'Save for Later')),
-        'Remove from List',
-      ];
+      return [...statuses, 'Remove from List'];
     },
     user() {
       return this.$store.getters['localStorage/USER'];

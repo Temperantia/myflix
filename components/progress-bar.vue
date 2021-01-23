@@ -1,8 +1,15 @@
 <template lang="pug">
 bar-chart(
+  v-if='width',
   :chartdata='tvShowsChartDataLatest(status, episodes, episodeCount)',
   :options='optionsBar',
-  :width='width ? width : "auto"',
+  :width='width',
+  :height='15'
+)
+bar-chart(
+  v-else,
+  :chartdata='tvShowsChartDataLatest(status, episodes, episodeCount)',
+  :options='optionsBar',
   :height='15'
 )
 </template>

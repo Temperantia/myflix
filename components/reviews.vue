@@ -74,23 +74,24 @@ v-container(v-else-if='edition', fluid)
         .white-font--text - BBCode is disabled.
         .white-font--text - This review is public.
         .white-font--text.mt-5 Note: this area is only to be used for posting a review of the series after you have seen it. This is not discussion area.
-v-container(v-else, fluid)
-  v-row.mt-5.title-border
-    v-col(cols='12', lg='8')
-      h3 "{{ title.title.toUpperCase() }}" REVIEWS
-    v-col.text-lg-right(cols='12', lg='4')
-      client-only
-        button(
-          v-if='$store.state.localStorage.connected',
-          @click='edition = true'
-        ) WRITE A REVIEW
-        button(v-else, @click='$router.push("/sign-in")') SIGN IN TO WRITE A REVIEW
-  review(
-    :review='review',
-    :title='title',
-    v-for='review in reviews',
-    :key='review.id'
-  )
+div(v-else)
+  v-container(fluid)
+    v-row.title-border
+      v-col(cols='12', lg='8')
+        h3 REVIEWS
+      v-col.text-lg-right(cols='12', lg='4')
+        client-only
+          button(
+            v-if='$store.state.localStorage.connected',
+            @click='edition = true'
+          ) MAKE A REVIEW
+          button(v-else, @click='$router.push("/sign-in")') SIGN IN TO MAKE A REVIEW
+  template(v-if='reviews.length > 0')
+    review(:review='review', v-for='review in reviews', :key='review.id')
+  v-container(v-else, fluid)
+    v-row
+      v-col
+        p No reviews yet
 </template>
 <script>
 export default {
