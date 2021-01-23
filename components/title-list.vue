@@ -1,9 +1,5 @@
 <template lang="pug">
 v-container(fluid)
-  client-only(v-if='pages > 1')
-    v-row(justify='center')
-      v-col
-        v-pagination(:length='pages', v-model='page', :total-visible='9')
   v-row(v-if='gallery')
     v-col.click.pa-0(
       v-for='title in titles',
@@ -27,9 +23,9 @@ v-container(fluid)
           :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + title.b + ");"'
         )
         div(
-          style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))'
+          style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))'
         )
-        div(style='position: absolute; bottom: 0; left: 0; padding: 30px')
+        div(style='position: absolute; bottom: 0; left: 0; padding: 22px')
           .mb-2
             h2.d-inline {{ title.t }}
             b(v-if='flixlist')
@@ -41,12 +37,12 @@ v-container(fluid)
               ) {{ title.status }}
           .mb-2
             span.white-font--text {{ title.y + " " }}
-            span.py-1.px-2.white-font--text.white-font--border.border {{ $maturitiesEurope[title.v] }}
+            span.py-0.px-1.white-font--text.white-font--border.border {{ $maturitiesEurope[title.v] }}
             span.white-font--text(v-if='title.s') {{ " " + title.s + " SEASONS" }}
-          .mb-2(
+          .mb-2.titleDetails(
             v-html='title.d.length < 100 ? title.d : title.d.substring(0, 100) + "..."'
           )
-          div
+          div.titleDetails
             span {{ "Genres: " }}
             span.white-font--text {{ title.g.join(", ") }}
   v-row.subtitle-border(v-else, v-for='title in titles', :key='title.id')
@@ -92,7 +88,7 @@ v-container(fluid)
   client-only(v-if='pages > 1')
     v-row(justify='center')
       v-col
-        v-pagination(:length='pages', v-model='page', :total-visible='9')
+        v-pagination(:length='pages', v-model='page', :total-visible='7')
 </template>
 <script>
 export default {
@@ -140,3 +136,9 @@ export default {
   },
 };
 </script>
+<style>
+.titleDetails {
+  line-height: 18px;
+  padding-top: 5px;
+}
+</style>

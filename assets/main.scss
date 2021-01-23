@@ -1,3 +1,10 @@
+* {
+  color: white;
+  word-wrap: break-word;
+  font-family: "Roboto", "sans-serif";
+  font-weight: 300;
+}
+
 .button {
   padding: 5px 30px;
   border-radius: 5px;
@@ -32,11 +39,6 @@
 
 .subtitle-border {
   border-bottom: 1px solid $white-font;
-}
-
-* {
-  color: white;
-  word-wrap: break-word;
 }
 
 .white-font--text {

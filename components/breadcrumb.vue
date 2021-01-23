@@ -37,3 +37,9 @@ export default {
   },
 };
 </script>
+<style>
+.pa-2 {
+  padding-top: 0;
+  margin-top: 12px;
+}
+</style>
