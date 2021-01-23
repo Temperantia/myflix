@@ -12,11 +12,10 @@ v-autocomplete(
 )
   template(v-slot:item='{ item }')
     nuxt-link.w-100(:to='getRoute(item)')
-      v-list-item
-        v-row
-          v-col(cols='5')
-            img(:src='getImage(item)')
-          v-col(cols='7') {{ item }}
+      v-list-item.pa-0
+        .searchImage
+          img(:src='getImage(item)')
+        .searchText {{ item }}
 v-autocomplete(
   v-else,
   :items='items',
@@ -82,5 +81,15 @@ export default {
 }
 ::v-deep input {
   text-align: center;
+}
+.searchImage {
+  width: 80px;
+  height: auto;
+}
+.searchText {
+  display: inline-block;
+  padding-left: 15px;
+  font-size: 16px;
+  font-weight: 500;
 }
 </style>

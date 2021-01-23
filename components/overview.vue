@@ -12,11 +12,11 @@ v-container(fluid)
         v-col(cols='12', md='9')
           v-row
             v-col(cols='12', lg='4')
-              h2 {{ "Ranked #" + title.rank }}
+              h2 <span>Ranked </span>{{ "#" + title.rank }}
             v-col(cols='12', lg='4')
-              h2 {{ "Popularity #" + title.popularity }}
+              h2 <span>Popularity </span>{{ "#" + title.popularity }}
             v-col(cols='12', lg='4')
-              h2 {{ "Following " + title.statistics.Followers }}
+              h2 <span>Following </span>{{ title.statistics.Followers }}
           .white-font--text {{ title.releaseYear }} | {{ title.maturity }}
             span.white-font--text(v-if='title.seasonCount') {{ " | " + title.seasonCount + (title.seasonCount > 1 ? " Seasons" : " Season") }}
           div
@@ -47,8 +47,8 @@ v-container(fluid)
   v-row
     v-col
       h3.title-border CREDITS
-      v-row
-        v-col(
+      v-row.pl-3
+        v-col.pa-2(
           v-for='(credits, category) in title.credits',
           cols='12',
           md='4',
@@ -89,3 +89,16 @@ export default {
   methods: {},
 };
 </script>
+<style lang="scss" scoped>
+.title-border {
+  font-size: 16px;
+  font-weight: 500px;
+}
+h2 {
+  font-size: 22px;
+      
+  span {
+    font-weight: 300;
+  }
+}
+</style>

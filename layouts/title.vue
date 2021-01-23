@@ -1,16 +1,16 @@
 <template lang="pug">
 defaultLayout
-  v-container(fluid)
+  v-container.mt-4
     v-row
       //-v-col(cols='12', md='1')
       //- ad
       client-only
-        v-col(cols='12', md='2')
+        v-col(cols='12', md='2', offset-md="1")
           img(:src='title.tallBoxArt')
           .mt-5(v-if='$store.getters["localStorage/CONNECTED"]')
             v-row.title-border
               v-col
-                h3.text-h5 YOUR OVERVIEW
+                h3 YOUR OVERVIEW
               v-col.text-right
                 a.click(
                   v-if='isFavorite(title.id)',
@@ -54,18 +54,18 @@ defaultLayout
               v-col(offset='3', cols='6', align='center')
                 button.update(@click='update') UPDATE
           .mt-5
-            h3.text-h5.title-border INFORMATION
-            .my-1(v-for='(data, name) in title.information', :key='name')
-              b {{ name }}:
-              span.pl-1 {{ data || "-" }}
+            h3.title-border INFORMATION
+            table(v-for='(data, name) in title.information', :key='name')
+              th.b {{ name }}:
+              td.pl-1 {{ data || "-" }}
           .mt-5
             h3.title-border STATISTICS
-            .my-1(v-for='(data, name) in title.statistics', :key='name')
-              b {{ name }}:
-              span.pl-1 {{ data }}
+            table(v-for='(data, name) in title.statistics', :key='name')
+              th.b {{ name }}:
+              td.pl-1 {{ data }}
       v-col(cols='12', md='8')
-        v-row.title-border
-          v-col(v-if='$vuetify.breakpoint.mdAndUp', md='12')
+        v-row.tabsRow
+          v-col.title-border.titleTabs(v-if='$vuetify.breakpoint.mdAndUp', md='12')
             nuxt-link(:to='tab.route', v-for='tab in tabs', :key='tab.name')
               h3.d-inline.mr-10(
                 :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
@@ -216,6 +216,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+img {
+  max-width: 100%;
+}
 input {
   padding-left: 5px;
   color: white;
@@ -230,5 +233,40 @@ fieldset {
   padding: 5px 30px;
   border: 1px solid $red-netflix;
   color: $red-netflix;
+}
+.breadcrumb {
+  padding: 0px 12px 12px 12px;
+  margin-top: 12px;
+}
+.titleTabs {
+  padding-left: 0px;
+  padding-bottom: 5px;
+}
+.tabsRow {
+  padding: 0px 20px;
+}
+h3 {
+  font-size: 16px;
+  font-weight: 500;
+  
+  .text-h5.title-border {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+}
+table {
+  width: 100%;
+  &:nth-child(even) {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  th {
+    text-align: left;
+  }
+  
+  td {
+    text-align: right;
+    }
 }
 </style>

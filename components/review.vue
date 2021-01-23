@@ -80,12 +80,9 @@ export default {
         : this.review.author;
     },
     postedOn() {
-      return this.$dateFns.format(
-        this.preview
-          ? new Date()
-          : new Date(Date(this.review.postedOn.seconds)),
-        'MMM d, yyyy'
-      );
+      return this.$moment(
+        this.preview ? new Date() : new Date(this.review.postedOn.seconds)
+      ).format('MMM D, yyyy');
     },
   },
   methods: {

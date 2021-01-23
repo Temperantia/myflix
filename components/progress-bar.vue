@@ -1,20 +1,20 @@
 <template lang="pug">
-  bar-chart(
-    :chartdata='tvShowsChartDataLatest(status, episodes, episodeCount)',
-    :options='optionsBar'
-    :height='15'
-    :width='200'
-  )
+bar-chart(
+  :chartdata='tvShowsChartDataLatest(status, episodes, episodeCount)',
+  :options='optionsBar',
+  :width='width ? width : "auto"',
+  :height='15'
+)
 </template>
 <script>
 export default {
-  props: ['status', 'episodes', 'episodeCount'],
+  props: ['status', 'episodes', 'episodeCount', 'width'],
   data: () => ({
     optionsBar: {
       layout: {
         padding: {
           left: -20,
-          top: -20
+          top: -20,
         },
       },
       scales: {
@@ -56,9 +56,11 @@ export default {
         enabled: false,
       },
       maintainAspectRatio: false,
-      responsive: false
     },
   }),
+  created() {
+    this.optionsBar.responsive = !this.width;
+  },
   methods: {
     tvShowsChartDataLatest(status, episodes, total) {
       let color = '';
