@@ -1,6 +1,5 @@
 export default {
   target: "server",
-  // ssr: false,
   debug: true,
   plugins: [
     "~/plugins/firebase",
@@ -102,11 +101,11 @@ export default {
   styleResources: {
     scss: ["~/assets/variables.scss"]
   },
-  /*  pwa: {
+   pwa: {
     icon: {
       fileName: "logo.png"
     }
-  }, */
+  },
   "google-adsense": {
     id: "ca-pub-4080768963424465"
   }
