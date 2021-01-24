@@ -23,12 +23,11 @@ export default {
   components: true,
   buildModules: [],
   modules: [
-
-  /*   "@nuxtjs/moment",
-    "@nuxtjs/vuetify",
-    "nuxt-webfontloader", */
-    "@nuxtjs/style-resources",
-  /*   "@nuxt/typescript-build",
+    /*      "@nuxtjs/moment",
+     */ "@nuxtjs/vuetify",
+    /* "nuxt-webfontloader", */
+    "@nuxtjs/style-resources"
+    /*   "@nuxt/typescript-build",
     "@nuxtjs/imagemin",
     //"@nuxtjs/pwa"
 
