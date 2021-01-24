@@ -39,7 +39,7 @@ export const mutations = {
     Vue.set(state.user.flixlist, idTitle, data);
   },
   USER_FAVORITE_ADD(state, { type, favorite }) {
-    Vue.set(state.user.favorites[type], favorite);
+    Vue.set(state.user.favorites, type, favorite);
   },
   USER_FAVORITE_REMOVE(state, { type, id }) {
     Vue.delete(state.user.favorites[type], id);

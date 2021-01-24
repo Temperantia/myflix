@@ -93,7 +93,6 @@ export default async (
   { $fire, $fireModule, $moment, $toast, store, $cookies },
   inject
 ) => {
-  console.log("starting firebase");
   const firestore = $fire.firestore;
   const collectionData = firestore.collection("data");
   const collectionGlobals = firestore.collection("globals");
@@ -397,7 +396,6 @@ export default async (
     .sort((a, b) => b.value - a.value)
     .slice(0, 3);
 
-  console.log("ending firebase");
   inject("titleStatusColor", titleStatusColor);
   inject("getTitle", getTitle);
   inject("getReviews", getReviews);
