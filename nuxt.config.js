@@ -8,7 +8,7 @@ export default {
       // req is the Node.js http request object
 
       // res is the Node.js http response object
-
+      console.log("req");
       // next is a function to call to invoke the next middleware
       // Don't forget to call next at the end if your middleware is not an endpoint!
       next();
@@ -27,8 +27,8 @@ export default {
     "nuxt-webfontloader",
     "@nuxtjs/style-resources",
     "@nuxt/typescript-build",
-    "@nuxtjs/imagemin",
-    "@nuxtjs/pwa"
+    "@nuxtjs/imagemin"
+    //"@nuxtjs/pwa"
   ],
   modules: [
     "@nuxtjs/firebase",
