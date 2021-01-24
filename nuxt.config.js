@@ -23,20 +23,12 @@ export default {
   components: true,
   buildModules: [],
   modules: [
-    function() {
-      this.nuxt.hook("modules:before", (moduleContainer, options) => {
-        console.log("modules:before");
-      });
-      // or
-      this.nuxt.hook("modules:done", moduleContainer => {
-        console.log("modules:done");
-      });
-    },
-    "@nuxtjs/moment",
+
+  /*   "@nuxtjs/moment",
     "@nuxtjs/vuetify",
-    "nuxt-webfontloader",
+    "nuxt-webfontloader", */
     "@nuxtjs/style-resources",
-    "@nuxt/typescript-build",
+  /*   "@nuxt/typescript-build",
     "@nuxtjs/imagemin",
     //"@nuxtjs/pwa"
 
@@ -46,7 +38,7 @@ export default {
     ["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
     "@nuxtjs/robots",
     "cookie-universal-nuxt",
-    "vue-social-sharing/nuxt"
+    "vue-social-sharing/nuxt" */
   ],
   firebase: {
     /* config: {
