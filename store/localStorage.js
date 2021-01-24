@@ -1,5 +1,4 @@
 import Vue from "vue";
-//import { stateMerge } from "vue-object-merge";
 
 export const state = () => ({
   user: null,
@@ -39,8 +38,8 @@ export const mutations = {
   USER_FLIXLIST(state, { idTitle, data }) {
     Vue.set(state.user.flixlist, idTitle, data);
   },
-  USER_FAVORITE_ADD(state, favorite) {
-    stateMerge(state.user, favorite);
+  USER_FAVORITE_ADD(state, { type, favorite }) {
+    Vue.set(state.user.favorites[type], favorite);
   },
   USER_FAVORITE_REMOVE(state, { type, id }) {
     Vue.delete(state.user.favorites[type], id);

@@ -304,22 +304,21 @@ export default async (
   function addFavorite(title, type) {
     const idUser = store.getters["localStorage/USER"].id;
     const favorite = {
-      favorites: {
-        [type]: {
-          [title.id]: {
-            image: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
-            title: title.title,
-            year: title.releaseYear,
-            maturity: title.maturity ? title.maturity : null,
-            season: title.seasonCount ? title.seasonCount : 1,
-            genres: title.genres
-            //duration: title.duration
-          }
-        }
+      [title.id]: {
+        image: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
+        title: title.title,
+        year: title.releaseYear,
+        maturity: title.maturity ? title.maturity : null,
+        season: title.seasonCount ? title.seasonCount : 1,
+        genres: title.genres
       }
     };
-    collectionUsers.doc(idUser).update(favorite);
-    store.commit("localStorage/USER_FAVORITE_ADD", favorite);
+    collectionUsers.doc(idUser).update({
+      favorites: {
+        [type]: favorite
+      }
+    });
+    store.commit("localStorage/USER_FAVORITE_ADD", { type, favorite });
 
     collectionVideos.doc(title.id).update({
       favorites: $fireModule.firestore.FieldValue.arrayUnion(idUser)
