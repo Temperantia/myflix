@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { stateMerge } from "vue-object-merge";
+//import { stateMerge } from "vue-object-merge";
 
 export const state = () => ({
   user: null,
