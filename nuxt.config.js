@@ -1,7 +1,16 @@
 export default {
   target: "server",
   // ssr: false,
+  debug: true,
 
+  plugins: [
+    /* "~/plugins/firebase",
+    "~/plugins/auth",
+    "~/plugins/vue-scrollactive",
+    "~/plugins/ad.client" */
+  ],
+  components: true,
+  buildModules: [],
   modules: [
     ,
     /*      "@nuxtjs/moment",
