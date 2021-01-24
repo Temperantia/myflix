@@ -24,11 +24,11 @@ export default {
   buildModules: [],
   modules: [
     /*      "@nuxtjs/moment",
-     */ "@nuxtjs/vuetify",
+     */ /* "@nuxtjs/vuetify" */,
     /* "nuxt-webfontloader", */
     "@nuxtjs/style-resources",
        "@nuxt/typescript-build",
-    "@nuxtjs/imagemin",
+    //"@nuxtjs/imagemin",
     //"@nuxtjs/pwa"
 
    /*  "@nuxtjs/firebase",
