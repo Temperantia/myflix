@@ -1,6 +1,7 @@
 export default {
   target: "server",
   // ssr: false,
+  dev: true,
   debug: true,
 
   plugins: [
