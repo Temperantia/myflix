@@ -37,7 +37,7 @@ export default {
     ["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
     "@nuxtjs/robots",
     "cookie-universal-nuxt",
-    "vue-social-sharing/nuxt" */
+    "vue-social-sharing/nuxt"
   ],
   firebase: {
     /* config: {
