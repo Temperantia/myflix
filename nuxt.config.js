@@ -1,5 +1,16 @@
 export default {
   target: "server",
+  build: {
+    extend(config, { isServer }) {
+      if (isServer) {
+        config.externals = {
+          "@firebase/app": "commonjs @firebase/app",
+          "@firebase/auth": "commonjs @firebase/auth",
+          "@firebase/firestore": "commonjs @firebase/firestore"
+        };
+      }
+    }
+  },
   debug: true,
   plugins: [
     "~/plugins/firebase",
@@ -101,7 +112,7 @@ export default {
   styleResources: {
     scss: ["~/assets/variables.scss"]
   },
-   pwa: {
+  pwa: {
     icon: {
       fileName: "logo.png"
     }
