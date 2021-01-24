@@ -1,18 +1,6 @@
 export default {
   target: "server",
-  dev: true,
-  debug: true,
-   build: {
-    extend(config, { isServer }) {
-      if (isServer) {
-        config.externals = {
-          "@firebase/app": "commonjs @firebase/app",
-          "@firebase/firestore": "commonjs @firebase/firestore",
-          "@firebase/auth": "commonjs @firebase/auth"
-        };
-      }
-    }
-  },
+  ssr: false,
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
