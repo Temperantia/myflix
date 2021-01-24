@@ -33,8 +33,8 @@ export const mutations = {
   USER_REVIEW(state, review) {
     state.user.reviews.push(review);
   },
-  USER_RECOMMENDATION(state, recommendation) {
-    state.user.recommendations.push(recommendation);
+  USER_SUGGESTION(state, suggestion) {
+    state.user.suggestions.push(suggestion);
   },
   USER_FLIXLIST(state, { idTitle, data }) {
     Vue.set(state.user.flixlist, idTitle, data);

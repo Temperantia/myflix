@@ -171,12 +171,12 @@ export default {
         },
       },
       {
-        name: 'RECOMMENDATIONS',
+        name: 'SUGGESTIONS',
         hook: () => {
           this.$router.push(
             '/profile/' +
               this.$store.state.localStorage.user.username +
-              '/recommendations'
+              '/suggestions'
           );
         },
       },

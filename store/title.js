@@ -6,7 +6,7 @@ export const state = () => ({
   bingeworthy: false,
   saved: false,
   reviews: [],
-  recommendations: []
+  suggestions: []
 });
 
 export const getters = {
@@ -79,8 +79,8 @@ export const mutations = {
   LOAD_REVIEWS(state, reviews) {
     state.reviews = reviews;
   },
-  LOAD_RECOMMENDATIONS(state, recommendations) {
-    state.recommendations = recommendations;
+  LOAD_SUGGESTIONS(state, suggestions) {
+    state.suggestions = suggestions;
   },
   LIKE(state, payload) {
     const review = state.reviews.find(review => review.id === payload.id);
@@ -94,17 +94,17 @@ export const mutations = {
   CREATE_REVIEW(state, review) {
     state.reviews.push(review);
   },
-  CREATE_RECOMMENDATION(state, recommendation) {
-    state.recommendations.push(recommendation);
+  CREATE_SUGGESTION(state, suggestion) {
+    state.suggestions.push(suggestion);
   },
   REPORT_REVIEW(state, payload) {
     const review = state.reviews.find(review => review.id === payload.id);
     review.reports.push(payload.idUser);
   },
-  REPORT_RECOMMENDATION(state, payload) {
-    const recommendation = state.recommendations.find(
-      recommendation => recommendation.id === payload.id
+  REPORT_SUGGESTION(state, payload) {
+    const suggestion = state.suggestions.find(
+      suggestion => suggestion.id === payload.id
     );
-    recommendation.reports.push(payload.idUser);
+    suggestion.reports.push(payload.idUser);
   }
 };

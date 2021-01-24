@@ -86,7 +86,7 @@ div
                 span {{ " - " + $moment(review.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
     v-row
       v-col
-        h1.title-border RECOMMENDED GENRES
+        h1.title-border SUGGESTED GENRES
         v-container(fluid)
           v-row
             v-col.click(
@@ -108,65 +108,65 @@ div
                 div {{ category.value }} Titles
     v-row
       v-col(cols='12', lg='5')
-        h1.title-border LATEST USER RECOMMENDATIONS
+        h1.title-border LATEST USER SUGGESTIONS
     v-row
       v-col(
         cols='12',
         lg='4',
-        v-for='recommendation in recommendationsLatest',
-        :key='recommendation.id'
+        v-for='suggestion in suggestionsLatest',
+        :key='suggestion.id'
       )
         v-container(fluid)
           v-row
             v-col(cols='4', lg='2')
               nuxt-link(
-                :to='$search.find((item) => Number(item.id) == recommendation.title.id).r'
+                :to='$search.find((item) => Number(item.id) == suggestion.title.id).r'
               )
-                img(:src='recommendation.title.tallBoxArt')
+                img(:src='suggestion.title.tallBoxArt')
             v-col(cols='8', lg='4') If you liked
               nuxt-link(
-                :to='$search.find((item) => Number(item.id) == recommendation.title.id).r'
+                :to='$search.find((item) => Number(item.id) == suggestion.title.id).r'
               )
-                .red-netflix--text {{ recommendation.title.title }}
+                .red-netflix--text {{ suggestion.title.title }}
               client-only(v-if='favorites')
                 a.click(
-                  v-if='isFavorite(recommendation.title.id)',
-                  @click='removeFavoriteFromId(recommendation.title.id)'
+                  v-if='isFavorite(suggestion.title.id)',
+                  @click='removeFavoriteFromId(suggestion.title.id)'
                 ) Remove from Favorites
                 a.click(
                   v-else,
-                  @click='addFavoriteFromId(recommendation.title.id)'
+                  @click='addFavoriteFromId(suggestion.title.id)'
                 ) Add to Favorites
             v-col(cols='4', lg='2')
-              img(:src='recommendation.similar.image')
+              img(:src='suggestion.similar.image')
             v-col(cols='8', lg='4') Then you might like...
-              .red-netflix--text {{ recommendation.similar.title }}
+              .red-netflix--text {{ suggestion.similar.title }}
               client-only(v-if='favorites')
                 a.click(
-                  v-if='isFavorite(recommendation.similar.id)',
-                  @click='removeFavoriteFromId(recommendation.similar.id)'
+                  v-if='isFavorite(suggestion.similar.id)',
+                  @click='removeFavoriteFromId(suggestion.similar.id)'
                 ) Remove from Favorites
                 a.click(
                   v-else,
-                  @click='addFavoriteFromId(recommendation.similar.id)'
+                  @click='addFavoriteFromId(suggestion.similar.id)'
                 ) Add to Favorites
           v-row
             v-col
-              p {{ recommendation.content }}
-              div Recommendation by
+              p {{ suggestion.content }}
+              div Suggestion by
                 client-only
-                  nuxt-link(:to='"/profile/" + recommendation.author.username')
-                    span.red-netflix--text {{ " " + recommendation.author.username }}
-                span {{ " - " + $moment(recommendation.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
+                  nuxt-link(:to='"/profile/" + suggestion.author.username')
+                    span.red-netflix--text {{ " " + suggestion.author.username }}
+                span {{ " - " + $moment(suggestion.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
 </template>
 <script>
 export default {
-  async asyncData({ $getReviewsLatest, $getRecommendationsLatest }) {
+  async asyncData({ $getReviewsLatest, $getSuggestionsLatest }) {
     const reviewsLatest = await $getReviewsLatest();
-    const recommendationsLatest = await $getRecommendationsLatest();
+    const suggestionsLatest = await $getSuggestionsLatest();
     return {
       reviewsLatest,
-      recommendationsLatest,
+      suggestionsLatest,
       expanded: [false, false, false],
     };
   },

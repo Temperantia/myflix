@@ -8,15 +8,15 @@ export default {
     route,
     $getTitle,
     $getReviews,
-    $getRecommendations,
+    $getSuggestions,
     store,
   }) {
     const title = await $getTitle(route.params.id);
     const reviews = await $getReviews(route.params.id);
-    const recommendations = await $getRecommendations(route.params.id);
+    const suggestions = await $getSuggestions(route.params.id);
     store.commit('title/LOAD_TITLE', title);
     store.commit('title/LOAD_REVIEWS', reviews);
-    store.commit('title/LOAD_RECOMMENDATIONS', recommendations);
+    store.commit('title/LOAD_SUGGESTIONS', suggestions);
   },
 };
 </script>

@@ -194,6 +194,7 @@ export default {
         await this.$updateFlixlist(
           {
             id: this.title.id,
+            summary: this.title.summary,
             title: this.title.title,
             tallBoxArt: this.title.tallBoxArt,
             releaseYear: this.title.releaseYear,

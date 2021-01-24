@@ -58,7 +58,7 @@ export default {
       const username = this.$route.params.username;
       const userCurrent = this.$store.state.localStorage.user;
       let user;
-      if (username === userCurrent.username) {
+      if (userCurrent && username === userCurrent.username) {
         user = userCurrent;
       } else {
         user = this.userOther;

@@ -184,8 +184,8 @@ export default {
           route: routeTitle + 'reviews',
         },
         {
-          name: 'RECOMMENDATIONS',
-          route: routeTitle + 'recommendations',
+          name: 'SUGGESTIONS',
+          route: routeTitle + 'suggestions',
         },
         /* {
         name: 'NEWS',
@@ -221,7 +221,9 @@ export default {
       if (!this.$store.state.title.saved) {
         await this.$updateFlixlist(
           {
+            id: this.title.id,
             title: this.title.title,
+            summary: this.title.summary,
             tallBoxArt: this.title.tallBoxArt,
             releaseYear: this.title.releaseYear,
             maturity: this.title.maturity,

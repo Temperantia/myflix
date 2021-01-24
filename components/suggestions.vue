@@ -4,13 +4,13 @@ v-container(v-if='edition', fluid)
     v-col(cols='12', lg='10')
       h3 {{ title.title.toUpperCase() }}
     v-col.text-lg-right(cols='12', lg='2')
-      h4 {{ title.summary.type === "show" ? "TV SHOW" : "FILM" + " RECOMMENDATION" }}
+      h4 {{ title.summary.type === "show" ? "TV SHOW" : "FILM" + " SUGGESTION" }}
   v-row.section-border
     v-col(cols='12', lg='10')
       h4 Choose a similar {{ title.summary.type === "show" ? "TV Show" : "Film" }} title
       search(
-        :title='recommendation.similar',
-        @click='(id, title, image, route) => (recommendation.similar = { id, title, image, route })'
+        :title='suggestion.similar',
+        @click='(id, title, image, route) => (suggestion.similar = { id, title, image, route })'
       )
     v-col.text-lg-right(cols='12', lg='2')
       button.red-netflix--text(@click='edition = false') CANCEL
@@ -18,45 +18,45 @@ v-container(v-if='edition', fluid)
     v-col(cols='12')
       h4 How is this similar to {{ title.title }}?
     v-col(cols='12')
-      textarea(v-model='recommendation.content')
-      .white-font--text Tip: Don't recommend sequels or other related film/series
+      textarea(v-model='suggestion.content')
+      .white-font--text Tip: Don't suggest sequels or other related film/series
     v-col.text-lg-right(cols='12')
-      button.button-action(@click='submit') SUBMIT RECOMMENDATION
+      button.button-action(@click='submit') SUBMIT SUGGESTION
   v-row
     v-col
-      h4 Recommendation Tips and Guidelines
+      h4 Suggestion Tips and Guidelines
       p
-        .white-font--text - Recommendations should contain persuasive arguments based on opinion and not solely on fact.
+        .white-font--text - Suggestions should contain persuasive arguments based on opinion and not solely on fact.
         .white-font--text - No spoilers.
-        .white-font--text - All recommendations are public.
+        .white-font--text - All suggestions are public.
 div(v-else)
   v-container(fluid)
     v-row.title-border
       v-col(cols='12', lg='8')
-        h3 RECOMMENDATIONS
+        h3 SUGGESTIONS
       v-col.text-lg-right(cols='12', lg='4')
         client-only
           button(
             v-if='$store.state.localStorage.connected',
             @click='edition = true'
-          ) MAKE A RECOMMENDATION
-          button(v-else, @click='$router.push("/sign-in")') SIGN IN TO MAKE A RECOMMENDATION
-  template(v-if='recommendations.length > 0')
-    recommendation(
-      :recommendation='recommendation',
-      v-for='recommendation in recommendations',
-      :key='recommendation.id'
+          ) MAKE A SUGGESTION
+          button(v-else, @click='$router.push("/sign-in")') SIGN IN TO MAKE A SUGGESTION
+  template(v-if='suggestions.length > 0')
+    suggestion(
+      :suggestion='suggestion',
+      v-for='suggestion in suggestions',
+      :key='suggestion.id'
     )
   v-container(v-else, fluid)
     v-row
       v-col
-        p No recommendations yet
+        p No suggestions yet
 </template>
 <script>
 export default {
   data: () => ({
     edition: false,
-    recommendation: {
+    suggestion: {
       content: '',
       similar: null,
     },
@@ -64,21 +64,21 @@ export default {
   methods: {
     submit() {
       if (
-        this.recommendation.content.length < 200 ||
-        this.recommendation.content.length > 1000
+        this.suggestion.content.length < 200 ||
+        this.suggestion.content.length > 1000
       ) {
         this.$toast.error(
-          'Your recommendation needs between 200 and 1000 characters.'
+          'Your suggestion needs between 200 and 1000 characters.'
         );
         return;
       }
-      if (!this.recommendation.similar) {
+      if (!this.suggestion.similar) {
         this.$toast.error('You need to pick a similar title');
         return;
       }
-      this.$createRecommendation(
+      this.$createSuggestion(
         this.title,
-        this.recommendation,
+        this.suggestion,
         this.$store.state.localStorage.user
       );
       this.edition = false;
@@ -89,8 +89,8 @@ export default {
     title() {
       return this.$store.state.title.data;
     },
-    recommendations() {
-      return this.$store.state.title.recommendations;
+    suggestions() {
+      return this.$store.state.title.suggestions;
     },
   },
 };

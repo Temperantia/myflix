@@ -99,7 +99,7 @@ export default async (
   const collectionUsers = firestore.collection("users");
   const collectionVideos = firestore.collection("videos");
   const collectionReviews = firestore.collection("reviews");
-  const collectionRecommendations = firestore.collection("recommendations");
+  const collectionSuggestions = firestore.collection("suggestions");
 
   async function getGlobals() {
     const globals = await doc(collectionGlobals.doc("globals"));
@@ -174,25 +174,25 @@ export default async (
     );
   }
 
-  async function getRecommendations(id) {
+  async function getSuggestions(id) {
     return await get(
-      collectionRecommendations.where("title.id", "==", Number(id)),
-      "getRecommendations",
+      collectionSuggestions.where("title.id", "==", Number(id)),
+      "getSuggestions",
       $cookies
     );
   }
 
-  async function getRecommendationsLatest() {
+  async function getSuggestionsLatest() {
     return await get(
-      collectionRecommendations.orderBy("postedOn", "desc").limit(3),
-      "getRecommendationsLatest",
+      collectionSuggestions.orderBy("postedOn", "desc").limit(3),
+      "getSuggestionsLatest",
       $cookies
     );
   }
 
-  async function getRecommendationsProfile(username) {
+  async function getSuggestionsProfile(username) {
     return await get(
-      collectionRecommendations.where("author.username", "==", username)
+      collectionSuggestions.where("author.username", "==", username)
     );
   }
 
@@ -242,7 +242,7 @@ export default async (
     store.commit("localStorage/USER_REVIEW", data);
   }
 
-  async function createRecommendation(title, recommendation, author) {
+  async function createSuggestion(title, suggestion, author) {
     const data = {
       author: {
         id: author.id,
@@ -256,18 +256,18 @@ export default async (
         tallBoxArt: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
         storyArt: title.storyArt
       },
-      ...recommendation,
+      ...suggestion,
       reports: [],
       postedOn: $fireModule.firestore.Timestamp.now()
     };
-    const ref = await collectionRecommendations.add(data);
-    store.commit("title/CREATE_RECOMMENDATION", data);
+    const ref = await collectionSuggestions.add(data);
+    store.commit("title/CREATE_SUGGESTION", data);
 
     data.id = ref.id;
     collectionUsers.doc(author.id).update({
-      recommendations: $fireModule.firestore.FieldValue.arrayUnion(data)
+      suggestions: $fireModule.firestore.FieldValue.arrayUnion(data)
     });
-    store.commit("localStorage/USER_RECOMMENDATION", data);
+    store.commit("localStorage/USER_SUGGESTION", data);
   }
 
   async function updateFlixlist(title, status, episodes, score, bingeworthy) {
@@ -365,7 +365,7 @@ export default async (
         reports: $fireModule.firestore.FieldValue.arrayUnion(idUser)
       });
     store.commit(
-      "title/REPORT_" + collection === "reviews" ? "REVIEW" : "RECOMMENDATION",
+      "title/REPORT_" + collection === "reviews" ? "REVIEW" : "SUGGESTION",
       {
         id,
         idUser
@@ -402,11 +402,11 @@ export default async (
   inject("getReviews", getReviews);
   inject("getReviewsLatest", getReviewsLatest);
   inject("getReviewsProfile", getReviewsProfile);
-  inject("getRecommendations", getRecommendations);
-  inject("getRecommendationsLatest", getRecommendationsLatest);
-  inject("getRecommendationsProfile", getRecommendationsProfile);
+  inject("getSuggestions", getSuggestions);
+  inject("getSuggestionsLatest", getSuggestionsLatest);
+  inject("getSuggestionsProfile", getSuggestionsProfile);
   inject("createReview", createReview);
-  inject("createRecommendation", createRecommendation);
+  inject("createSuggestion", createSuggestion);
   inject("updateFlixlist", updateFlixlist);
   inject("addFavorite", addFavorite);
   inject("removeFavorite", removeFavorite);

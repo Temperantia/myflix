@@ -29,8 +29,8 @@ v-col(cols='12', lg='2')
       v-col.pt-1.pb-0.text-right {{ user.reviews.length }}
     v-row
       v-col.pt-1.pb-0
-        b Recommendations:
-      v-col.pt-1.pb-0.text-right {{ user.recommendations.length }}
+        b Suggestions:
+      v-col.pt-1.pb-0.text-right {{ user.suggestions.length }}
     v-row
       v-col.pt-1.pb-0
         b Films:

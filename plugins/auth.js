@@ -91,7 +91,7 @@ export default ({ $fire, $fireModule, store, $moment, app }, inject) => {
       usernameCoolDown: new Date(),
       image: photoURL ? photoURL : null,
       reviews: [],
-      recommendations: [],
+      suggestions: [],
       flixlist: {},
       favorites: { films: {}, shows: {} },
       created: $fireModule.firestore.Timestamp.now(),
