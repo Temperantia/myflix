@@ -1,8 +1,21 @@
 export default {
   target: "server",
- // ssr: false,
+  // ssr: false,
   dev: true,
   debug: true,
+  serverMiddleware: [
+    function(req, res, next) {
+      // req is the Node.js http request object
+      console.log(req.url);
+      console.log(req)
+
+      // res is the Node.js http response object
+
+      // next is a function to call to invoke the next middleware
+      // Don't forget to call next at the end if your middleware is not an endpoint!
+      next();
+    }
+  ],
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
