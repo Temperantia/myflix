@@ -33,44 +33,38 @@ export default {
     },
     function() {
       console.log("web");
-      import("nuxt-webfontloader",);
+      import("nuxt-webfontloader");
     },
     function() {
       console.log("styles");
-      import("@nuxtjs/style-resources",);
+      import("@nuxtjs/style-resources");
     },
     function() {
       console.log("type");
-      import( "@nuxt/typescript-build",);
+      import("@nuxt/typescript-build");
     },
     function() {
       console.log("imagemin");
-      import( "@nuxtjs/imagemin",);
+      import("@nuxtjs/imagemin");
     },
-
-
 
     function() {
       console.log("firebase");
-      import(  "@nuxtjs/firebase",);
+      import("@nuxtjs/firebase");
     },
     function() {
       console.log("vuex");
-      import( "nuxt-vuex-localstorage",);
+      import("nuxt-vuex-localstorage");
     },
     function() {
       console.log("adsense");
-      import( "@nuxtjs/google-adsense",);
-    },
-
+      import("@nuxtjs/google-adsense");
+    }
 
     //"@nuxtjs/pwa"
 
-
-
-
     //["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
-   //"@nuxtjs/robots",
+    //"@nuxtjs/robots",
     //"cookie-universal-nuxt",
     //"vue-social-sharing/nuxt"
   ],
