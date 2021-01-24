@@ -25,40 +25,40 @@ export default {
   modules: [
     function() {
       console.log("moment");
-      import("@nuxtjs/moment");
+      return import("@nuxtjs/moment");
     },
     function() {
       console.log("vuetify");
-      import("@nuxtjs/vuetify");
+      return import("@nuxtjs/vuetify");
     },
     function() {
       console.log("web");
-      import("nuxt-webfontloader");
+      return import("nuxt-webfontloader");
     },
     function() {
       console.log("styles");
-      import("@nuxtjs/style-resources");
+      return import("@nuxtjs/style-resources");
     },
     function() {
       console.log("type");
-      import("@nuxt/typescript-build");
+      return import("@nuxt/typescript-build");
     },
     function() {
       console.log("imagemin");
-      import("@nuxtjs/imagemin");
+      return import("@nuxtjs/imagemin");
     },
 
     function() {
       console.log("firebase");
-      import("@nuxtjs/firebase");
+      return import("@nuxtjs/firebase");
     },
     function() {
       console.log("vuex");
-      import("nuxt-vuex-localstorage");
+      return import("nuxt-vuex-localstorage");
     },
     function() {
       console.log("adsense");
-      import("@nuxtjs/google-adsense");
+      return import("@nuxtjs/google-adsense");
     }
 
     //"@nuxtjs/pwa"
