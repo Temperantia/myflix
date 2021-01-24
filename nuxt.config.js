@@ -24,49 +24,29 @@ export default {
   buildModules: [],
   modules: [
     function() {
-      console.log("moment");
-      return import("@nuxtjs/moment");
+      this.nuxt.hook("modules:before", (moduleContainer, options) => {
+        console.log("modules:before");
+      });
+      // or
+      this.nuxt.hook("modules:done", moduleContainer => {
+        console.log("modules:done");
+      });
     },
-    function() {
-      console.log("vuetify");
-      return import("@nuxtjs/vuetify");
-    },
-    function() {
-      console.log("web");
-      return import("nuxt-webfontloader");
-    },
-    function() {
-      console.log("styles");
-      return import("@nuxtjs/style-resources");
-    },
-    function() {
-      console.log("type");
-      return import("@nuxt/typescript-build");
-    },
-    function() {
-      console.log("imagemin");
-      return import("@nuxtjs/imagemin");
-    },
-
-    function() {
-      console.log("firebase");
-      return import("@nuxtjs/firebase");
-    },
-    function() {
-      console.log("vuex");
-      return import("nuxt-vuex-localstorage");
-    },
-    function() {
-      console.log("adsense");
-      return import("@nuxtjs/google-adsense");
-    }
-
+    "@nuxtjs/moment",
+    "@nuxtjs/vuetify",
+    "nuxt-webfontloader",
+    "@nuxtjs/style-resources",
+    "@nuxt/typescript-build",
+    "@nuxtjs/imagemin",
     //"@nuxtjs/pwa"
 
-    //["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
-    //"@nuxtjs/robots",
-    //"cookie-universal-nuxt",
-    //"vue-social-sharing/nuxt"
+    "@nuxtjs/firebase",
+    "nuxt-vuex-localstorage",
+    "@nuxtjs/google-adsense",
+    ["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
+    "@nuxtjs/robots",
+    "cookie-universal-nuxt",
+    "vue-social-sharing/nuxt"
   ],
   firebase: {
     /* config: {
