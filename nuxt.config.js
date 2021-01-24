@@ -1,24 +1,5 @@
-import shows from "./netflix/data/videos.json";
-import slugify from "slugify";
-
-let dynamicRoutes = Object.values(shows).reduce((acc, show) => {
-  return acc.concat(
-    `/tvshows/${slugify(show.title, {
-      lower: true,
-      strict: true
-    })}/overview`
-  );
-}, []);
-
 export default {
   target: "server",
-  buildDir: "public",
-  ssr: false,
-  /*  generate: {
-    crawler: false,
-    dir: "public",
-    routes: ["/", ...dynamicRoutes]
-  }, */
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
@@ -74,8 +55,7 @@ export default {
           onAuthStateChangedMutation: "ON_AUTH_STATE_CHANGED_MUTATION"
         }
       }
-    },
-    onFirebaseHosting: true
+    }
   },
   css: ["@/assets/main.scss", "@/node_modules/swiper/swiper-bundle.css"],
   head: {

@@ -81,9 +81,8 @@ v-container(fluid)
           button.mr-3.button.white--text(@click='update')
             v-icon(color='green-watching', v-if='$store.state.title.saved') mdi-check
             span(v-else) UPDATE
-          v-btn(color='black-search')
-            v-icon mdi-share-variant
-            span Share this page
+          share
+
     //-v-col(cols='12', md='3')
       video(:src='title.trailer')
   v-row

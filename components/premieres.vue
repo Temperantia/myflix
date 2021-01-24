@@ -10,12 +10,13 @@ v-container.px-10(fluid)
       .swiper-slide(v-for='item in premieres', :key='item.id')
         nuxt-link(:to='item.r')
           div(
-            :style='"height: 100%;  position: relative; background-size: cover; background-position: center; background-image: url(" + item.x + ");"'
+            :style='"height: 100%;  position: relative; background-size: cover; background-position: center; background-image: url(" + item.b + ");"'
           )
           div(
             style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))'
           )
           div(style='position: absolute; bottom: 0; left: 0; padding: 30px')
+            h2 {{ item.t }}
             .my-5.white-font--text {{ item.g.join(", ") }}
             .my-5(
               v-html='item.d.length < 200 ? item.d : item.d.substring(0, 200) + "..."'
