@@ -21,16 +21,16 @@ export default {
     "~/plugins/ad.client"
   ],
   components: true,
-  buildModules: [
+  buildModules: [],
+  modules: [
     "@nuxtjs/moment",
     "@nuxtjs/vuetify",
     "nuxt-webfontloader",
     "@nuxtjs/style-resources",
     "@nuxt/typescript-build",
-    "@nuxtjs/imagemin"
+    "@nuxtjs/imagemin",
     //"@nuxtjs/pwa"
-  ],
-  modules: [
+
     "@nuxtjs/firebase",
     "nuxt-vuex-localstorage",
     "@nuxtjs/google-adsense",
@@ -114,11 +114,11 @@ export default {
   styleResources: {
     scss: ["~/assets/variables.scss"]
   },
-  pwa: {
+  /*  pwa: {
     icon: {
       fileName: "logo.png"
     }
-  },
+  }, */
   "google-adsense": {
     id: "ca-pub-4080768963424465"
   }
