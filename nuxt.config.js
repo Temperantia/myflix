@@ -15,10 +15,10 @@ export default {
     }
   ],
   plugins: [
-    "~/plugins/firebase",
+    /* "~/plugins/firebase",
     "~/plugins/auth",
     "~/plugins/vue-scrollactive",
-    "~/plugins/ad.client"
+    "~/plugins/ad.client" */
   ],
   components: true,
   buildModules: [],
