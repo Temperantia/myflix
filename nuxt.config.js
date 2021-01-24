@@ -26,8 +26,8 @@ export default {
     /*      "@nuxtjs/moment",
      */ "@nuxtjs/vuetify",
     /* "nuxt-webfontloader", */
-    "@nuxtjs/style-resources"
-    /*   "@nuxt/typescript-build",
+    "@nuxtjs/style-resources",
+       "@nuxt/typescript-build",
     "@nuxtjs/imagemin",
     //"@nuxtjs/pwa"
 
