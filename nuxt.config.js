@@ -31,13 +31,13 @@ export default {
     "@nuxtjs/imagemin",
     //"@nuxtjs/pwa"
 
-    "@nuxtjs/firebase",
+   /*  "@nuxtjs/firebase",
     "nuxt-vuex-localstorage",
     "@nuxtjs/google-adsense",
     ["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
     "@nuxtjs/robots",
     "cookie-universal-nuxt",
-    "vue-social-sharing/nuxt"
+    "vue-social-sharing/nuxt" */
   ],
   firebase: {
     /* config: {
