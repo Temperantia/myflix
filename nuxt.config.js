@@ -1,6 +1,8 @@
 export default {
   target: "server",
-  ssr: false,
+ // ssr: false,
+  dev: true,
+  debug: true,
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
