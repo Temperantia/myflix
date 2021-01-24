@@ -6,8 +6,6 @@ export default {
   serverMiddleware: [
     function(req, res, next) {
       // req is the Node.js http request object
-      console.log(req.url);
-      console.log(req)
 
       // res is the Node.js http response object
 
