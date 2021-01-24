@@ -162,6 +162,7 @@ div
 <script>
 export default {
   async asyncData({ $getReviewsLatest, $getSuggestionsLatest }) {
+    console.log('async data ');
     const reviewsLatest = await $getReviewsLatest();
     const suggestionsLatest = await $getSuggestionsLatest();
     return {
