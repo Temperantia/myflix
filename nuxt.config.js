@@ -23,7 +23,9 @@ export default {
   components: true,
   buildModules: [],
   modules: [
-    "@nuxtjs/moment",
+    function () {
+    import ( "@nuxtjs/moment")
+    },
     "@nuxtjs/vuetify",
     "nuxt-webfontloader",
     "@nuxtjs/style-resources",
