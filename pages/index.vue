@@ -55,7 +55,7 @@ v-app.app(app)
 export default {
   data: () => ({
     email: '',
-  })
+  }),
 };
 </script>
 <style lang="scss" scoped>
