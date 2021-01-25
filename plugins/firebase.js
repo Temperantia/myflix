@@ -372,6 +372,13 @@ export default async (
     );
   }
 
+  async function subscribe(email) {
+    await collectionGlobals.doc("globals").update({
+      newsletter: $fireModule.firestore.FieldValue.arrayUnion(email)
+    });
+    $toast.success("Thank you for subscribing to MyFlix");
+  }
+
   function requestContent(country) {
     const idUser = store.getters["localStorage/USER"].id;
     collectionGlobals.doc("globals").update({
@@ -412,6 +419,7 @@ export default async (
   inject("like", like);
   inject("unlike", unlike);
   inject("report", report);
+  inject("subscribe", subscribe);
   inject("requestContent", requestContent);
   inject("globals", globals);
   inject("search", search);
