@@ -64,7 +64,7 @@ v-container(fluid)
               @change='(value) => $store.commit("title/UPDATE_SCORE", value)'
             )
         v-col(cols='12', lg='4')
-          v-btn(color='blue-completed', @click='vpn = true') GET IT IN YOUR COUNTRY
+          v-btn(color='blue-completed', @click='$router.push("/vpn")') GET IT IN YOUR COUNTRY
       v-row.my-1
         v-col
           v-btn.mr-3(
@@ -149,7 +149,6 @@ v-container(fluid)
 export default {
   data: () => ({
     expanded: {},
-    vpn: false,
   }),
   mounted() {
     if (this.title.credits) {

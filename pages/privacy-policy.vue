@@ -6,7 +6,7 @@ client-only
         client-only
           scrollactive.my-nav(
             scrollContainerSelector='#content',
-            :offset='100'
+            :offset='130'
           )
             a.scrollactive-item(
               v-for='item in items',
@@ -14,7 +14,7 @@ client-only
               :href='"#" + slugify(item.title)'
             )
               h5.py-2.white-font--text {{ item.title.toUpperCase() }}
-      v-col#content(cols='9', style='overflow: scroll; height: 500px')
+      v-col#content(cols='9', style='overflow-y: scroll; height: 70vh')
         div(
           v-for='item in items',
           :key='item.title',

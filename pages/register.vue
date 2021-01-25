@@ -45,8 +45,8 @@ v-container(fluid)
           v-checkbox(color='red', v-model='agreed')
             template(v-slot:label)
               | I have read and agree to the
-              nuxt-link(to='/terms-and-conditions')
-              b.px-1 Terms and Conditions
+              nuxt-link(to='/terms-of-service')
+              b.px-1 Terms of Service
               | and
               nuxt-link(to='/privacy-policy')
               b.px-1 Privacy Policy

@@ -2,7 +2,7 @@
 defaultLayout
   v-container.mt-4(fluid)
     v-row
-      v-col(cols='12', lg='1', xl='2')
+      v-col(cols='12', lg='1')
       //- ad
       client-only
         v-col(cols='12', md='2')
@@ -112,7 +112,7 @@ defaultLayout
                 table(v-for='(data, name) in title.statistics', :key='name')
                   th {{ name }}:
                   td {{ data }}
-      v-col(cols='12', lg='8', xl='6')
+      v-col(cols='12', lg='8')
         v-container(fluid)
           v-row.title-border
             v-col(v-if='$vuetify.breakpoint.mdAndUp', md='12')

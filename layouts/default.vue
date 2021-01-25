@@ -56,7 +56,7 @@ v-app(app)
   v-main.blackBody
     nuxt(v-if='!$slots.default')
     slot
-  v-container.pa-0(fluid)
+  v-container.px-0.pt-0(fluid)
     footer
       .top
         v-row(align='center')
@@ -69,8 +69,8 @@ v-app(app)
             nuxt-link(to='/privacy-policy')
               span PRIVACY POLICY
           v-col(cols='12', md='3', lg='2')
-            nuxt-link(to='/terms-and-conditions')
-              span TERMS & CONDITIONS
+            nuxt-link(to='/terms-of-service')
+              span TERMS OF SERVICE
       .middle
         v-row(align='center')
           v-col(cols='6', lg='1')
