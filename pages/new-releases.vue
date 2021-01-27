@@ -5,7 +5,7 @@ div
     v-row
       v-col
         .pb-2.subtitle-border
-          h2 Browse New Releases
+          h2.font-weight-bold Browse New Releases
           div {{ getWeek() }}
     v-row
       v-col(cols='12', lg='2') Category
@@ -35,7 +35,7 @@ div
     v-row
       v-col.py-0(cols='12') More filters
       v-col(cols='12', lg='2')
-        v-checkbox.my-0(
+        v-switch.my-0(
           label='Netflix Original',
           v-model='original',
           dense,

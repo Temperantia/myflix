@@ -60,27 +60,39 @@ v-app(app)
     footer
       .top
         v-row(align='center')
-          v-col(cols='12', md='3', lg='2')
+          //-v-col(cols='12', md='3', lg='2')
             nuxt-link(to='/faq')
               span FAQ
           //-v-col(cols='12', lg='2')
             span ADVERTISING
-          v-col(cols='12', md='3', lg='2')
+          //-v-col(cols='12', md='3', lg='2')
             nuxt-link(to='/privacy-policy')
               span PRIVACY POLICY
-          v-col(cols='12', md='3', lg='2')
+          //-v-col(cols='12', md='3', lg='2')
             nuxt-link(to='/terms-and-conditions')
-              span TERMS & CONDITIONS
+              span TERMS &amp; CONDITIONS
+          v-col(cols='12')
+            ul
+              li 
+                nuxt-link(to='/faq')
+                  span FAQ
+              li 
+                nuxt-link(to='/privacy-policy')
+                  span PRIVACY POLICY
+              li 
+                nuxt-link(to='/terms-and-conditions')
+                  span TERMS &amp; CONDITIONS
       .middle
         v-row(align='center')
-          v-col(cols='6', lg='1')
+          v-col.pa-5(cols='6', lg='1')
             img(src='/logo.png')
-          v-col(cols='6', lg='1')
+          v-col.pa-5(cols='6', lg='1')
             img(src='/inclusive.png')
           v-col(lg='10')
             p MyFlix is not endorsed, moderated, owned by or affiliated with Netflix or any of its partners in any capacity. The authors of this site also have no affiliation with Netflix. MyFlix is a unofficial fansite for Netflix. All promotional material including but not limited to trailers, images and videos are all copyright to their respective owners. Netflix is a registered trademark of Netflix, Inc.
-        v-row.bottom(justify='center')
-          p All Rights Reserved. Copyright MyFlix {{ new Date().getFullYear() }}. MyFlix is a website of Inclusive Corp.
+        v-row.bottom
+          v-col.pb-0(cols='12')
+            p.mb-0.text-center All Rights Reserved. Copyright MyFlix {{ new Date().getFullYear() }}. MyFlix is a website of Inclusive Corp.
 </template>
 <script>
 export default {
@@ -255,10 +267,25 @@ footer {
     padding: 10px 20px;
 
     background-color: $black-subheader;
-    border-bottom: 3px solid $red-netflix;
+    border-bottom: 2px solid $red-netflix;
+
+    ul li {
+      display: inline;
+      list-style: none;
+      margin-right: 60px;
+    }
   }
   .middle {
     padding: 10px 20px;
+    font-size: 12px;
+
+    p {
+      color: rgba(255,255,255,0.3);
+    }
+
+    .bottom {
+      margin: 0px;
+    }
   }
 }
 </style>

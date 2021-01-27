@@ -5,17 +5,17 @@ div
   v-container.px-10(fluid)
     v-row
       v-col(cols='12', lg='7')
-        h1.title-border TOP 5 MOST POPULAR ONGOING SERIES
-        h2.font-weight-light.subtitle.py-5 {{ $moment().format("MMM D, yyyy").toUpperCase() }}
+        h1.title-border.font-weight-bold TOP 5 MOST POPULAR ONGOING SERIES
+        h2.font-weight-regular.subtitle.py-3 {{ $moment().format("MMM D, yyyy").toUpperCase() }}
         client-only
           v-container(fluid)
             v-row.my-2(v-for='(item, index) in topSeries', :key='item.id')
               v-col.text-center(cols='1')
-                h2 {{ index + 1 }}
+                h1.font-weight-black {{ index + 1 }}
               v-col(cols='11', lg='3')
                 nuxt-link(:to='item.r')
                   img(:src='item.i')
-              v-col.py-0(
+              v-col(
                 offset='1',
                 cols='11',
                 offset-lg='0',
@@ -31,7 +31,7 @@ div
                   span.red-netflix--text {{ item.z + "/10" }}
                 div Released {{ item.a ? $moment(item.a).format("MMM D, yyyy") : "-" }}
                 div
-                  span.green-watching--text {{ item.f + " members " }}
+                  span.red-netflix--text {{ item.f + " members " }}
                   span watching this
               v-col(cols='3', v-if='favorites')
                 client-only
@@ -41,7 +41,7 @@ div
                   ) Remove from Favorites
                   a.click(v-else, @click='addFavorite(item)') Add to Favorites
       v-col(cols='12', lg='5')
-        h1.title-border.mb-5 LATEST USER REVIEWS
+        h1.title-border.font-weight-bold LATEST USER REVIEWS
         v-container(fluid)
           v-row.my-2(
             v-for='(review, index) in reviewsLatest',
@@ -60,7 +60,7 @@ div
                   @click='removeFavoriteFromId(review.title.id)'
                 ) Remove from Favorites
                 a.click(v-else, @click='addFavoriteFromId(review.title.id)') Add to Favorites
-            v-col.py-0(cols='9')
+            v-col.reviewText(cols='9')
               v-row
                 v-col
                   nuxt-link(
@@ -79,14 +79,14 @@ div
                   v-else-if='review.content.length > 300',
                   @click='$set(expanded, index, true)'
                 ) show more
-              div Review by
+              div.reviewBy Review by
                 client-only
                   nuxt-link(:to='"/profile/" + review.author.username')
                     span.red-netflix--text {{ " " + review.author.username }}
                 span {{ " - " + $moment(review.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
     v-row
       v-col
-        h1.title-border SUGGESTED GENRES
+        h1.title-border.font-weight-bold SUGGESTED GENRES
         v-container(fluid)
           v-row
             v-col.click(
@@ -108,7 +108,7 @@ div
                 div {{ category.value }} Titles
     v-row
       v-col(cols='12', lg='5')
-        h1.title-border LATEST USER SUGGESTIONS
+        h1.title-border.font-weight-bold LATEST USER SUGGESTIONS
     v-row
       v-col(
         cols='12',
@@ -248,3 +248,14 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.reviewBy {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  font-size: 14px;
+}
+.reviewText {
+  position: relative;
+}
+</style>
