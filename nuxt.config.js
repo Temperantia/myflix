@@ -1,6 +1,6 @@
 export default {
   target: "server",
-  /* build: {
+  build: {
     extend(config, { isServer }) {
       if (isServer) {
         config.externals = {
@@ -10,8 +10,7 @@ export default {
         };
       }
     }
-  }, */
-  debug: true,
+  },
   router: {
     middleware: "authorized"
   },
