@@ -89,15 +89,23 @@ defaultLayout
             v-row.title-border(align='center')
               v-col
                 h3 INFORMATION
-              v-col.text-right(v-if='isCurrentTab(tabs[0].route)')
-                a.click(
+              v-col.text-right-xl(
+                md='12',
+                xl='6',
+                v-if='isCurrentTab(tabs[0].route)'
+              )
+                .click(
                   v-if='isFavorite(title.id)',
                   @click='$removeFavorite(title, title.summary.type === "show" ? "shows" : "films")'
-                ) Remove from Favorites
-                a.click(
+                )
+                  v-icon mdi-star
+                  span In Favorites
+                .click(
                   v-else,
                   @click='$addFavorite(title, title.summary.type === "show" ? "shows" : "films")'
-                ) Add to Favorites
+                )
+                  v-icon mdi-star-outline
+                  span Add to Favorites
             v-row
               v-col
                 table(v-for='(data, name) in title.information', :key='name')

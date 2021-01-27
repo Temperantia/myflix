@@ -1,7 +1,7 @@
 <template lang="pug">
 v-container(fluid)
   v-row.mt-5
-    v-col.text-center(cols='12', offset-lg='4', lg='4')
+    v-col.text-center(cols='12', offset-lg='3', lg='6', offset-xl='4', xl='4')
       h4.text-left.title-border SIGN IN
       h3.py-10 Sign In with
       socials-auth

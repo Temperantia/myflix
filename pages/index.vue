@@ -34,12 +34,16 @@ div
                   span.green-watching--text {{ item.f + " members " }}
                   span watching this
               v-col(cols='3', v-if='favorites')
-                client-only
-                  a.click(
+                client-only(v-if='favorites')
+                  .click(
                     v-if='isFavorite(item.id)',
-                    @click='removeFavorite(item)'
-                  ) Remove from Favorites
-                  a.click(v-else, @click='addFavorite(item)') Add to Favorites
+                    @click='removeFavoriteFromId(item.id)'
+                  )
+                    v-icon mdi-star
+                    span In Favorites
+                  .click(v-else, @click='addFavoriteFromId(item.id)')
+                    v-icon mdi-star-outline
+                    span Add to Favorites
       v-col(cols='12', lg='5')
         h1.title-border.mb-5 LATEST USER REVIEWS
         v-container(fluid)
@@ -55,11 +59,15 @@ div
                   :src='review.title.tallBoxArt ? review.title.tallBoxArt : review.title.boxArt'
                 )
               client-only(v-if='favorites')
-                a.click(
+                .click(
                   v-if='isFavorite(review.title.id)',
                   @click='removeFavoriteFromId(review.title.id)'
-                ) Remove from Favorites
-                a.click(v-else, @click='addFavoriteFromId(review.title.id)') Add to Favorites
+                )
+                  v-icon mdi-star
+                  span In Favorites
+                .click(v-else, @click='addFavoriteFromId(review.title.id)')
+                  v-icon mdi-star-outline
+                  span Add to Favorites
             v-col.py-0(cols='9')
               v-row
                 v-col
@@ -129,27 +137,32 @@ div
               )
                 .red-netflix--text {{ suggestion.title.title }}
               client-only(v-if='favorites')
-                a.click(
+                .click(
                   v-if='isFavorite(suggestion.title.id)',
                   @click='removeFavoriteFromId(suggestion.title.id)'
-                ) Remove from Favorites
-                a.click(
-                  v-else,
-                  @click='addFavoriteFromId(suggestion.title.id)'
-                ) Add to Favorites
+                )
+                  v-icon mdi-star
+                  span In Favorites
+                .click(v-else, @click='addFavoriteFromId(suggestion.title.id)')
+                  v-icon mdi-star-outline
+                  span Add to Favorites
             v-col(cols='4', lg='2')
               img(:src='suggestion.similar.image')
             v-col(cols='8', lg='4') Then you might like...
               .red-netflix--text {{ suggestion.similar.title }}
               client-only(v-if='favorites')
-                a.click(
+                .click(
                   v-if='isFavorite(suggestion.similar.id)',
                   @click='removeFavoriteFromId(suggestion.similar.id)'
-                ) Remove from Favorites
-                a.click(
+                )
+                  v-icon mdi-star
+                  span In Favorites
+                .click(
                   v-else,
                   @click='addFavoriteFromId(suggestion.similar.id)'
-                ) Add to Favorites
+                )
+                  v-icon mdi-star-outline
+                  span Add to Favorites
           v-row
             v-col
               p {{ suggestion.content }}
