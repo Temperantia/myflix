@@ -2,7 +2,7 @@
 defaultLayout
   v-container.mt-4(fluid)
     v-row
-      v-col(cols='12', lg='1', xl='2')
+      v-col(cols='12', lg='1')
       //- ad
       client-only
         v-col(cols='12', md='2')
@@ -89,15 +89,23 @@ defaultLayout
             v-row.title-border(align='center')
               v-col
                 h3 INFORMATION
-              v-col.text-right(v-if='isCurrentTab(tabs[0].route)')
-                a.click(
+              v-col.text-right-xl(
+                md='12',
+                xl='6',
+                v-if='isCurrentTab(tabs[0].route)'
+              )
+                .click(
                   v-if='isFavorite(title.id)',
                   @click='$removeFavorite(title, title.summary.type === "show" ? "shows" : "films")'
-                ) Remove from Favorites
-                a.click(
+                )
+                  v-icon mdi-star
+                  span In Favorites
+                .click(
                   v-else,
                   @click='$addFavorite(title, title.summary.type === "show" ? "shows" : "films")'
-                ) Add to Favorites
+                )
+                  v-icon mdi-star-outline
+                  span Add to Favorites
             v-row
               v-col
                 table(v-for='(data, name) in title.information', :key='name')
@@ -112,7 +120,7 @@ defaultLayout
                 table(v-for='(data, name) in title.statistics', :key='name')
                   th {{ name }}:
                   td {{ data }}
-      v-col(cols='12', lg='8', xl='6')
+      v-col(cols='12', lg='8')
         v-container(fluid)
           v-row.title-border
             v-col(v-if='$vuetify.breakpoint.mdAndUp', md='12')

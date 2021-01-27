@@ -25,20 +25,21 @@ v-app(app)
                 button.button.button-red.mr-5 SIGN IN
               nuxt-link(to='/register')
                 button.button REGISTER
-        v-col.subHeader
-          span.px-5.text-center(
-            v-for='tab of tabs',
-            :key='tab.name',
-            :class='{ "red-netflix--text": tab.route === currentTab, tab: true }',
-            @click='tab.hook'
-          ) {{ tab.name }}
-        //-v-col.py-0.text-right
-          a.mr-3(href='')
-            img.logo-social(src='/facebook.png')
-          a.mr-3(href='')
-            img.logo-social(src='/twitter.png')
-          a.mr-3(href='')
-            img.logo-social(src='/rss.png')
+        .subHeader.d-flex.justify-space-between
+          div
+            span.px-5.text-center(
+              v-for='tab of tabs',
+              :key='tab.name',
+              :class='{ "red-netflix--text": tab.route === currentTab, tab: true }',
+              @click='tab.hook'
+            ) {{ tab.name }}
+          div.text-right
+            a.mr-3(href='https://twitter.com/myflixnet')
+              v-icon mdi-twitter
+            a.mr-3(href='https://www.facebook.com/myflixnet/')
+              v-icon mdi-facebook
+            a.mr-3(href='https://discord.gg/c9qVMWcdNe')
+              v-icon mdi-discord
       v-col.pl-0(v-else, cols='1')
         v-menu
           template(v-slot:activator='{ on, attrs }')
@@ -56,7 +57,7 @@ v-app(app)
   v-main.blackBody
     nuxt(v-if='!$slots.default')
     slot
-  v-container.pa-0(fluid)
+  v-container.px-0.pt-0(fluid)
     footer
       .top
         v-row(align='center')
@@ -80,8 +81,8 @@ v-app(app)
                 nuxt-link(to='/privacy-policy')
                   span PRIVACY POLICY
               li 
-                nuxt-link(to='/terms-and-conditions')
-                  span TERMS &amp; CONDITIONS
+                nuxt-link(to='/terms-of-service')
+                  span TERMS OF SERVICE
       .middle
         v-row(align='center')
           v-col.pa-5(cols='6', lg='1')

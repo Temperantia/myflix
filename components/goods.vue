@@ -54,6 +54,7 @@ export default {
 <style lang="scss" >
 ::v-deep .amzn-native-product {
   background-color: $black-body;
+  height: 250px;
 }
 
 .amzn-native-product {

@@ -11,7 +11,9 @@ export default {
       }
     }
   },
-  debug: true,
+  router: {
+    middleware: "authorized"
+  },
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
@@ -19,22 +21,22 @@ export default {
     "~/plugins/ad.client"
   ],
   components: true,
-  buildModules: [],
-  modules: [
+  buildModules: [
     "@nuxtjs/moment",
     "@nuxtjs/vuetify",
     "nuxt-webfontloader",
     "@nuxtjs/style-resources",
     "@nuxt/typescript-build",
     "@nuxtjs/imagemin",
-    "@nuxtjs/pwa",
-
+    "@nuxtjs/pwa"
+  ],
+  modules: [
+    "cookie-universal-nuxt",
     "@nuxtjs/firebase",
     "nuxt-vuex-localstorage",
     "@nuxtjs/google-adsense",
     ["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
     "@nuxtjs/robots",
-    "cookie-universal-nuxt",
     "vue-social-sharing/nuxt"
   ],
   firebase: {
