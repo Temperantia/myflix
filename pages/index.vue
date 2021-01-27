@@ -9,7 +9,7 @@ div
         h2.font-weight-regular.subtitle.py-3 {{ $moment().format("MMM D, yyyy").toUpperCase() }}
         client-only
           v-container(fluid)
-            v-row.my-2(v-for='(item, index) in topSeries', :key='item.id')
+            v-row.my-2.top5List(v-for='(item, index) in topSeries', :key='item.id')
               v-col.text-center(cols='1')
                 h1.font-weight-black {{ index + 1 }}
               v-col(cols='11', lg='3')
@@ -33,44 +33,34 @@ div
                 div
                   span.red-netflix--text {{ item.f + " members " }}
                   span watching this
-              v-col(cols='3', v-if='favorites')
+              v-col(cols='12', md='3', v-if='favorites')
                 client-only(v-if='favorites')
                   .click(
                     v-if='isFavorite(item.id)',
                     @click='removeFavoriteFromId(item.id)'
                   )
-                    v-icon mdi-star
+                    v-icon.mr-2 mdi-star
                     span In Favorites
                   .click(v-else, @click='addFavoriteFromId(item.id)')
-                    v-icon mdi-star-outline
+                    v-icon.mr-2 mdi-star-outline
                     span Add to Favorites
       v-col(cols='12', lg='5')
         h1.title-border.font-weight-bold LATEST USER REVIEWS
         v-container(fluid)
-          v-row.my-2(
+          v-row.my-2.userReviews(
             v-for='(review, index) in reviewsLatest',
             :key='review.id'
           )
-            v-col(cols='3')
+            v-col.mh-Review(cols='12', md='2')
               nuxt-link(
                 :to='$search.find((item) => Number(item.id) == review.title.id).r'
               )
                 img(
                   :src='review.title.tallBoxArt ? review.title.tallBoxArt : review.title.boxArt'
                 )
-              client-only(v-if='favorites')
-                .click(
-                  v-if='isFavorite(review.title.id)',
-                  @click='removeFavoriteFromId(review.title.id)'
-                )
-                  v-icon mdi-star
-                  span In Favorites
-                .click(v-else, @click='addFavoriteFromId(review.title.id)')
-                  v-icon mdi-star-outline
-                  span Add to Favorites
-            v-col.py-0(cols='9')
-              v-row
-                v-col
+            v-col.py-0.reviewText(cols='12', md='10')
+              v-row.ma-0
+                v-col.pl-0
                   nuxt-link(
                     :to='$search.find((item) => Number(item.id) == review.title.id).r'
                   )
@@ -87,11 +77,24 @@ div
                   v-else-if='review.content.length > 300',
                   @click='$set(expanded, index, true)'
                 ) show more
-              div.reviewBy Review by
+              .spacer
+              div.reviewBy 
+                span Review by
                 client-only
                   nuxt-link(:to='"/profile/" + review.author.username')
-                    span.red-netflix--text {{ " " + review.author.username }}
+                    span.red-netflix--text.font-weight-bold {{ " " + review.author.username }}
                 span {{ " - " + $moment(review.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
+              client-only(v-if='favorites')
+                .click.faveButton(
+                  v-if='isFavorite(review.title.id)',
+                  @click='removeFavoriteFromId(review.title.id)'
+                )
+                  v-icon.mr-2 mdi-star
+                  span.d-none.d-md-inline-flex In Favorites
+                .click.faveButton(v-else, @click='addFavoriteFromId(review.title.id)')
+                  v-icon.mr-2 mdi-star-outline
+                  span.d-none.d-md-inline-flex Add to Favorites
+
     v-row
       v-col
         h1.title-border.font-weight-bold SUGGESTED GENRES
@@ -263,12 +266,53 @@ export default {
 </script>
 <style lang="scss" scoped>
 .reviewBy {
+  font-size: 14px;
   position: absolute;
   bottom: 12px;
   left: 12px;
-  font-size: 14px;
+}
+.spacer {
+  height: 30px;
+  width: auto;
+  display: block;
 }
 .reviewText {
+  position: relative;
+  min-height: 250px;
+
+  .faveButton {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    height: 21px;
+    width: auto;
+
+    .v-icon {
+      font-size: 16px;
+    }
+    span {
+      font-size: 14px;
+    }
+  }
+}
+.top5List {
+  border-bottom: 1px $grey-google solid;
+
+  .click {
+    text-align: right;
+
+    .v-icon {
+      font-size: 16px;
+    }
+    span {
+      font-size: 14px;
+    }
+  }
+}
+.userReviews {
+  border-bottom: 1px $grey-google solid;
+}
+.mh-Review {
   position: relative;
 }
 </style>
