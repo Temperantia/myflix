@@ -121,5 +121,9 @@ export default {
   },
   "google-adsense": {
     id: "ca-pub-4080768963424465"
-  }
+  },
+  publicRuntimeConfig: {
+    enableAffiliates: false
+  },
+  privateRuntimeConfig: {}
 };

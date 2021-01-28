@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  trending-week.title-border.pa-0
+  trending-week.title-border.pa-0(isNewReleases)
   v-container(fluid)
     v-row
       v-col

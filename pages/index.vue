@@ -68,7 +68,7 @@ div
                 .click(v-else, @click='addFavoriteFromId(review.title.id)')
                   v-icon mdi-star-outline
                   span Add to Favorites
-             v-col.py-0.reviewText(cols='12', md='10')
+            v-col.py-0.reviewText(cols='12', md='10')
               v-row.ma-0
                 v-col.pl-0(cols='12', lg='6')
                   nuxt-link(

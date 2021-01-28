@@ -28,7 +28,9 @@ v-container(fluid)
                           b {{ vpn.score }} / 5
                         v-btn.black-body--bg.px-10.blue-completed--border.border
                           .blue-completed--text.font-weight-bold
-                            a(:href='vpn.link') Get {{ vpn.name }}
+                            a(
+                              :href='$config.enableAffiliates && vpn.link'
+                            ) Get {{ vpn.name }}
 </template>
 <script>
 export default {
