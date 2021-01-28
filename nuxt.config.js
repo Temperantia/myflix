@@ -32,6 +32,7 @@ export default {
   ],
   modules: [
     "cookie-universal-nuxt",
+    "nuxt-clipboard2",
     "@nuxtjs/firebase",
     "nuxt-vuex-localstorage",
     "@nuxtjs/google-adsense",
@@ -123,6 +124,7 @@ export default {
     id: "ca-pub-4080768963424465"
   },
   publicRuntimeConfig: {
+    baseUrl: process.env.BASE_URL,
     enableAffiliates: false
   },
   privateRuntimeConfig: {}

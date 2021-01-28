@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-container(fluid)
+v-container(fluid, :id='review.id')
   v-row.header-border
     v-col(lg='2')
       img(:src='user && user.image ? user.image : "/defaultUser.png"')
@@ -38,17 +38,21 @@ v-container(fluid)
       ) show more
   client-only
     v-row.section-border
-      v-col(cols='9', lg='7', offset-lg='3')
+      v-col(cols='9', lg='5', offset-lg='3')
         template(v-if='!preview && !$store.getters["profile/SELF"]')
           button.button-action.activated(
             v-if='!$store.getters["localStorage/CONNECTED"] || review.likes.includes($store.getters["localStorage/USER"].id)',
             @click='$unlike(review.id)'
           ) I found this review helpful
           button.button-action(v-else, @click='$like(review.id)') I found this review helpful
-      v-col.text-lg-right(cols='3', lg='2')
-        //-span.small-action.click permalink
-        //-span.small-action {{ " | " }}
-        span.small-action.click(
+      v-col.text-lg-right(cols='3', lg='4')
+        span.white-font--text.click(
+          @click='$copyText($config.baseUrl + $route.path + "#" + review.id); $toast.success("Copied to clipboard")'
+        ) permalink
+        span.white-font--text {{ " | " }}
+        share(:url='$config.baseUrl + $route.path + "#" + review.id')
+        span.white-font--text {{ " | " }}
+        span.white-font--text.click(
           v-if='$store.state.localStorage.connected && !$store.getters["profile/SELF"] && !review.reports.includes($store.state.localStorage.user.id)',
           @click='overlay = true'
         ) report
@@ -110,16 +114,13 @@ export default {
   background-color: white;
   color: $grey-button;
 }
+
 .header-border {
   border-bottom: 1px solid $white-font;
 }
 
 .section-border {
   border-bottom: 1px solid white;
-}
-
-.small-action {
-  color: $white-font;
 }
 
 .click {

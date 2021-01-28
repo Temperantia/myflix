@@ -83,7 +83,7 @@ v-container(fluid)
           button.mr-3.button.white--text(@click='update')
             v-icon(color='green-watching', v-if='$store.state.title.saved') mdi-check
             span(v-else) UPDATE
-          share
+          share(isButton, :url='$config.baseUrl + $route.path')
 
     //-v-col(cols='12', md='3')
       video(:src='title.trailer')
@@ -100,21 +100,22 @@ v-container(fluid)
       h3.title-border CAST
       v-container(fluid)
         v-row
-          v-col(
-            v-if='title.cast',
-            v-for='actor in title.cast',
-            cols='6',
-            md='2',
-            :key='actor.name'
-          )
-            v-row
-              v-col(cols='3')
-                img(:src='actor.image')
-              v-col.pl-1.pt-1(cols='9')
-                div {{ actor.name }}
-                div as
-                  span.red-netflix--text.pl-2 {{ actor.character }}
-                div(v-if='title.summary.type === "show"') {{ actor.episodes }}
+          template(v-if='title.imdbCast')
+            v-col(
+              v-for='actor of title.imdbCast',
+              cols='6',
+              md='2',
+              :key='actor.name'
+            )
+              v-container(fluid)
+                v-row
+                  v-col(cols='3')
+                    img(:src='actor.image')
+                  v-col.pl-1.pt-1(cols='9')
+                    div {{ actor.name }}
+                    div as
+                      span.red-netflix--text.pl-2 {{ actor.character }}
+                    div(v-if='title.summary.type === "show"') {{ actor.episodes }}
           v-col(v-else)
             p Not Available
   v-row
