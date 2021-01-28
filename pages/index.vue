@@ -70,12 +70,12 @@ div
                   span Add to Favorites
             v-col.py-0(cols='9')
               v-row
-                v-col
+                v-col(cols='12', lg='6')
                   nuxt-link(
                     :to='$search.find((item) => Number(item.id) == review.title.id).r'
                   )
                     h3 {{ review.title.title }}
-                v-col.text-right
+                v-col.text-right-lg(cols='12', lg='6')
                   div Overall Rating: {{ review.ratings.Overall }}
               p.font-weight-light
                 span(v-html='content(review.content, index)')

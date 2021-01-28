@@ -25,22 +25,6 @@ v-col(cols='12', lg='10')
               )
                 div {{ stat.name }}
                 div(:class='stat.class ? stat.class : ""') {{ stat.value }}
-        h4.subtitle-border FILMS
-        v-container(fluid)
-          v-row
-            v-col(cols='12', lg='5')
-              doughnut-chart(
-                :chartdata='filmsChartData',
-                :options='optionsDoughnut'
-              )
-            v-col(cols='12', lg='7')
-              .d-flex.justify-space-between(
-                v-for='(stat, index) in filmsStats',
-                :class='{ even: index % 2 === 1 }',
-                :key='stat.name'
-              )
-                div {{ stat.name }}
-                div(:class='stat.class ? stat.class : ""') {{ stat.value }}
       v-col(cols='12', lg='6')
         h4.subtitle-border LATEST TV SHOWS WATCHED
         v-container(v-if='tvShows.length > 0', fluid)
@@ -68,10 +52,29 @@ v-col(cols='12', lg='10')
                 span.white-font--text {{ " • Scored " }}
                 span(:class='$titleStatusColor(element.status)') {{ element.score || "-" }}
             v-col(cols='12', lg='4') {{ $moment(element.postedOn.seconds * 1000).format("MMM D, hh:ss a") }}
-        v-container(v-else, fluid, style='height: 227px')
+        v-container(v-else, fluid)
           v-row
             v-col
               p You have no recent tv shows
+    v-row
+      v-col(cols='12', lg='6')
+        h4.subtitle-border FILMS
+        v-container(fluid)
+          v-row
+            v-col(cols='12', lg='5')
+              doughnut-chart(
+                :chartdata='filmsChartData',
+                :options='optionsDoughnut'
+              )
+            v-col(cols='12', lg='7')
+              .d-flex.justify-space-between(
+                v-for='(stat, index) in filmsStats',
+                :class='{ even: index % 2 === 1 }',
+                :key='stat.name'
+              )
+                div {{ stat.name }}
+                div(:class='stat.class ? stat.class : ""') {{ stat.value }}
+      v-col(cols='12', lg='6')
         h4.subtitle-border LATEST FILMS WATCHED
         v-container(v-if='films.length > 0', fluid)
           v-row(
@@ -85,11 +88,13 @@ v-col(cols='12', lg='10')
               h2 {{ element.title.title }}
               .white-font--text {{ element.title.releaseYear }} {{ element.title.maturity }}
               div
-                span.white-font--text(:class='$titleStatusColor(element.status)') {{ element.status }}
+                span.white-font--text(
+                  :class='$titleStatusColor(element.status)'
+                ) {{ element.status }}
                 span.white-font--text {{ " • Scored " }}
                 span(:class='$titleStatusColor(element.status)') {{ element.score || "-" }}
             v-col(cols='12', lg='4') {{ $moment(element.postedOn.seconds * 1000).format("MMM D, hh:ss a") }}
-        v-container(v-else, fluid, style='height: 227px')
+        v-container(v-else, fluid)
           v-row
             v-col
               p You have no recent films
@@ -111,7 +116,7 @@ v-col(cols='12', lg='10')
                 span {{ show.year + " " + show.maturity }}
                 span {{ " " + show.season + " Seasons" }}
               .white-font--text {{ show.genres.map((genre) => genre.name).join(", ") }}
-        v-container(v-else, fluid, style='height: 227px')
+        v-container(v-else, fluid)
           v-row
             v-col
               p No favorites yet
@@ -125,7 +130,7 @@ v-col(cols='12', lg='10')
               h3 {{ film.title }}
               .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
               .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
-        v-container(v-else, fluid, style='height: 227px')
+        v-container(v-else, fluid)
           v-row
             v-col
               p No favorites yet

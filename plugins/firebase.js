@@ -39,10 +39,10 @@ export async function doc(query, name, cookies) {
 }
 
 const maturitiesEurope = {
-  AL: "PG",
+  AL: "G",
   "Kids OK": "TV-Y7",
   6: "TV-Y7",
-  9: "G",
+  9: "PG",
   12: "PG-13",
   14: "PG-13",
   16: "TV-MA",

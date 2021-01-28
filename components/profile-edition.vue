@@ -1,35 +1,39 @@
 <template lang="pug">
 v-container(fluid)
   v-row.title-border.pa-2
-    v-col
-      a(v-for='tab in tabs', :key='tab.name', @click='currentTab = tab.name')
-        h3.d-inline.mr-10(
-          :class='{ "red-netflix--text": isCurrentTab(tab.name) }'
-        ) {{ tab.name }}
-    v-col.text-right
+    v-col(cols='12', v-for='tab in tabs', :key='tab.name')
+      h3.click.d-inline.mr-10(
+        @click='currentTab = tab.name',
+        :class='{ "red-netflix--text": isCurrentTab(tab.name) }'
+      ) {{ tab.name }}
+    v-col.text-right-lg
       a(@click='validate') SAVE CHANGES
   v-container(fluid, v-if='currentTab === "EDIT PROFILE"')
     v-row.subtitle-border
-      v-col(cols='3')
-        .white-font--text Current Picture
-      v-col(cols='9')
-        .white-font--text Upload a Picture
+      v-col(cols='12', lg='3')
+        v-container(fluid)
+          .white-font--text Current Picture
+      v-col(cols='12', lg='9')
+        v-container(fluid)
+          .white-font--text Upload a Picture
     v-row
-      v-col.d-flex.justify-center(cols='3')
-        img(:src='copy.image ? copy.image : "/defaultUser.png"')
-      v-col(cols='4')
-        .mb-3 Must be jpg, gif or png format. No NSFW allowed. No copyrighted images. Maximum of 250 x 250 pixels (resized automatically).
-        .mb-5
-          input(type='file', @input='load')
-        .mb-3.subtitle-border.white-font--text Remove Picture
-        .mb-3 You can remove this picture by clicking the button below. Don't forget to upload another though, or else you will have a default image in its place.
-        button.button-action(@click='copy.image = null') Remove
-      v-col(cols='5')
+      v-col.d-flex.justify-center(cols='12', lg='3')
+        v-container(fluid)
+          img(:src='copy.image ? copy.image : "/defaultUser.png"')
+      v-col(cols='12', lg='4')
+        v-container(fluid)
+          .mb-3 Must be jpg, gif or png format. No NSFW allowed. No copyrighted images. Maximum of 250 x 250 pixels (resized automatically).
+          .mb-5
+            input(type='file', @input='load')
+          .mb-3.subtitle-border.white-font--text Remove Picture
+          .mb-3 You can remove this picture by clicking the button below. Don't forget to upload another though, or else you will have a default image in its place.
+          button.button-action(@click='copy.image = null') Remove
+      v-col(cols='12', lg='5')
         v-container(fluid)
           v-row(align='center')
-            v-col(cols='3')
+            v-col(cols='12', lg='3')
               h5 Time Zone
-            v-col(cols='5')
+            v-col(cols='12', lg='5')
               v-select(
                 :items='listTimeZones()',
                 outlined,
@@ -38,12 +42,12 @@ v-container(fluid)
                 @change='updateTimeZone',
                 v-model='copy.timeZone'
               )
-            v-col(cols='3')
+            v-col(cols='12', lg='3')
               .white-font--text Time: {{ time }}
           v-row(align='center')
-            v-col(cols='3')
+            v-col(cols='12', lg='3')
               h5 Gender
-            v-col(cols='5')
+            v-col(cols='12', lg='5')
               v-select(
                 :items='["Male", "Female"]',
                 v-model='copy.gender',
@@ -52,51 +56,53 @@ v-container(fluid)
                 :hide-details='true'
               )
           v-row(align='center')
-            v-col(cols='3')
+            v-col(cols='12', lg='3')
               h5 Birthday
-            v-col(cols='9')
+            v-col(cols='12', xl='9')
               birthdate-picker(
                 :birthdate='copy.birthdate',
                 :onUpdate='updateBirthdate'
               )
           v-row(align='center')
-            v-col(cols='3')
+            v-col(cols='12', lg='3')
               h5 Location
-            v-col(cols='6')
+            v-col(cols='12', lg='6')
               input.location(v-model='copy.location')
-            v-col(cols='3')
+            v-col(cols='12', lg='3')
               .white-font--text Ex: Anaheim, CA
   v-container(fluid, v-if='currentTab === "FAVORITES"')
     v-row
-      v-col(cols='6')
+      v-col(cols='12', lg='6')
         h4.subtitle-border TV SHOWS
-        v-row(v-for='(show, id) in copy.favorites.shows', :key='id')
-          v-col(cols='9')
-            h3 {{ show.title }}
-            .white-font--text {{ show.year + " " + show.maturity + " " + show.season + " Seasons" }}
-            .white-font--text {{ show.genres.map((genre) => genre.name).join(", ") }}
-          v-col.text-right(cols='3')
-            a.click.white-font--text(
-              @click='removeFavorite(copy.favorites.shows, id)'
-            ) REMOVE
-      v-col(cols='6')
+        v-container(fluid)
+          v-row(v-for='(show, id) in copy.favorites.shows', :key='id')
+            v-col(cols='12', lg='9')
+              h3 {{ show.title }}
+              .white-font--text {{ show.year + " " + show.maturity + " " + show.season + " Seasons" }}
+              .white-font--text {{ show.genres.map((genre) => genre.name).join(", ") }}
+            v-col.text-right(cols='12', lg='3')
+              a.click.white-font--text(
+                @click='removeFavorite(copy.favorites.shows, id)'
+              ) REMOVE
+      v-col(cols='12', lg='6')
         h4.subtitle-border FILMS
-        v-row(v-for='(film, id) in copy.favorites.films', :key='id')
-          v-col(cols='9')
-            h3 {{ film.title }}
-            .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
-            .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
-          v-col.text-right(cols='3')
-            a.click.white-font--text(
-              @click='removeFavorite(copy.favorites.films, id)'
-            ) REMOVE
+        v-container(fluid)
+          v-row(v-for='(film, id) in copy.favorites.films', :key='id')
+            v-col(cols='12', lg='9')
+              h3 {{ film.title }}
+              .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
+              .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
+            v-col.text-right(cols='12', lg='3')
+              a.click.white-font--text(
+                @click='removeFavorite(copy.favorites.films, id)'
+              ) REMOVE
   v-container(fluid, v-if='currentTab === "ACCOUNT SETTINGS"')
     v-form(ref='form')
       v-row.subtitle-border
         v-col Social Sign-in
       v-row
-        v-col(cols='2')
-          .d-flex.align-center
+        v-col(cols='12', lg='2')
+          v-container.d-flex.align-center(fluid)
             .button-block.google
               img(src='/Google.png')
               button Google
@@ -105,8 +111,8 @@ v-container(fluid)
               src='/Layer 127.png',
               @click='signInWithGoogle'
             )
-        v-col(cols='2')
-          .d-flex.align-center
+        v-col(cols='12', lg='2')
+          v-container.d-flex.align-center(fluid)
             .button-block.facebook
               img(src='/Facebook auth.png')
               button Facebook
@@ -117,7 +123,7 @@ v-container(fluid)
             )
       v-row(:class='{ "subtitle-border": !isSocial }')
         template(v-if='!isSocial')
-          v-col(cols='4')
+          v-col(cols='12', lg='4')
             .mb-5.subtitle-border Change Password
             v-text-field.my-2(
               type='password',
@@ -128,7 +134,7 @@ v-container(fluid)
               :rules='[(v) => !v || v.length >= 6 || "Password should be at least 6 characters"]',
               autocomplete='new-password'
             )
-          v-col(cols='4')
+          v-col(cols='12', lg='4')
             .mb-5.subtitle-border Change Email
             v-text-field(
               color='red',
@@ -138,7 +144,7 @@ v-container(fluid)
               :rules='[(v) => !v || /.+@.+\..+/.test(v) || "E-mail must be valid"]',
               autocomplete='email'
             )
-        v-col(cols='4')
+        v-col(cols='12', lg='4')
           .mb-5.subtitle-border Change Username
           v-text-field(
             color='red',
@@ -152,7 +158,7 @@ v-container(fluid)
             .white-font--text - You may only change your username once every month.
             .white-font--text - If you change your username, all links that used to go to your old username will no longer work.
       v-row(v-if='!isSocial')
-        v-col(cols='4')
+        v-col(cols='12', lg='4')
           v-text-field.my-2(
             type='password',
             color='red',
@@ -165,29 +171,32 @@ v-container(fluid)
     v-form(ref='deletion')
       v-row.subtitle-border
         v-col Account Deletion
-      v-row(align='center')
+      v-row
         template(v-if='!isSocial')
-          v-col(cols='2')
-            v-text-field.my-2(
-              color='red',
-              outlined,
-              label='Confirm Email',
-              :rules='[(v) => !!v || "Required", (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"]',
-              v-model='deletionEmail',
-              required
-            )
-          v-col(cols='2')
-            v-text-field.my-2(
-              type='password',
-              color='red',
-              outlined,
-              label='Confirm Password',
-              v-model='deletionPassword',
-              :rules='[(v) => !!v || "Required"]',
-              required
-            )
-        v-col(cols='2')
-          a.px-10.py-2.red-netflix.rounded(@click='deleteUser') DELETE ACCOUNT
+          v-col(cols='12', lg='2')
+            v-container(fluid)
+              v-text-field.my-2(
+                color='red',
+                outlined,
+                label='Confirm Email',
+                :rules='[(v) => !!v || "Required", (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"]',
+                v-model='deletionEmail',
+                required
+              )
+          v-col(cols='12', lg='2')
+            v-container(fluid)
+              v-text-field.my-2(
+                type='password',
+                color='red',
+                outlined,
+                label='Confirm Password',
+                v-model='deletionPassword',
+                :rules='[(v) => !!v || "Required"]',
+                required
+              )
+        v-col(cols='12', lg='3')
+          v-container.mt-5(fluid)
+            a.px-10.py-2.red-netflix.rounded(@click='deleteUser') DELETE ACCOUNT
 </template>
 <script>
 import { listTimeZones } from 'timezone-support';
@@ -273,10 +282,7 @@ export default {
       if (!this.$refs.deletion.validate()) {
         return;
       }
-      await this.$deleteUser(
-        this.deletionEmail,
-        this.deletionPassword
-      );
+      await this.$deleteUser(this.deletionEmail, this.deletionPassword);
     },
     async link(provider, name) {
       try {

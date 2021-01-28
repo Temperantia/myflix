@@ -152,6 +152,7 @@ export default ({ $fire, $fireModule, store, $moment, app }, inject) => {
     if (redirect) {
       app.router.push(redirect);
     }
+    return true;
   }
 
   inject("register", register);

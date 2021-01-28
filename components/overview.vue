@@ -17,8 +17,10 @@ v-container(fluid)
               h2 <span>Popularity </span>{{ "#" + title.popularity }}
             v-col(cols='12', lg='4')
               h2 <span>Following </span>{{ title.statistics.Followers }}
-          .white-font--text {{ title.releaseYear }} | {{ title.maturity }}
+          div
+            span.white-font--text {{ title.releaseYear }} | {{ title.maturity }}
             span.white-font--text(v-if='title.seasonCount') {{ " | " + title.seasonCount + (title.seasonCount > 1 ? " Seasons" : " Season") }}
+            span.white-font--text {{ " | " + title.genres.map((genre) => genre.name).join(", ") }}
           div
             span.white-font--text Creators:
             span.ml-1 {{ title.creators.join(", ") || "-" }}
@@ -93,7 +95,7 @@ v-container(fluid)
           v-row
             v-col
               p(v-html='title.synopsis ? title.synopsis : "Not Available"')
-  v-row(v-if='title.imdbCast')
+  v-row
     v-col
       h3.title-border CAST
       v-container(fluid)
