@@ -2,7 +2,7 @@
 v-container(fluid)
   v-row.subtitle-border
     v-col.pr-0(cols='12', lg='2')
-      h1.pageSubHead {{ show ? "TV SHOWS" : film ? "FILMS" : "TITLES" }}
+      h1.pageSubHead.font-weight-black {{ show ? "TV SHOWS" : film ? "FILMS" : "TITLES" }}
       h2.pageSubHead_1 {{ parseFloat(source.length).toLocaleString("en") }} titles currently available on Netflix
     v-col.searchContainer(cols='8', offset-lg='2', lg='4')
       input#search.titlePageSearch(
@@ -38,7 +38,7 @@ v-container(fluid)
           dense,
           hide-details
         )
-  v-row
+  v-row.ma-0
     v-col(cols='12', lg='2') Genre
       v-select(
         :items='["All", ...categories]',

@@ -3,7 +3,7 @@ div
   div(style='position: absolute; top: 0; left: 0; z-index: 1')
     img(src='/title bg.png')
     div(style='position: absolute; top: 0; left: 0; padding-left: 20px')
-      h2 WHAT'S TRENDING THIS WEEK?
+      h2.font-weight-bold.pt-1 WHAT'S TRENDING THIS WEEK?
       h4.font-weight-light {{ getWeek() }}
   swiper(:options='swiperOption', style='height: 600px; z-index: 0')
     swiper-slide(
@@ -22,10 +22,9 @@ div
         div(
           style='width: 100%; position: absolute; bottom: 0; left: 0; padding: 30px'
         )
-          h1 {{ item.t }}
+          h1.mb-1 {{ item.t }}
           h2(v-if='item.e', style='padding-top: 10px') Episodes: {{ item.e }}
-          b(style='padding-top: 10px') Available on Netflix:
-          span {{ " " + availability(item.a) }}
+          span.font-weight-bold(style='padding-top: 10px') Available on Netflix: {{ " " + availability(item.a) }}
           p(
             style='padding-top: 10px; font-weight: 300',
             v-html='item.d.length < 200 ? item.d : item.d.substring(0, 200) + "..."'

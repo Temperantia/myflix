@@ -2,7 +2,7 @@
 v-container.px-10(fluid)
   v-row
     v-col(cols='12', lg='7')
-      h1.title-border TOP UPCOMING PREMIERES OF {{ new Date().getFullYear() }}
+      h1.title-border.font-weight-bold TOP UPCOMING PREMIERES OF {{ new Date().getFullYear() }}
       h2.font-weight-light.subtitle.py-5 {{ $moment().format("MMMM").toUpperCase() }}
     v-col(cols='5')
   div(v-swiper='swiperOption', style='height: 370px')

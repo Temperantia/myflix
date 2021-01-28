@@ -26,7 +26,7 @@ v-container(fluid)
         )
         div(style='position: absolute; bottom: 0; left: 0; padding: 22px')
           .mb-2
-            h2.d-inline {{ title.t }}
+            h2.d-inline.font-weight-bold {{ title.t }}
             b(v-if='flixlist')
               i.green-watching--text(v-if='title.status === "Watching"') {{ title.episodes }}
                 span {{ " / " + title.e }}
@@ -89,7 +89,7 @@ v-container(fluid)
                 span Add to Favorites
         .my-1
           span.white-font--text.mr-2 {{ title.y }}
-          span.white-font--text.mr-1.py-1.px-2.border.white-font--border {{ $maturitiesEurope[title.v] }}
+          span.white-font--text.mr-1.py-0.px-1.border.white-font--border {{ $maturitiesEurope[title.v] }}
           span.white-font--text.mr-1(v-if='title.s') {{ title.s }} SEASONS
           b(v-if='flixlist')
             i.green-watching--text(v-if='title.status === "Watching"') {{ title.episodes }}
@@ -110,7 +110,7 @@ v-container(fluid)
             :width='200'
           )
   client-only(v-if='pages > 1')
-    v-row(justify='center')
+    v-row.ma-0(justify='center')
       v-col
         v-pagination(:length='pages', v-model='page', :total-visible='7')
 </template>
@@ -208,5 +208,8 @@ export default {
 .titleDetails {
   line-height: 18px;
   padding-top: 5px;
+}
+.subtitle-border {
+  margin: 0px;
 }
 </style>
