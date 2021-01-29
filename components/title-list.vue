@@ -1,7 +1,7 @@
 <template lang="pug">
 v-container(fluid)
   v-row(v-if='gallery')
-    v-col.click.pa-0(
+    v-col.click.pa-0.item-wrap(
       v-for='title in titles',
       :key='title.id',
       cols='12',
@@ -21,39 +21,36 @@ v-container(fluid)
         div(
           :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + title.b + ");"'
         )
-        div(
-          style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))'
-        )
-        div(style='position: absolute; bottom: 0; left: 0; padding: 22px')
-          .mb-2
-            h2.d-inline.font-weight-bold {{ title.t }}
-            b(v-if='flixlist')
-              i.green-watching--text(v-if='title.status === "Watching"') {{ title.episodes }}
-                span {{ " / " + title.e }}
-              i(
+        .gradient
+          .hover-title
+            .mb-2
+              h2.d-inline.font-weight-regular {{ title.t }}
+              b.ml-2(v-if='flixlist')
+                i.green-watching--text(v-if='title.status === "Watching"') {{ title.episodes }}
+                  span {{ " / " + title.e }}
+                i(
+                  v-else,
+                  :class='textColor(title.u ? "show" : "movie", title.status)'
+                ) {{ title.status }}
+              v-icon.click.fave(
+                v-if='isFavorite(title.id)',
+                @click='removeFavoriteFromId(title.id)'
+              ) mdi-star
+              v-icon.click.fave(
                 v-else,
-                :class='textColor(title.u ? "show" : "movie", title.status)'
-              ) {{ title.status }}
-          .mb-2
-            span.white-font--text {{ title.y + " " }}
-            span.py-0.px-1.white-font--text.white-font--border.border {{ $maturitiesEurope[title.v] }}
-            span.white-font--text(v-if='title.s') {{ " " + title.s + " SEASONS" }}
-          .mb-2.titleDetails(
-            v-html='title.d.length < 100 ? title.d : title.d.substring(0, 100) + "..."'
-          )
-          .titleDetails
-            span {{ "Genres: " }}
-            span.white-font--text {{ title.g.join(", ") }}
-        v-icon.click(
-          style='position: absolute; right: 5px; bottom: 5px',
-          v-if='isFavorite(title.id)',
-          @click='removeFavoriteFromId(title.id)'
-        ) mdi-star
-        v-icon.click(
-          style='position: absolute; right: 5px; bottom: 5px',
-          v-else,
-          @click='addFavoriteFromId(title.id)'
-        ) mdi-star-outline
+                @click='addFavoriteFromId(title.id)'
+              ) mdi-star-outline
+          .hover-item
+            .mb-2
+              span.white-font--text {{ title.y + " " }}
+              span.py-0.px-1.white-font--text.white-font--border.border {{ $maturitiesEurope[title.v] }}
+              span.white-font--text(v-if='title.s') {{ " " + title.s + " SEASONS" }}
+            .mb-2.titleDetails(
+              v-html='title.d.length < 100 ? title.d : title.d.substring(0, 100) + "..."'
+            )
+            .titleDetails
+              span {{ "Genres: " }}
+              span.white-font--text {{ title.g.join(", ") }}
   v-row.subtitle-border(v-else, v-for='title in titles', :key='title.id')
     v-col(cols='12', lg='1')
       v-container(fluid)
@@ -110,7 +107,7 @@ v-container(fluid)
             :width='200'
           )
   client-only(v-if='pages > 1')
-    v-row.ma-0(justify='center')
+    v-row.pagination(justify='center')
       v-col
         v-pagination(:length='pages', v-model='page', :total-visible='7')
 </template>
@@ -204,12 +201,67 @@ export default {
   },
 };
 </script>
-<style>
+<style lang="scss" scoped>
 .titleDetails {
   line-height: 18px;
   padding-top: 5px;
 }
 .subtitle-border {
   margin: 0px;
+}
+.pagination {
+  margin-top: 12px;
+}
+.item-wrap {
+  overflow: hidden;
+  position: relative;
+  font-weight: 400;
+
+  &:hover .hover-item {
+    bottom: 0px;
+    opacity: 1;
+  }
+
+  &:hover .hover-title {
+    bottom: 100px;
+  }
+}
+.hover-title {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  padding: 22px;
+  -o-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -webkit-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+}
+.hover-item {
+  width: 100%;
+  max-height: 300px;
+  position: absolute;
+  padding: 22px;
+  bottom: -100px;
+  opacity: 0;
+  -o-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -webkit-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+}
+.gradient {
+  display: block;
+  border-top: 4px;
+  width: 100%;
+  height: 300px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))
+}
+.fave {
+  position: absolute;
+  right: 22px;
+  top: 32px;
+  font-size: 18px;
 }
 </style>
