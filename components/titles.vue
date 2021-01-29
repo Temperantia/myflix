@@ -55,7 +55,7 @@ v-container(fluid)
       )
     v-col(cols='12', lg='2') Sort
       v-select(
-        :items='["Netflix Original", "Release date (Newest first)", "Release date (Oldest first)", "Alphabetical (A - Z)"]',
+        :items='["Most Popular", "Netflix Original", "Release date (Newest first)", "Release date (Oldest first)", "Alphabetical (A - Z)"]',
         v-model='sort',
         outlined,
         dense
@@ -140,11 +140,12 @@ export default {
               title.episodes = this.flixlist[title.id].episodes;
             }
           }
-
           return title;
         })
         .sort((a, b) => {
-          if (this.sort === 'Netflix Original') {
+          if (this.sort === 'Most Popular') {
+            return a.p - b.p;
+          } else if (this.sort === 'Netflix Original') {
             return a.o ? -1 : 1;
           } else if (this.sort === 'Release date (Newest first)') {
             return a.a && b.a ? (a.a > b.a ? -1 : 1) : a.y > b.y ? -1 : 1;
