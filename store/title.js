@@ -45,7 +45,7 @@ export const mutations = {
       state.episodes = payload.title.episodeCount;
       state.status = "Completed";
     } else {
-      state.episodes = value;
+      state.episodes = payload.value;
       if (state.status === "Completed" || !state.status) {
         state.status = "Watching";
       }
