@@ -33,7 +33,7 @@ v-app(app)
               :class='{ "red-netflix--text": tab.route === currentTab, tab: true }',
               @click='tab.hook'
             ) {{ tab.name }}
-          div.text-right
+          .text-right
             a.mr-3(href='https://twitter.com/myflixnet')
               v-icon mdi-twitter
             a.mr-3(href='https://www.facebook.com/myflixnet/')
@@ -74,13 +74,13 @@ v-app(app)
               span TERMS &amp; CONDITIONS
           v-col(cols='12')
             ul
-              li 
+              li
                 nuxt-link(to='/faq')
                   span FAQ
-              li 
+              li
                 nuxt-link(to='/privacy-policy')
                   span PRIVACY POLICY
-              li 
+              li
                 nuxt-link(to='/terms-of-service')
                   span TERMS OF SERVICE
       .middle
@@ -281,7 +281,7 @@ footer {
     font-size: 12px;
 
     p {
-      color: rgba(255,255,255,0.3);
+      color: rgba(255, 255, 255, 0.3);
     }
 
     .bottom {

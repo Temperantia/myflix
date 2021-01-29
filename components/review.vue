@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-container(fluid, :id='review.id')
+v-container(fluid, :id='"review-" + review.id')
   v-row.header-border
     v-col(lg='2')
       img(:src='user && user.image ? user.image : "/defaultUser.png"')
@@ -16,26 +16,28 @@ v-container(fluid, :id='review.id')
       div Overall Rating: {{ review.ratings.Overall }}
   v-row
     v-col(cols='12', lg='3')
-      .ratings.pa-1
-        .black-subheader.d-flex.justify-space-between
-          span.px-3.py-1 Overall
-          span.px-3.py-1 {{ review.ratings.Overall }}
-        .d-flex.justify-space-between(
-          v-for='(rating, name) in review.ratings',
-          :key='name'
-        )
-          span.px-3.py-1 {{ name }}
-          span.px-3.py-1 {{ rating }}
+      v-container(fluid)
+        .ratings.pa-1
+          .black-subheader.d-flex.justify-space-between
+            span.px-3.py-1 Overall
+            span.px-3.py-1 {{ review.ratings.Overall }}
+          .d-flex.justify-space-between(
+            v-for='(rating, name) in review.ratings',
+            :key='name'
+          )
+            span.px-3.py-1 {{ name }}
+            span.px-3.py-1 {{ rating }}
     v-col(cols='12', lg='9')
-      p(v-html='content')
-      span.red-netflix--text.click.ml-1(
-        v-if='content.length > 500 && expanded',
-        @click='expanded = false'
-      ) show less
-      span.red-netflix--text.click.ml-1(
-        v-else-if='content.length > 500',
-        @click='expanded = true'
-      ) show more
+      v-container(fluid)
+        p(v-html='content')
+        span.red-netflix--text.click.ml-1(
+          v-if='content.length > 500 && expanded',
+          @click='expanded = false'
+        ) show less
+        span.red-netflix--text.click.ml-1(
+          v-else-if='content.length > 500',
+          @click='expanded = true'
+        ) show more
   client-only
     v-row.section-border
       v-col(cols='9', lg='5', offset-lg='3')
@@ -47,15 +49,15 @@ v-container(fluid, :id='review.id')
           button.button-action(v-else, @click='$like(review.id)') I found this review helpful
       v-col.text-lg-right(cols='3', lg='4')
         span.white-font--text.click(
-          @click='$copyText($config.baseUrl + $route.path + "#" + review.id); $toast.success("Copied to clipboard")'
+          @click='$copyText($config.baseUrl + $route.path + "#review-" + review.id); $toast.success("Copied to clipboard")'
         ) permalink
         span.white-font--text {{ " | " }}
-        share(:url='$config.baseUrl + $route.path + "#" + review.id')
-        span.white-font--text {{ " | " }}
-        span.white-font--text.click(
-          v-if='$store.state.localStorage.connected && !$store.getters["profile/SELF"] && !review.reports.includes($store.state.localStorage.user.id)',
-          @click='overlay = true'
-        ) report
+        share(:url='$config.baseUrl + $route.path + "#review-" + review.id')
+        template(
+          v-if='$store.state.localStorage.connected && !$store.getters["profile/SELF"] && !review.reports.includes($store.state.localStorage.user.id)'
+        )
+          span.white-font--text {{ " | " }}
+          span.white-font--text.click(@click='overlay = true') report
   report(
     :display='overlay',
     type='review',
@@ -121,9 +123,5 @@ export default {
 
 .section-border {
   border-bottom: 1px solid white;
-}
-
-.click {
-  cursor: pointer;
 }
 </style>

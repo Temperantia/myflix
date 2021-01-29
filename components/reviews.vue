@@ -88,6 +88,11 @@ div(v-else)
           button(v-else, @click='$router.push("/sign-in")') SIGN IN TO MAKE A REVIEW
   template(v-if='reviews.length > 0')
     review(:review='review', v-for='review in reviews', :key='review.id')
+    client-only(v-if='pages > 1')
+      v-container(fluid)
+        v-row.ma-0(justify='center')
+          v-col
+            v-pagination(:length='pages', v-model='page', :total-visible='7')
   v-container(v-else, fluid)
     v-row
       v-col
@@ -96,6 +101,8 @@ div(v-else)
 <script>
 export default {
   data: () => ({
+    reviewsPerPage: 20,
+    page: 1,
     edition: false,
     preview: false,
     review: {
@@ -111,6 +118,21 @@ export default {
       },
     },
   }),
+  mounted() {
+    const id = this.$route.hash.substring(1);
+    if (id) {
+      const index = this.source.findIndex((review) => review.id === id);
+      if (index !== -1) {
+        this.page = Math.floor(index / this.reviewsPerPage) + 1;
+        const checkExist = setInterval(() => {
+          if (document.getElementById(id)) {
+            this.$scrollTo('#review-' + id);
+            clearInterval(checkExist);
+          }
+        }, 100);
+      }
+    }
+  },
   methods: {
     updateEpisodes(event) {
       const value = event.target.value;
@@ -151,7 +173,14 @@ export default {
       return this.$store.state.title.data;
     },
     reviews() {
-      return this.$store.state.title.reviews;
+      const offset = (this.page - 1) * this.reviewsPerPage;
+      return this.source.slice(offset, offset + this.reviewsPerPage);
+    },
+    source() {
+      return this.$store.getters['title/REVIEWS'];
+    },
+    pages() {
+      return Math.ceil(this.source.length / this.reviewsPerPage);
     },
   },
 };

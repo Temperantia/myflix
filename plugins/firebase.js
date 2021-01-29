@@ -153,11 +153,13 @@ export default async (
   }
 
   async function getReviews(id) {
-    return await get(
-      collectionReviews.where("title.id", "==", Number(id)),
-      "getReviews",
-      $cookies
-    );
+    return (
+      await get(
+        collectionReviews.where("title.id", "==", Number(id)),
+        "getReviews",
+        $cookies
+      )
+    ).sort((a, b) => b.postedOn - a.postedOn);
   }
 
   async function getReviewsLatest() {
@@ -175,11 +177,13 @@ export default async (
   }
 
   async function getSuggestions(id) {
-    return await get(
-      collectionSuggestions.where("title.id", "==", Number(id)),
-      "getSuggestions",
-      $cookies
-    );
+    return (
+      await get(
+        collectionSuggestions.where("title.id", "==", Number(id)),
+        "getSuggestions",
+        $cookies
+      )
+    ).sort((a, b) => b.postedOn - a.postedOn);
   }
 
   async function getSuggestionsLatest() {
@@ -222,6 +226,7 @@ export default async (
       },
       title: {
         id: title.summary.id,
+        type: title.summary.type,
         title: title.title,
         boxArt: title.boxArt,
         tallBoxArt: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
@@ -251,6 +256,7 @@ export default async (
       },
       title: {
         id: title.summary.id,
+        type: title.summary.type,
         title: title.title,
         boxArt: title.boxArt,
         tallBoxArt: title.tallBoxArt ? title.tallBoxArt : title.boxArt,

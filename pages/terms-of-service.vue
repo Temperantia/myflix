@@ -2,19 +2,20 @@
 client-only
   v-container(fluid)
     v-row
-      v-col(cols='3')
+      v-col(
+        cols='12',
+        md='3',
+        :style='$vuetify.breakpoint.mdAndUp ? "position: fixed" : ""'
+      )
         client-only
-          scrollactive.my-nav(
-            scrollContainerSelector='#content',
-            :offset='130'
-          )
+          scrollactive.my-nav(:offset='130')
             a.scrollactive-item(
               v-for='item in items',
               :key='item.title',
               :href='"#" + slugify(item.title)'
             )
               h5.py-2.white-font--text {{ item.title.toUpperCase() }}
-      v-col#content(cols='9', style='overflow-y: scroll; height: 70vh')
+      v-col(cols='12', lg='9', offset-lg='3')
         p This Privacy Policy governs the manner in which INC DIGITAL collects, uses, maintains and discloses information collected from users (each, a "User") of the my-flix.net website ("Site"). This privacy policy applies to the Site and all products and services offered by INC DIGITAL.
         div(
           v-for='item in items',
@@ -103,6 +104,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .is-active > h5 {
-  color: white;
+  color: white !important;
 }
 </style>

@@ -1,12 +1,19 @@
 <template lang="pug">
 v-container(fluid)
-  v-row.title-border.pa-2
-    v-col(cols='12', v-for='tab in tabs', :key='tab.name')
+  v-row.title-border.pa-2(align='center')
+    template(v-if='$vuetify.breakpoint.mdAndUp')
+      h3.click.d-inline.mr-10(
+        v-for='tab in tabs',
+        :key='tab.name',
+        @click='currentTab = tab.name',
+        :class='{ "red-netflix--text": isCurrentTab(tab.name) }'
+      ) {{ tab.name }}
+    v-col(v-else, cols='12', v-for='tab in tabs', :key='tab.name')
       h3.click.d-inline.mr-10(
         @click='currentTab = tab.name',
         :class='{ "red-netflix--text": isCurrentTab(tab.name) }'
       ) {{ tab.name }}
-    v-col.text-right-lg
+    v-col.text-md-right
       a(@click='validate') SAVE CHANGES
   v-container(fluid, v-if='currentTab === "EDIT PROFILE"')
     v-row.subtitle-border

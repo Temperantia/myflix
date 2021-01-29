@@ -125,11 +125,11 @@ export default {
       }
     },
     pages() {
-      return parseInt(this.source.length / 25);
+      return Math.ceil(this.source.length / 24);
     },
     titles() {
-      const offset = (this.page - 1) * 25;
-      return this.source.slice(offset, offset + 25);
+      const offset = (this.page - 1) * 24;
+      return this.source.slice(offset, offset + 24);
     },
     user() {
       return this.$store.getters['localStorage/USER'];

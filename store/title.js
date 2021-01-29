@@ -10,7 +10,9 @@ export const state = () => ({
 });
 
 export const getters = {
-  TITLE: state => state.data
+  TITLE: state => state.data,
+  REVIEWS: state => state.reviews,
+  SUGGESTIONS: state => state.suggestions
 };
 
 export const mutations = {
@@ -61,7 +63,7 @@ export const mutations = {
   UPDATE_SAVED(state, saved) {
     state.saved = saved;
   },
-  LOAD_FLIXLIST(state, flixlist) {
+  LOAD_FLIXLIST(state, { flixlist, ratings }) {
     if (flixlist.status) {
       state.status = flixlist.status;
     }
@@ -69,7 +71,7 @@ export const mutations = {
       state.episodes = flixlist.episodes;
     }
     if (flixlist.score) {
-      state.score = `${flixlist.score} - ${$ratings[flixlist.score]}`;
+      state.score = `${flixlist.score} - ${ratings[flixlist.score]}`;
     }
     if (flixlist.bingeworthy) {
       state.bingeworthy = state.bingeworthy;
@@ -92,10 +94,10 @@ export const mutations = {
     review.likes.splice(index, 1);
   },
   CREATE_REVIEW(state, review) {
-    state.reviews.push(review);
+    state.reviews.unshift(review);
   },
   CREATE_SUGGESTION(state, suggestion) {
-    state.suggestions.push(suggestion);
+    state.suggestions.unshift(suggestion);
   },
   REPORT_REVIEW(state, payload) {
     const review = state.reviews.find(review => review.id === payload.id);

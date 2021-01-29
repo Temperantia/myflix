@@ -45,9 +45,9 @@ export default class BirthdatePicker extends Vue {
   daysByMonth: number[] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   months: number[] = Array.from({ length: 12 }, (x, i) => i + 1);
   years: number[] = Array.from(
-    { length: new Date().getFullYear() - 1900 + 13 },
+    { length: new Date().getFullYear() - 1900 - 13 + 1 },
     (x, i) => i + 1900
-  );
+  ).reverse();
 
   created() {
     let birthdate: Date;

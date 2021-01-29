@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container.section-border(fluid, :id='suggestion.id')
+v-container.section-border(fluid, :id='"suggestion-" + suggestion.id')
   v-row(align='center')
     v-col(cols='12', lg='2')
       img(:src='suggestion.similar.image')
@@ -11,15 +11,17 @@ v-container.section-border(fluid, :id='suggestion.id')
           v-col.text-lg-right
             client-only
               span.white-font--text.click(
-                @click='$copyText($config.baseUrl + $route.path + "#" + suggestion.id); $toast.success("Copied to clipboard")'
+                @click='$copyText($config.baseUrl + $route.path + "#suggestion-" + suggestion.id); $toast.success("Copied to clipboard")'
               ) permalink
               span.white-font--text {{ " | " }}
-              share(:url='$config.baseUrl + $route.path + "#" + suggestion.id')
-              span.white-font--text {{ " | " }}
-              span.white-font--text.click(
-                v-if='$store.state.localStorage.connected && !$store.getters["profile/SELF"] && !suggestion.reports.includes($store.state.localStorage.user.id)',
-                @click='overlay = true'
-              ) report
+              share(
+                :url='$config.baseUrl + $route.path + "#suggestion-" + suggestion.id'
+              )
+              template(
+                v-if='$store.state.localStorage.connected && !$store.getters["profile/SELF"] && !suggestion.reports.includes($store.state.localStorage.user.id)'
+              )
+                span.white-font--text {{ " | " }}
+                span.white-font--text.click(@click='overlay = true') report
       v-container(fluid)
         v-row
           v-col

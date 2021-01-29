@@ -2,19 +2,20 @@
 client-only
   v-container(fluid)
     v-row
-      v-col(cols='3')
+      v-col(
+        cols='12',
+        md='3',
+        :style='$vuetify.breakpoint.mdAndUp ? "position: fixed" : ""'
+      )
         client-only
-          scrollactive.my-nav(
-            scrollContainerSelector='#content',
-            :offset='130'
-          )
+          scrollactive
             a.scrollactive-item(
               v-for='item in items',
               :key='item.title',
               :href='"#" + slugify(item.title)'
             )
               h5.py-2.white-font--text {{ item.title.toUpperCase() }}
-      v-col#content(cols='9', style='overflow-y: scroll; height: 70vh')
+      v-col(cols='12', lg='9', offset-lg='3')
         div(
           v-for='item in items',
           :key='item.title',
@@ -97,6 +98,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .is-active > h5 {
-  color: white;
+  color: white !important;
 }
 </style>

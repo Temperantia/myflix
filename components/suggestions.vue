@@ -47,6 +47,11 @@ div(v-else)
       v-for='suggestion in suggestions',
       :key='suggestion.id'
     )
+    client-only(v-if='pages > 1')
+      v-container(fluid)
+        v-row.ma-0(justify='center')
+          v-col
+            v-pagination(:length='pages', v-model='page', :total-visible='7')
   v-container(v-else, fluid)
     v-row
       v-col
@@ -55,12 +60,29 @@ div(v-else)
 <script>
 export default {
   data: () => ({
+    suggestionsPerPage: 20,
+    page: 1,
     edition: false,
     suggestion: {
       content: '',
       similar: null,
     },
   }),
+  mounted() {
+    const id = this.$route.hash.substring(1);
+    if (id) {
+      const index = this.source.findIndex((suggestion) => suggestion.id === id);
+      if (index !== -1) {
+        this.page = Math.floor(index / this.suggestionsPerPage) + 1;
+        const checkExist = setInterval(() => {
+          if (document.getElementById(id)) {
+            this.$scrollTo('#suggestion-' + id);
+            clearInterval(checkExist);
+          }
+        }, 100);
+      }
+    }
+  },
   methods: {
     submit() {
       if (
@@ -90,7 +112,14 @@ export default {
       return this.$store.state.title.data;
     },
     suggestions() {
-      return this.$store.state.title.suggestions;
+      const offset = (this.page - 1) * this.suggestionsPerPage;
+      return this.source.slice(offset, offset + this.suggestionsPerPage);
+    },
+    source() {
+      return this.$store.getters['title/SUGGESTIONS'];
+    },
+    pages() {
+      return Math.ceil(this.source.length / this.suggestionsPerPage);
     },
   },
 };

@@ -1,7 +1,15 @@
 <template lang="pug">
-  div
-    p.red-netflix--text This feature is currently being tested. We are trying to improve your ads experience and we will tend to give you better suggestions.
-    #ad
+v-container(fluid)
+  v-row.title-border
+    v-col(cols='12', lg='8')
+      h3 {{ title.title.toUpperCase() + " RELATED GOODS" }}
+    v-col.text-lg-right(cols='12', lg='4')
+      span.white-font--text VIA AMAZON
+  v-row
+    v-col
+      v-container(fluid)
+        p.red-netflix--text This feature is currently being tested. We are trying to improve your ads experience and we will tend to give you better suggestions.
+  #ad
 </template>
 <script>
 export default {
@@ -26,7 +34,8 @@ export default {
     for (const key in this.config) {
       config.innerHTML += key + '="' + this.config[key] + '";';
     }
-    config.innerHTML += 'amzn_assoc_default_search_phrase = "netflix ' + this.title.title + '";';
+    config.innerHTML +=
+      'amzn_assoc_default_search_phrase = "netflix ' + this.title.title + '";';
 
     document.getElementById('ad').appendChild(config);
 

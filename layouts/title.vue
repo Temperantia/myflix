@@ -89,7 +89,7 @@ defaultLayout
             v-row.title-border(align='center')
               v-col
                 h3 INFORMATION
-              v-col.text-right-xl(
+              v-col.text-xl-right(
                 md='12',
                 xl='6',
                 v-if='isCurrentTab(tabs[0].route)'
@@ -159,7 +159,10 @@ export default {
   components: { DefaultLayout },
   created() {
     if (this.flixlist) {
-      this.$store.commit('title/LOAD_FLIXLIST', this.flixlist);
+      this.$store.commit('title/LOAD_FLIXLIST', {
+        flixlist: this.flixlist,
+        ratings: this.$ratings,
+      });
     }
   },
   computed: {
