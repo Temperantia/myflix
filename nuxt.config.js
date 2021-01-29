@@ -125,7 +125,9 @@ export default {
     id: "ca-pub-4080768963424465"
   },
   publicRuntimeConfig: {
-    baseUrl: process.env.BASE_URL,
+    baseUrl: process.env.NODE_ENV === 'dev'
+    ? 'http://localhost:3000'
+    : 'https:/my-flix.net',
     enableAffiliates: false
   },
   privateRuntimeConfig: {}
