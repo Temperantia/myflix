@@ -4,7 +4,7 @@ v-container(fluid)
     v-col.text-center(cols='12', offset-lg='3', lg='6', offset-xl='4', xl='4')
       h4.title-border.text-left REGISTER
       .mt-10
-        img(src='/logo.png', style='width: 60%')
+        img(src='/myflix-logo.png', style='width: 60%')
       h2.mt-10 Get started using MyFlix
       p.pa-5 Join MyFlix to catalog your favorite series, movies, and Netflix originals, compare with your friends, create your own profile, and plenty more. It's <b>Free</b>.
       h3 Sign Up with
