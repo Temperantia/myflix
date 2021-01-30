@@ -107,18 +107,18 @@ export default {
   },
   pwa: {
     meta: {
-      name: "Myflix",
-      author: "Inc•lusive",
-      ogSiteName: "Myflix",
-      ogTitle: "Myflix",
+      name: "MYFLIX",
+      author: "Inc • Digital",
+      ogSiteName: "my-flix.net",
+      ogTitle: "MYFLIX",
       ogDescription:
         "Find User recommendations/suggestions, reviews, ratings, look at your personal statistics, and more! 😍 The project is currently in a development phase, but we are looking forward to hearing from you. (75%)",
       ogHost: "https://my-flix.net",
       ogImage: "/myflixFavicon2.png"
     },
     manifest: {
-      name: "Myflix",
-      short_name: "Myflix",
+      name: "MYFLIX",
+      short_name: "MYFLIX",
       description:
         "Find User recommendations/suggestions, reviews, ratings, look at your personal statistics, and more! 😍 The project is currently in a development phase, but we are looking forward to hearing from you. (75%)",
       start_url:
