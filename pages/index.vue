@@ -30,7 +30,6 @@ v-app.app(app)
       v-col.h-100.pa-0(cols='12', md='5')
         v-container.h-100.pa-0(fluid)
           v-col.pa-0.boxart(cols='12')
-            
 </template>
 <script>
 export default {
@@ -71,7 +70,7 @@ export default {
 
   .legal {
     font-size: 12px;
-    color: rgba(255,255,255,0.2)
+    color: rgba(255, 255, 255, 0.2);
   }
 }
 </style>

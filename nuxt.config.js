@@ -11,7 +11,6 @@ export default {
       }
     }
   },
-  debug: true,
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",
@@ -70,15 +69,6 @@ export default {
     }
   },
   css: ["@/assets/main.scss", "@/node_modules/swiper/swiper-bundle.css"],
-  head: {
-    title: "myflix",
-    meta: [
-      { charset: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: "" }
-    ],
-    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
-  },
   vuetify: {
     customVariables: ["~/assets/variables.scss"],
     theme: {
@@ -112,9 +102,29 @@ export default {
   styleResources: {
     scss: ["~/assets/variables.scss"]
   },
+  head: {
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
+  },
   pwa: {
-    icon: {
-      fileName: "logo.png"
+    meta: {
+      name: "Myflix",
+      author: "Inc•lusive",
+      ogSiteName: "Myflix",
+      ogTitle: "Myflix",
+      ogDescription:
+        "Find User recommendations/suggestions, reviews, ratings, look at your personal statistics, and more! 😍 The project is currently in a development phase, but we are looking forward to hearing from you. (75%)",
+      ogHost: "https://my-flix.net",
+      ogImage: "/myflixFavicon2.png"
+    },
+    manifest: {
+      name: "Myflix",
+      short_name: "Myflix",
+      description:
+        "Find User recommendations/suggestions, reviews, ratings, look at your personal statistics, and more! 😍 The project is currently in a development phase, but we are looking forward to hearing from you. (75%)",
+      start_url:
+        process.env.NODE_ENV === "dev"
+          ? "http://localhost:3000"
+          : "https:/my-flix.net"
     }
   },
   "google-adsense": {
