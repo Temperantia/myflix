@@ -60,29 +60,16 @@ v-app(app)
   v-container.px-0.pt-0(fluid)
     footer
       .top
-        v-row(align='center')
-          //-v-col(cols='12', md='3', lg='2')
+        ul
+          li.d-block.d-md-inline
             nuxt-link(to='/faq')
               span FAQ
-          //-v-col(cols='12', lg='2')
-            span ADVERTISING
-          //-v-col(cols='12', md='3', lg='2')
+          li.d-block.d-md-inline
             nuxt-link(to='/privacy-policy')
               span PRIVACY POLICY
-          //-v-col(cols='12', md='3', lg='2')
-            nuxt-link(to='/terms-and-conditions')
-              span TERMS &amp; CONDITIONS
-          v-col(cols='12')
-            ul
-              li
-                nuxt-link(to='/faq')
-                  span FAQ
-              li
-                nuxt-link(to='/privacy-policy')
-                  span PRIVACY POLICY
-              li
-                nuxt-link(to='/terms-of-service')
-                  span TERMS OF SERVICE
+          li.d-block.d-md-inline
+            nuxt-link(to='/terms-of-service')
+              span TERMS OF SERVICE
       .middle
         v-row(align='center')
           v-col.pa-5(cols='6', lg='1')
@@ -271,7 +258,6 @@ footer {
     border-bottom: 2px solid $red-netflix;
 
     ul li {
-      display: inline;
       list-style: none;
       margin-right: 60px;
     }

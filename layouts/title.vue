@@ -122,13 +122,12 @@ defaultLayout
                   td {{ data }}
       v-col(cols='12', md='10', xl='8')
         v-container(fluid)
-          v-row.title-border
-            v-col(v-if='$vuetify.breakpoint.mdAndUp', md='12')
-              nuxt-link(:to='tab.route', v-for='tab in tabs', :key='tab.name')
-                h3.d-inline.mr-10(
-                  :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
-                ) {{ tab.name }}
-            v-col(v-else, v-for='tab in tabs', :key='tab.name', cols='12')
+          ul.title-border
+            li.d-block.d-md-inline(
+              v-for='tab in tabs',
+              :key='tab.name',
+              cols='12'
+            )
               nuxt-link(:to='tab.route')
                 h3.d-inline.mr-10(
                   :class='{ "red-netflix--text": isCurrentTab(tab.route) }'

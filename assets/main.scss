@@ -108,6 +108,10 @@ img {
   outline: 1px solid $red-netflix;
 }
 
+.v-application ul, .v-application ol {
+  padding-left: 0 !important;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
