@@ -14,7 +14,7 @@ export default {
 <style lang="scss" scoped>
 .score {
   position: relative;
-  
+
   img {
     height: 130px;
     width: 233px;
@@ -23,7 +23,7 @@ export default {
 
   .content {
     position: absolute;
-        
+
     h1 {
       font-size: 46px;
       font-weight: 900;

@@ -73,7 +73,7 @@ export default {
     expanded: false,
     overlay: false,
   }),
-  props: ['review', 'title', 'preview'],
+  props: { review: Object, title: Object, preview: Boolean },
   computed: {
     content() {
       return !this.expanded && this.review.content.length > 500
