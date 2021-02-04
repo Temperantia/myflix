@@ -22,9 +22,13 @@ v-menu
           img.mr-5(src='/fb.png')
           span Facebook
 </template>
-<script>
-export default {
-  props: { isButton: Boolean, url: String },
+<script lang='ts'>
+import { Vue, Component, Prop } from 'nuxt-property-decorator';
+
+@Component
+export default class Share extends Vue {
+  @Prop({type: Boolean}) isButton!: boolean;
+  @Prop({type: String}) url!: string;
 };
 </script>
 <style lang="scss" scoped>

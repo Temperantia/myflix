@@ -106,8 +106,11 @@ v-col(cols='12', lg='10')
     v-row
       v-col(cols='12', lg='6')
         h4.subtitle-border TV SHOWS
-        v-container(v-if='Object.keys(user.favorites.shows).length > 0', fluid)
-          v-row(v-for='(show, id) in user.favorites.shows', :key='id')
+        v-container(
+          v-if='Object.keys(profile.favorites.shows).length > 0',
+          fluid
+        )
+          v-row(v-for='(show, id) in profile.favorites.shows', :key='id')
             v-col(cols='12', lg='3')
               img(:src='show.image')
             v-col(cols='12', lg='9')
@@ -122,8 +125,11 @@ v-col(cols='12', lg='10')
               p No favorites yet
       v-col(cols='12', lg='6')
         h4.subtitle-border FILMS
-        v-container(v-if='Object.keys(user.favorites.films).length > 0', fluid)
-          v-row(v-for='(film, id) in user.favorites.films', :key='id')
+        v-container(
+          v-if='Object.keys(profile.favorites.films).length > 0',
+          fluid
+        )
+          v-row(v-for='(film, id) in profile.favorites.films', :key='id')
             v-col(cols='12', lg='3')
               img(:src='film.image')
             v-col(cols='12', lg='9')
@@ -135,217 +141,42 @@ v-col(cols='12', lg='10')
             v-col
               p No favorites yet
 </template>
-<script>
-export default {
-  layout: 'profile',
-  props: ['edit'],
-  data: () => ({
-    optionsDoughnut: {
-      cutoutPercentage: 95,
-      elements: {
-        arc: {
-          borderWidth: 0,
-        },
+<script lang='ts'>
+import { Vue, Component, Prop, namespace } from 'nuxt-property-decorator';
+
+const profileModule = namespace('profile');
+
+@Component({ layout: 'profile' })
+export default class Profile extends Vue {
+  @Prop({ type: Boolean }) edit!: boolean;
+
+  @profileModule.State('profile') profile!: any;
+  @profileModule.Getter('self') self!: any;
+  @profileModule.Getter('tvShows') tvShows!: any;
+  @profileModule.Getter('tvShowsStats') tvShowsStats!: any;
+  @profileModule.Getter('tvShowsChartData') tvShowsChartData!: any;
+  @profileModule.Getter('films') films!: any;
+  @profileModule.Getter('filmsStats') filmsStats!: any;
+  @profileModule.Getter('filmsChartData') filmsChartData!: any;
+  @profileModule.Getter('tvShowsWatching') tvShowsWatching!: any;
+  @profileModule.Action('loadUsername') loadUsername!: any;
+
+  created() {
+    this.loadUsername(this.$route.params.username);
+  }
+
+  optionsDoughnut = {
+    cutoutPercentage: 95,
+    elements: {
+      arc: {
+        borderWidth: 0,
       },
-      tooltips: {
-        enabled: false,
-      },
     },
-  }),
-  async asyncData({ route, store }) {
-    const username = route.params.username;
-    await store.dispatch('profile/LOAD_USERNAME', username);
-  },
-  computed: {
-    user() {
-      return this.$store.getters['profile/PROFILE'];
+    tooltips: {
+      enabled: false,
     },
-    self() {
-      return this.$store.getters['profile/SELF'];
-    },
-    tvShowsStats() {
-      return [
-        {
-          name: 'Watching',
-          value: this.tvShowsWatching.length,
-          class: 'green-watching--text',
-        },
-        {
-          name: 'Completed',
-          value: this.tvShowsCompleted.length,
-          class: 'blue-completed--text',
-        },
-        {
-          name: 'On-Hold',
-          value: this.tvShowsOnHold.length,
-          class: 'yellow-on-hold--text',
-        },
-        {
-          name: 'Dropped',
-          value: this.tvShowsDropped.length,
-          class: 'red-dropped--text',
-        },
-        {
-          name: 'Save for Later',
-          value: this.tvShowsPlanToWatch.length,
-          class: 'grey-save-for-later--text',
-        },
-        { name: 'Total Entries', value: this.tvShows.length },
-        { name: 'Episodes', value: this.tvShowsEpisodes },
-      ];
-    },
-    tvShows() {
-      return this.$store.getters['profile/TVSHOWS'];
-    },
-    tvShowsWatching() {
-      return this.tvShows.filter((element) => element.status === 'Watching');
-    },
-    tvShowsCompleted() {
-      return this.tvShows.filter((element) => element.status === 'Completed');
-    },
-    tvShowsOnHold() {
-      return this.tvShows.filter((element) => element.status === 'On-Hold');
-    },
-    tvShowsDropped() {
-      return this.tvShows.filter((element) => element.status === 'Dropped');
-    },
-    tvShowsPlanToWatch() {
-      return this.tvShows.filter(
-        (element) => element.status === 'Save for Later'
-      );
-    },
-    tvShowsEpisodes() {
-      return Number(
-        this.tvShows.reduce((sum, tvShow) => sum + tvShow.episodes, 0)
-      );
-    },
-    tvShowsChartData() {
-      return this.tvShowsWatching.length ||
-        this.tvShowsCompleted.length ||
-        this.tvShowsOnHold.length ||
-        this.tvShowsDropped.length ||
-        this.tvShowsPlanToWatch.length
-        ? {
-            datasets: [
-              {
-                backgroundColor: [
-                  '#6dee76',
-                  '#576bec',
-                  '#f2921c',
-                  '#f51c1f',
-                  '#888888',
-                ],
-                data: [
-                  this.tvShowsWatching.length,
-                  this.tvShowsCompleted.length,
-                  this.tvShowsOnHold.length,
-                  this.tvShowsDropped.length,
-                  this.tvShowsPlanToWatch.length,
-                ],
-              },
-            ],
-          }
-        : {
-            datasets: [
-              {
-                backgroundColor: ['#1b1b1b'],
-                data: [1],
-              },
-            ],
-          };
-    },
-    filmsStats() {
-      return [
-        {
-          name: 'Watching',
-          value: this.filmsWatching.length,
-          class: 'green-watching--text',
-        },
-        {
-          name: 'Completed',
-          value: this.filmsCompleted.length,
-          class: 'blue-completed--text',
-        },
-        {
-          name: 'On-Hold',
-          value: this.filmsOnHold.length,
-          class: 'yellow-on-hold--text',
-        },
-        {
-          name: 'Dropped',
-          value: this.filmsDropped.length,
-          class: 'red-dropped--text',
-        },
-        {
-          name: 'Save for Later',
-          value: this.filmsPlanToWatch.length,
-          class: 'grey-save-for-later--text',
-        },
-        { name: 'Total Entries', value: this.films.length },
-      ];
-    },
-    films() {
-      return this.$store.getters['profile/FILMS'];
-    },
-    filmsWatching() {
-      return this.films.filter((element) => element.status === 'Watching');
-    },
-    filmsCompleted() {
-      return this.films.filter((element) => element.status === 'Completed');
-    },
-    filmsOnHold() {
-      return this.films.filter((element) => element.status === 'On-Hold');
-    },
-    filmsDropped() {
-      return this.films.filter((element) => element.status === 'Dropped');
-    },
-    filmsPlanToWatch() {
-      return this.films.filter(
-        (element) => element.status === 'Save for Later'
-      );
-    },
-    filmsEpisodes() {
-      return Number(
-        this.films.reduce((sum, tvShow) => sum + tvShow.episodes, 0)
-      );
-    },
-    filmsChartData() {
-      return this.filmsWatching.length ||
-        this.filmsCompleted.length ||
-        this.filmsOnHold.length ||
-        this.filmsDropped.length ||
-        this.filmsPlanToWatch.length
-        ? {
-            datasets: [
-              {
-                backgroundColor: [
-                  '#6dee76',
-                  '#576bec',
-                  '#f2921c',
-                  '#f51c1f',
-                  '#888888',
-                ],
-                data: [
-                  this.filmsWatching.length,
-                  this.filmsCompleted.length,
-                  this.filmsOnHold.length,
-                  this.filmsDropped.length,
-                  this.filmsPlanToWatch.length,
-                ],
-              },
-            ],
-          }
-        : {
-            datasets: [
-              {
-                backgroundColor: ['#1b1b1b'],
-                data: [1],
-              },
-            ],
-          };
-    },
-  },
-};
+  };
+}
 </script>
 <style lang="scss" scoped>
 .flixlist {

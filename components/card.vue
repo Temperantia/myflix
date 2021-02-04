@@ -6,10 +6,15 @@
     h1 {{ content }}
     h4 {{ subtitle }}
 </template>
-<script>
-export default {
-  props: ['title', 'content', 'subtitle'],
-};
+<script lang='ts'>
+import { Vue, Component, Prop } from 'nuxt-property-decorator';
+
+@Component
+export default class Card extends Vue {
+  @Prop({ type: String }) title!: string;
+  @Prop({ type: String }) content!: string;
+  @Prop({ type: String }) subtitle!: string;
+}
 </script>
 <style lang="scss" scoped>
 .score {
@@ -31,11 +36,11 @@ export default {
     }
     h2 {
       font-size: 20px;
-      font-weight: 400
+      font-weight: 400;
     }
     h4 {
       font-size: 16px;
-      font-weight: 300
+      font-weight: 300;
     }
   }
 }

@@ -203,127 +203,142 @@ v-container(fluid)
               )
         v-col(cols='12', lg='3')
           v-container.mt-5(fluid)
-            a.px-10.py-2.red-netflix.rounded(@click='deleteUser') DELETE ACCOUNT
+            a.px-10.py-2.red-netflix.rounded(@click='deleteUserValidate') DELETE ACCOUNT
 </template>
-<script>
+<script lang='ts'>
 import { listTimeZones } from 'timezone-support';
 import { formatToTimeZone } from 'date-fns-timezone';
 import clonedeep from 'lodash.clonedeep';
-export default {
-  methods: {
-    validate() {
-      if (this.$refs.form && !this.$refs.form.validate()) {
-        return;
-      }
-      this.save(
-        this.copy,
-        this.passwordNew,
-        this.passwordCurrent,
-        this.email,
-        this.username
-      );
-    },
-    removeFavorite(titles, id) {
-      this.$delete(titles, id);
-    },
-    isCurrentTab(tab) {
-      return tab === this.currentTab;
-    },
-    load(event) {
-      const file = event.target.files[0];
-      if (!file) {
-        return;
-      }
-      if (
-        file.type !== 'image/jpeg' &&
-        file.type !== 'image/png' &&
-        file.type !== 'image/gif'
-      ) {
-        this.$toast.error('Must be jpg, gif or png format.');
-        return;
-      }
+import { Vue, Component, Prop, namespace } from 'nuxt-property-decorator';
 
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        await new Promise((r) => setTimeout(r, 2000));
+const localStorageModule = namespace('localStorage');
 
-        const canvas = document.createElement('canvas');
-        let ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
+@Component
+export default class ProfileEdition extends Vue {
+  @Prop({ type: Object }) user!: any;
+  @Prop({ type: Function }) save!: any;
+  @localStorageModule.Action('deleteUser') deleteUser!: any;
 
-        const MAX_WIDTH = 250;
-        const MAX_HEIGHT = 250;
-        let width = img.width;
-        let height = img.height;
+  listTimeZones = listTimeZones;
+  formatToTimeZone = formatToTimeZone;
+  currentTab = 'EDIT PROFILE';
+  copy: any = {};
+  passwordNew = '';
+  passwordCurrent = '';
+  email = '';
+  username = '';
+  deletionEmail = '';
+  deletionPassword = '';
 
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
+  validate() {
+    if (!(this.$refs.form as any)?.validate()) {
+      return;
+    }
+    this.save(
+      this.copy,
+      this.passwordNew,
+      this.passwordCurrent,
+      this.email,
+      this.username
+    );
+  }
+
+  removeFavorite(titles: any, id: string) {
+    this.$delete(titles, id);
+  }
+
+  isCurrentTab(tab: string) {
+    return tab === this.currentTab;
+  }
+
+  load(event: any) {
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+    if (
+      file.type !== 'image/jpeg' &&
+      file.type !== 'image/png' &&
+      file.type !== 'image/gif'
+    ) {
+      this.$toast.error('Must be jpg, gif or png format.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (e: ProgressEvent<FileReader>) => {
+      const img: HTMLImageElement = document.createElement('img');
+      img.src = e.target?.result as string;
+      await new Promise((r) => setTimeout(r, 2000));
+
+      const canvas = document.createElement('canvas');
+      let ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
+      ctx?.drawImage(img, 0, 0);
+
+      const MAX_WIDTH = 250;
+      const MAX_HEIGHT = 250;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
         }
-        canvas.width = width;
-        canvas.height = height;
-        ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height;
+          height = MAX_HEIGHT;
+        }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      ctx = canvas.getContext('2d');
+      ctx?.drawImage(img, 0, 0, width, height);
 
-        const dataurl = canvas.toDataURL(file.type);
-        this.copy.image = dataurl;
-      };
-      reader.readAsDataURL(file);
-    },
-    updateTimeZone(value) {
-      this.copy.timeZone = value;
-    },
-    updateBirthdate(value) {
-      this.copy.birthdate = value;
-    },
-    async deleteUser() {
-      if (!this.$refs.deletion.validate()) {
-        return;
-      }
-      await this.$deleteUser(this.deletionEmail, this.deletionPassword);
-    },
-    async link(provider, name) {
-      try {
-        const cred = await this.$fire.auth.signInWithPopup(provider);
-        this.$set(this.copy.providers, name, {
-          id: cred.user.uid,
-          token: cred.credential.accessToken,
-        });
-      } catch (error) {
-        this.$toast.error(error);
-      }
-    },
-    signInWithGoogle() {
-      const provider = new this.$fireModule.auth.GoogleAuthProvider();
-      this.link(provider, 'google');
-    },
-    signInWithFacebook() {
-      const provider = new this.$fireModule.auth.FacebookAuthProvider();
-      this.link(provider, 'facebook');
-    },
-  },
-  props: ['user', 'save'],
-  data: () => ({
-    listTimeZones,
-    formatToTimeZone,
-    currentTab: 'EDIT PROFILE',
-    copy: {},
-    passwordNew: '',
-    passwordCurrent: '',
-    email: '',
-    username: '',
-    deletionEmail: '',
-    deletionPassword: '',
-  }),
+      const dataurl = canvas.toDataURL(file.type);
+      this.copy.image = dataurl;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  updateTimeZone(value: string) {
+    this.copy.timeZone = value;
+  }
+
+  updateBirthdate(value: string) {
+    this.copy.birthdate = value;
+  }
+
+  async deleteUserValidate() {
+    if (!(this.$refs.deletion as any).validate()) {
+      return;
+    }
+    await this.deleteUser(this.deletionEmail, this.deletionPassword);
+  }
+
+  async link(provider: any, name: string) {
+    try {
+      const cred: any = await this.$fire.auth.signInWithPopup(provider);
+      this.$set(this.copy.providers, name, {
+        id: cred.user.uid,
+        token: cred.credential.accessToken,
+      });
+    } catch (error) {
+      this.$toast.error(error);
+    }
+  }
+
+  signInWithGoogle() {
+    const provider = new this.$fireModule.auth.GoogleAuthProvider();
+    this.link(provider, 'google');
+  }
+
+  signInWithFacebook() {
+    const provider = new this.$fireModule.auth.FacebookAuthProvider();
+    this.link(provider, 'facebook');
+  }
+
   created() {
     this.copy = clonedeep(this.user);
     if (!this.copy.timeZone) {
@@ -333,33 +348,34 @@ export default {
         Intl.DateTimeFormat().resolvedOptions().timeZone
       );
     }
-  },
-  computed: {
-    isSocial() {
-      return Object.values(this.copy.providers).find(
-        (provider) => provider.id === this.copy.id
-      );
-    },
-    tabs() {
-      return [
-        {
-          name: 'EDIT PROFILE',
-        },
-        {
-          name: 'FAVORITES',
-        },
-        {
-          name: 'ACCOUNT SETTINGS',
-        },
-      ];
-    },
-    time() {
-      return formatToTimeZone(new Date(), 'h:mm A', {
-        timeZone: this.copy.timeZone,
-      });
-    },
-  },
-};
+  }
+
+  get isSocial() {
+    return Object.values(this.copy.providers).find(
+      (provider: any) => provider.id === this.copy.id
+    );
+  }
+
+  get tabs() {
+    return [
+      {
+        name: 'EDIT PROFILE',
+      },
+      {
+        name: 'FAVORITES',
+      },
+      {
+        name: 'ACCOUNT SETTINGS',
+      },
+    ];
+  }
+
+  time() {
+    return formatToTimeZone(new Date(), 'h:mm A', {
+      timeZone: this.copy.timeZone,
+    });
+  }
+}
 </script>
 <style lang="scss" scoped>
 img {

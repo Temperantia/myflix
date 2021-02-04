@@ -33,12 +33,13 @@ v-app.app(app)
         v-container.h-100.pa-0(fluid)
           v-col.pa-0.boxart(cols='12')
 </template>
-<script>
-export default {
-  data: () => ({
-    email: '',
-  }),
-};
+<script lang='ts'>
+import { Vue, Component } from 'nuxt-property-decorator';
+
+@Component
+export default class Newsletter extends Vue {
+  email = '';
+}
 </script>
 <style lang="scss" scoped>
 .app {

@@ -40,63 +40,48 @@ v-autocomplete(
       v-list-item-content
         v-list-item-title(v-text='item')
 </template>
-<script>
-export default {
-  data: () => ({
-    similar: '',
-    selected: '',
-    input: '',
-    items: [],
-    map: {
-      a: 'á|à|ã|â|À|Á|Ã|Â',
-      e: 'é|è|ê|É|È|Ê',
-      i: 'í|ì|î|Í|Ì|Î',
-      o: 'ó|ò|ô|õ|Ó|Ò|Ô|Õ',
-      u: 'ú|ù|û|ü|Ú|Ù|Û|Ü',
-      c: 'ç|Ç',
-      n: 'ñ|Ñ',
-    },
-  }),
-  props: { nav: Boolean, title: Object },
-  methods: {
-    click(value) {
-      this.similar = value;
-      this.selected = value;
-      this.$emit(
-        'click',
-        this.getId(value),
-        value,
-        this.getImage(value),
-        this.getRoute(value)
-      );
-    },
-    getRoute(title) {
-      return this.$search.find((item) => item.t === title).r;
-    },
-    getImage(title) {
-      return this.$search.find((item) => item.t === title).i;
-    },
-    getId(title) {
-      return this.$search.find((item) => item.t === title).id;
-    },
-    search(item, queryText, itemText) {
-      return (
-        this.slugify(itemText)
-          .toLocaleLowerCase()
-          .indexOf(this.slugify(queryText).toLocaleLowerCase()) > -1
-      );
-    },
-    slugify(str) {
-      for (const pattern in this.map) {
-        str = str.replace(new RegExp(this.map[pattern], 'g'), pattern);
-      }
-      return str;
-    },
-  },
-  created() {
-    this.items = this.$search.map((item) => item.t);
-  },
-};
+<script lang='ts'>
+import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
+
+const browseModule = namespace('browse');
+
+@Component
+export default class Search extends Vue {
+  @Prop({ type: Boolean }) nav!: boolean;
+  @browseModule.Getter('titleFromTitle') getTitle!: Function;
+  selected: string = '';
+  input: string = '';
+  items: any[] = [];
+  map: any = {
+    a: 'á|à|ã|â|À|Á|Ã|Â',
+    e: 'é|è|ê|É|È|Ê',
+    i: 'í|ì|î|Í|Ì|Î',
+    o: 'ó|ò|ô|õ|Ó|Ò|Ô|Õ',
+    u: 'ú|ù|û|ü|Ú|Ù|Û|Ü',
+    c: 'ç|Ç',
+    n: 'ñ|Ñ',
+  };
+
+  click(value: string) {
+    this.selected = value;
+    this.$emit('click', this.getTitle(value));
+  }
+
+  search(_: any, queryText: string, itemText: any) {
+    return (
+      this.slugify(itemText)
+        .toLocaleLowerCase()
+        .indexOf(this.slugify(queryText).toLocaleLowerCase()) > -1
+    );
+  }
+
+  slugify(str: string) {
+    for (const pattern in this.map) {
+      str = str.replace(new RegExp(this.map[pattern], 'g'), pattern);
+    }
+    return str;
+  }
+}
 </script>
 <style lang="scss"  scoped>
 ::v-deep .v-input__slot {

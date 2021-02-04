@@ -17,19 +17,22 @@ v-col(cols='12', lg='10')
       v-col
         p No suggestions yet
 </template>
-<script>
-export default {
-  layout: 'profile',
-  async asyncData({ route, store, $getSuggestionsProfile }) {
-    const username = route.params.username;
-    await store.dispatch('profile/LOAD_USERNAME', username);
-    const suggestions = await $getSuggestionsProfile(username);
-    return { suggestions };
-  },
-  computed: {
-    user() {
-      return this.$store.getters['profile/PROFILE'];
-    },
-  },
-};
+<script lang='ts'>
+import { Vue, Component, namespace } from 'nuxt-property-decorator';
+
+const profileModule = namespace('profile');
+const suggestionsModule = namespace('suggestions');
+
+@Component({ layout: 'profile' })
+export default class ProfileSuggestions extends Vue {
+  @profileModule.State('profile') profile!: any;
+  @suggestionsModule.Getter('profile') suggestions!: any;
+  @profileModule.Action('loadUsername') loadUsername!: any;
+  @suggestionsModule.Action('getProfile') getSuggestions!: any;
+
+  created() {
+    this.loadUsername(this.$route.params.username);
+    this.getSuggestions(this.$route.params.username);
+  }
+}
 </script>

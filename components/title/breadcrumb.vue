@@ -7,35 +7,36 @@ v-container(fluid)
       nuxt-link(:to='tabRoute') > {{ tabName }}
 </template>
 
-<script>
-export default {
-  props: ['titleName'],
-  data: () => ({
-    typeRoute: '',
-    titleRoute: '',
-    tabRoute: '',
-    typeName: '',
-    tabName: '',
-  }),
-  methods: {
-    update() {
-      this.tabRoute = this.$route.path;
-      const parts = this.tabRoute.split('/');
-      this.typeRoute = '/' + parts[1];
-      this.titleRoute = '/' + parts[1] + '/' + parts[2] + '/overview';
-      this.typeName = parts[1] == 'tvshows' ? 'TV Shows' : 'Films';
-      this.tabName = parts[3].charAt(0).toUpperCase() + parts[3].slice(1);
-    },
-  },
+<script lang='ts'>
+import { Vue, Component, Prop, Watch } from 'nuxt-property-decorator';
+
+@Component
+export default class Title extends Vue {
+  @Prop({ type: String }) titleName!: string;
+  typeRoute = '';
+  titleRoute = '';
+  tabRoute = '';
+  typeName = '';
+  tabName = '';
+
   created() {
     this.update();
-  },
-  watch: {
-    $route() {
-      this.update();
-    },
-  },
-};
+  }
+
+  update() {
+    this.tabRoute = this.$route.path;
+    const parts = this.tabRoute.split('/');
+    this.typeRoute = '/' + parts[1];
+    this.titleRoute = '/' + parts[1] + '/' + parts[2] + '/overview';
+    this.typeName = parts[1] == 'tvshows' ? 'TV Shows' : 'Films';
+    this.tabName = parts[3].charAt(0).toUpperCase() + parts[3].slice(1);
+  }
+
+  @Watch('$route')
+  onRouteChanged() {
+    this.update();
+  }
+}
 </script>
 <style>
 .pa-2 {

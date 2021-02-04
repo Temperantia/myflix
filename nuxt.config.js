@@ -18,7 +18,8 @@ export default {
     "~/plugins/firebase",
     "~/plugins/auth",
     "~/plugins/vue-scrollactive",
-    "~/plugins/ad.client"
+    "~/plugins/ad.client",
+    "~/plugins/modules-accessor"
   ],
   components: true,
   buildModules: [
@@ -125,11 +126,7 @@ export default {
       name: "MYFLIX",
       short_name: "MYFLIX",
       description:
-        "Find User recommendations/suggestions, reviews, ratings, look at your personal statistics, and more! 😍 The project is currently in a development phase, but we are looking forward to hearing from you. (75%)",
-      start_url:
-        process.env.NODE_ENV === "dev"
-          ? "http://localhost:3000"
-          : "https:/my-flix.net"
+        "Find User recommendations/suggestions, reviews, ratings, look at your personal statistics, and more! 😍 The project is currently in a development phase, but we are looking forward to hearing from you. (75%)"
     }
   },
   "google-adsense": {
@@ -140,7 +137,8 @@ export default {
       process.env.NODE_ENV === "dev"
         ? "http://localhost:3000"
         : "https:/my-flix.net",
-    enableAffiliates: false
+    enableAffiliates: false,
+    reviewsPerPage: 20
   },
   privateRuntimeConfig: {}
 };

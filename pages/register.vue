@@ -52,45 +52,31 @@ v-container(fluid)
               b.px-1 Privacy Policy
         button.button-red.px-8.py-3.rounded-lg(type='submit') Create Account
 </template>
-<script>
-export default {
-  data: () => ({
-    email: '',
-    username: '',
-    password: '',
-    sub: false,
-    agreed: false,
-  }),
-  methods: {
-    async registerWithMyflix() {
-      if (!this.$refs.form.validate() || !this.agreed) {
-        return;
-      }
-      try {
-        const user = await this.$getUser(this.username);
-        if (user) {
-          this.$toast.error('Username is taken');
-          return;
-        }
+<script lang='ts'>
+import { Vue, Component, namespace } from 'nuxt-property-decorator';
 
-        const cred = await this.$fire.auth.createUserWithEmailAndPassword(
-          this.email,
-          this.password
-        );
+const localStorageModule = namespace('localStorage');
 
-        await this.$register(
-          cred.user.uid,
-          this.email,
-          this.username,
-          this.sub
-        );
-        this.$router.push('/');
-      } catch (error) {
-        this.$toast.error(error);
-      }
-    },
-  },
-};
+@Component
+export default class Register extends Vue {
+  email = '';
+  username = '';
+  password = '';
+  sub = false;
+  agreed = false;
+  @localStorageModule.Action('register') register!: any;
+
+  registerWithMyflix() {
+    if (!(this.$refs.form as any).validate() || !this.agreed) {
+      return;
+    }
+    this.register({
+      email: this.email,
+      username: this.username,
+      password: this.password,
+    });
+  }
+}
 </script>
 <style lang="scss" scoped>
 .line {

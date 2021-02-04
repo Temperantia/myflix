@@ -14,10 +14,14 @@ v-container(fluid)
       button.button-action.mr-lg-5.preview(@click='preview = false') BACK TO EDIT
       button.button-action(@click='submit') SUBMIT REVIEW
 </template>
-<script>
-export default {
-  props: ['review', 'title'],
-};
+<script lang='ts'>
+import { Vue, Component, Prop } from 'nuxt-property-decorator';
+
+@Component
+export default class ReviewPreview extends Vue {
+  @Prop({ type: Object }) review!: any;
+  @Prop({ type: String }) title!: string;
+}
 </script>
 <style lang="scss" scoped>
 .button-action {

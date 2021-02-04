@@ -28,48 +28,45 @@ v-container(fluid)
                           b {{ vpn.score }} / 5
                         v-btn.black-body--bg.px-10.blue-completed--border.border
                           .blue-completed--text.font-weight-bold
-                            a(
-                              :href='$config.enableAffiliates && vpn.link'
-                            ) Get {{ vpn.name }}
+                            a(:href='$config.enableAffiliates && vpn.link') Get {{ vpn.name }}
 </template>
-<script>
-export default {
-  data: () => ({
-    vpns: [
-      {
-        logo: 'Layer 48.png',
-        name: 'HMA VPN',
-        tagline: 'Get more from your internet with HMA VPN',
-        score: '4.2',
-        link:
-          'https://click.hmavpn.com/aff_c?offer_id=1&aff_id=1926&file_id=511',
-      },
-      {
-        logo: 'Layer 49.png',
-        name: 'PUREVPN',
-        tagline: 'Now work, binge & stay secure online with PureVPN',
-        score: '4.7',
-        link:
-          'https://www.purevpn.com/streaming-special.php?aff=45815&amp;a_bid=bd4c8e59',
-      },
-      {
-        logo: 'Layer 50.png',
-        name: 'NordVPN',
-        tagline: 'Because your online security comes first',
-        score: '4.4',
-        link:
-          'https://go.nordvpn.net/aff_c?offer_id=15&aff_id=50394&url_id=902',
-      },
-      {
-        logo: 'Layer 45.png',
-        name: 'Surefshark',
-        tagline: 'Secure your digital life',
-        score: '4.3',
-        link: 'https://get.surfshark.net/aff_c?offer_id=6&aff_id=6612',
-      },
-    ],
-  }),
-};
+<script lang='ts'>
+import { Vue, Component } from 'nuxt-property-decorator';
+
+@Component
+export default class Vpn extends Vue {
+  vpns = [
+    {
+      logo: 'Layer 48.png',
+      name: 'HMA VPN',
+      tagline: 'Get more from your internet with HMA VPN',
+      score: '4.2',
+      link: 'https://click.hmavpn.com/aff_c?offer_id=1&aff_id=1926&file_id=511',
+    },
+    {
+      logo: 'Layer 49.png',
+      name: 'PUREVPN',
+      tagline: 'Now work, binge & stay secure online with PureVPN',
+      score: '4.7',
+      link:
+        'https://www.purevpn.com/streaming-special.php?aff=45815&amp,a_bid=bd4c8e59',
+    },
+    {
+      logo: 'Layer 50.png',
+      name: 'NordVPN',
+      tagline: 'Because your online security comes first',
+      score: '4.4',
+      link: 'https://go.nordvpn.net/aff_c?offer_id=15&aff_id=50394&url_id=902',
+    },
+    {
+      logo: 'Layer 45.png',
+      name: 'Surefshark',
+      tagline: 'Secure your digital life',
+      score: '4.3',
+      link: 'https://get.surfshark.net/aff_c?offer_id=6&aff_id=6612',
+    },
+  ];
+}
 </script>
 <style lang="scss" scoped>
 .black-body--bg {

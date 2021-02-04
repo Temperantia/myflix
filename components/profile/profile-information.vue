@@ -1,36 +1,36 @@
 <template lang="pug">
 v-col(cols='12', lg='2')
-  img(:src='user.image ? user.image : "/defaultUser.png"')
+  img(:src='image')
   v-row
     v-col.pt-1.pb-0
       b Gender:
-    v-col.pt-1.pb-0.text-right {{ user.gender || "-" }}
+    v-col.pt-1.pb-0.text-right {{ profile.gender || "-" }}
   v-row
     v-col.pt-1.pb-0
       b Birthday:
-    v-col.pt-1.pb-0.text-right {{ user.birthdate ? new Date(user.birthdate.seconds * 1000).getFullYear() : "-" }}
+    v-col.pt-1.pb-0.text-right {{ profile.birthdate ? new Date(profile.birthdate.seconds * 1000).getFullYear() : "-" }}
   v-row
     v-col.pt-1.pb-0
       b Location:
-    v-col.pt-1.pb-0.text-right {{ user.location || "-" }}
+    v-col.pt-1.pb-0.text-right {{ profile.location || "-" }}
   v-row
     v-col.pt-1.pb-0
       b Join Date:
-    v-col.pt-1.pb-0.text-right {{ $moment(user.created.seconds * 1000).format("MMM D, yyyy") }}
+    v-col.pt-1.pb-0.text-right {{ $moment(profile.created.seconds * 1000).format("MMM D, yyyy") }}
   v-row
     v-col.text-center
-      nuxt-link(:to='"/flixlist/" + user.username')
+      nuxt-link(:to='"/flixlist/" + profile.username')
         button.button.flixlist FlixList
   h3.title-border INFORMATION
   v-container(fluid)
     v-row
       v-col.pt-1.pb-0
         b Reviews:
-      v-col.pt-1.pb-0.text-right {{ user.reviews.length }}
+      v-col.pt-1.pb-0.text-right {{ profile.reviews.length }}
     v-row
       v-col.pt-1.pb-0
         b Suggestions:
-      v-col.pt-1.pb-0.text-right {{ user.suggestions.length }}
+      v-col.pt-1.pb-0.text-right {{ profile.suggestions.length }}
     v-row
       v-col.pt-1.pb-0
         b Films:
@@ -40,12 +40,19 @@ v-col(cols='12', lg='2')
         b TV Shows:
       v-col.pt-1.pb-0.text-right {{ tvShows.length }}
 </template>
-<script>
-export default {
-  props: ['user', 'tvShows', 'films'],
-  async asyncData({ route, store }) {
-    const username = route.params.username;
-    await store.dispatch('profile/LOAD_USERNAME', username);
-  },
-};
+<script lang='ts'>
+import { Vue, Component, namespace } from 'nuxt-property-decorator';
+
+const profileModule = namespace('profile');
+
+@Component
+export default class ProfileInformation extends Vue {
+  @profileModule.Getter('profile') profile!: any;
+  @profileModule.Getter('tvShows') tvShows!: any;
+  @profileModule.Getter('films') films!: any;
+
+  get image() {
+    return this.profile.image ?? '/defaultUser.png';
+  }
+}
 </script>

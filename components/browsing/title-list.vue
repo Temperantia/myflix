@@ -10,12 +10,12 @@ v-container(fluid)
     )
       nuxt-link(:to='title.r')
         div(
-          v-if='flixlist && title.status',
+          v-if='title.status',
           style='width: 100%; position: absolute; top: 0; left: 0'
         )
           progress-bar(
             :status='title.status',
-            :episodes='title.episodes',
+            :episodes='episodes',
             :episodeCount='title.e'
           )
         div(
@@ -25,25 +25,22 @@ v-container(fluid)
           .hover-title
             .mb-2
               h2.d-inline.font-weight-regular {{ title.t }}
-              b.ml-2(v-if='flixlist')
+              b.ml-2(v-if='connected')
                 i.green-watching--text(v-if='title.status === "Watching"') {{ title.episodes }}
                   span {{ " / " + title.e }}
                 i(
                   v-else,
                   :class='textColor(title.u ? "show" : "movie", title.status)'
                 ) {{ title.status }}
-              v-icon.click.fave(
+              //-v-icon.click.fave(
                 v-if='isFavorite(title.id)',
                 @click='removeFavoriteFromId(title.id)'
-              ) mdi-star
-              v-icon.click.fave(
-                v-else,
-                @click='addFavoriteFromId(title.id)'
-              ) mdi-star-outline
+                ) mdi-star
+              //-v-icon.click.fave(v-else, @click='addFavoriteFromId(title.id)') mdi-star-outline
           .hover-item
             .mb-2
               span.white-font--text {{ title.y + " " }}
-              span.py-0.px-1.white-font--text.white-font--border.border {{ $maturitiesEurope[title.v] }}
+              span.py-0.px-1.white-font--text.white-font--border.border {{ title.v }}
               span.white-font--text(v-if='title.s') {{ " " + title.s + " SEASONS" }}
             .mb-2.titleDetails(
               v-html='title.d.length < 100 ? title.d : title.d.substring(0, 100) + "..."'
@@ -74,7 +71,7 @@ v-container(fluid)
               img.icon.mr-3(src='/netflix.png')
               span.white-font--text O R I G I N A L
           v-col.text-right(cols='4')
-            client-only(v-if='favorites')
+            //-client-only(v-if='favorites')
               .click(
                 v-if='isFavorite(title.id)',
                 @click='removeFavoriteFromId(title.id)'
@@ -86,20 +83,20 @@ v-container(fluid)
                 span Add to Favorites
         .my-1
           span.white-font--text.mr-2 {{ title.y }}
-          span.white-font--text.mr-1.py-0.px-1.border.white-font--border {{ $maturitiesEurope[title.v] }}
+          span.white-font--text.mr-1.py-0.px-1.border.white-font--border {{ title.v }}
           span.white-font--text.mr-1(v-if='title.s') {{ title.s }} SEASONS
-          b(v-if='flixlist')
+          b(v-if='connected')
             i.green-watching--text(v-if='title.status === "Watching"') {{ title.episodes }}
               span {{ " / " + title.e }}
             i(
               v-else,
-              :class='textColor(title.u ? "show" : "movie", title.status)'
+              :class='$titleStatusColor(title.u ? "show" : "movie", title.status)'
             ) {{ title.status }}
         .my-1(v-html='title.d')
         div
           span Genres:
           span.white-font--text {{ " " + title.g.join(", ") }}
-        .mt-3(v-if='flixlist && title.status')
+        .mt-3(v-if='connected && title.status')
           progress-bar(
             :status='title.status',
             :episodes='title.episodes',
@@ -111,95 +108,26 @@ v-container(fluid)
       v-col
         v-pagination(:length='pages', v-model='page', :total-visible='7')
 </template>
-<script>
-export default {
-  props: ['source', 'gallery'],
-  data: () => ({ page: 1 }),
-  computed: {
-    flixlist() {
-      if (this.$store.state.localStorage.user) {
-        return this.$store.state.localStorage.user.flixlist;
-      }
-    },
-    pages() {
-      return Math.ceil(this.source.length / 24);
-    },
-    titles() {
-      const offset = (this.page - 1) * 24;
-      return this.source.slice(offset, offset + 24);
-    },
-    user() {
-      return this.$store.getters['localStorage/USER'];
-    },
-    favorites() {
-      if (this.user) {
-        return this.user.favorites;
-      }
-    },
-  },
-  methods: {
-    isFavorite(id) {
-      if (!id) {
-        return false;
-      }
-      const title = this.$search.find(
-        (title) => Number(title.id) === Number(id)
-      );
-      return (
-        !!this.favorites &&
-        !!this.favorites[title.u ? 'shows' : 'films'] &&
-        !!this.favorites[title.u ? 'shows' : 'films'][id]
-      );
-    },
-    addFavoriteFromId(id) {
-      const title = this.$search.find(
-        (title) => Number(title.id) === Number(id)
-      );
-      this.$addFavorite(
-        {
-          id: title.id,
-          tallBoxArt: title.i,
-          title: title.t,
-          releaseYear: title.y,
-          maturity: this.$maturitiesEurope[title.v],
-          seasonCount: title.s,
-          genres: title.g,
-        },
-        title.u ? 'shows' : 'films'
-      );
-    },
-    removeFavoriteFromId(id) {
-      const title = this.$search.find(
-        (title) => Number(title.id) === Number(id)
-      );
-      this.$removeFavorite({ id: title.id }, title.u ? 'shows' : 'films');
-    },
-    textColor(type, status) {
-      if (type === 'show') {
-        if (status === 'Watching') {
-          return 'green-watching--text';
-        } else if (status === 'Completed') {
-          return 'blue-completed--text';
-        } else if (status === 'On-Hold') {
-          return 'yellow-on-hold--text';
-        } else if (status === 'Dropped') {
-          return 'red-dropped--text';
-        } else if (status === 'Save for Later') {
-          return 'grey-save-for-later--text';
-        }
-      }
-      if (status === 'Completed') {
-        return 'blue-completed--text';
-      } else if (status === 'Rewatched') {
-        return 'yellow-on-hold--text';
-      } else if (status === 'Unfinished') {
-        return 'red-dropped--text';
-      } else if (status === 'Save for Later') {
-        return 'grey-save-for-later--text';
-      }
-    },
-  },
-};
+<script lang='ts'>
+import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
+
+const localStorageModule = namespace('localStorage');
+
+@Component
+export default class Search extends Vue {
+  @Prop({ type: Object }) source!: any;
+  @Prop({ type: Boolean }) galley!: boolean;
+  @localStorageModule.State('connected') connected!: boolean;
+
+  page = 1;
+  get pages() {
+    return Math.ceil(this.source.length / 24);
+  }
+  get titles() {
+    const offset = (this.page - 1) * 24;
+    return this.source.slice(offset, offset + 24);
+  }
+}
 </script>
 <style lang="scss" scoped>
 .titleDetails {
@@ -231,10 +159,10 @@ export default {
   position: absolute;
   bottom: 0;
   padding: 22px;
-  -o-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -webkit-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 .hover-item {
   width: 100%;
@@ -243,10 +171,10 @@ export default {
   padding: 22px;
   bottom: -100px;
   opacity: 0;
-  -o-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -webkit-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 .gradient {
   display: block;
@@ -256,7 +184,7 @@ export default {
   position: absolute;
   bottom: 0;
   left: 0;
-  background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))
+  background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7));
 }
 .fave {
   position: absolute;

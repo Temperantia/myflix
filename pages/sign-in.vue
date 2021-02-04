@@ -36,32 +36,25 @@ v-container(fluid)
       nuxt-link(to='/register')
         button.button-grey.px-8.py-3.mt-5.rounded-lg(type='submit') Register
 </template>
-<script>
-export default {
-  data: () => ({
-    email: '',
-    password: '',
-  }),
-  methods: {
-    async signInWithMyflix() {
-      if (!this.$refs.form.validate()) {
-        return;
-      }
-      try {
-        const cred = await this.$fire.auth.signInWithEmailAndPassword(
-          this.email,
-          this.password
-        );
+<script lang='ts'>
+import { Vue, Component, namespace } from 'nuxt-property-decorator';
 
-        this.$signIn(cred.user.uid);
+const localStorageModule = namespace('localStorage');
 
-        this.$router.push('/');
-      } catch (error) {
-        this.$toast.error('Incorrect Email or Password');
-      }
-    },
-  },
-};
+@Component
+export default class SignIn extends Vue {
+  email = '';
+  password = '';
+  @localStorageModule.Action('signIn') signIn!: any;
+
+  async signInWithMyflix() {
+    if (!(this.$refs.form as any).validate()) {
+      return;
+    }
+
+    this.signIn({ email: this.email, password: this.password });
+  }
+}
 </script>
 <style lang="scss" scoped>
 .line {

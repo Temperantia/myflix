@@ -13,18 +13,18 @@ v-container(fluid)
       .button-block.apple(@click='signInWithApple')
         button Apple
         img(src='/Apple.png')
-  v-form(v-if='id', ref='form', @submit.prevent='register')
+  v-form(v-if='socialAuthUser', ref='form', @submit.prevent='validate')
     v-text-field(
       color='red',
-      v-model='username',
+      v-model='socialAuthUser.username',
       :rules='[(v) => !!v || "Required", (v) => v.length >= 2 || v.length <= 16 || "(Between 2 and 16 characters)"]',
       label='Username',
       required
     )
     v-text-field(
-      v-if='!emailFromAuth',
+      v-if='!socialAuthUser.email',
       color='red',
-      v-model='email',
+      v-model='socialUser.email',
       :rules='[(v) => !!v || "Required", (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"]',
       label='Email',
       required
@@ -33,74 +33,33 @@ v-container(fluid)
       v-checkbox(color='red', v-model='agreed')
         template(v-slot:label)
           | I have read and agree to the
-          nuxt-link(to='/terms-and-conditions')
-            b.px-1 Terms and Conditions
+          nuxt-link(to='/terms-of-service')
+            b.px-1 Terms of Service
           | and
           nuxt-link(to='/privacy-policy')
             b.px-1 Privacy Policy
     button.button-red.px-8.py-3.rounded-lg(type='submit') Create Account
 </template>
-<script>
-export default {
-  data: () => ({
-    id: '',
-    emailFromAuth: '',
-    email: '',
-    username: '',
-    image: '',
-    name: '',
-    token: '',
-    agreed: false,
-  }),
-  methods: {
-    async signIn(provider) {
-      try {
-        const cred = await this.$fire.auth.signInWithPopup(provider);
-        const id = cred.user.uid;
-        const exists = await this.$signIn(id, this.name);
-        if (exists) {
-          this.$router.push('/');
-        } else {
-          this.id = id;
-          this.emailFromAuth = cred.user.email;
-          this.image = cred.user.photoURL;
-          this.token = cred.credential.accessToken;
-        }
-      } catch (error) {
-        this.$toast.error(error);
-      }
-    },
-    async register() {
-      if (!this.$refs.form.validate()) {
-        return;
-      }
+<script lang='ts'>
+import { Vue, Component, namespace } from 'nuxt-property-decorator';
 
-      await this.$register(
-        this.id,
-        this.emailFromAuth ? this.emailFromAuth : this.email,
-        this.username,
-        this.image,
-        this.name,
-        this.token
-      );
-    },
-    signInWithGoogle() {
-      const provider = new this.$fireModule.auth.GoogleAuthProvider();
-      this.name = 'google';
-      this.signIn(provider);
-    },
-    signInWithFacebook() {
-      const provider = new this.$fireModule.auth.FacebookAuthProvider();
-      this.name = 'facebook';
-      this.signIn(provider);
-    },
-    signInWithApple() {
-      const provider = new this.$fireModule.auth.OAuthProvider('apple.com');
-      this.name = 'apple';
-      this.signIn(provider);
-    },
-  },
-};
+const localStorageModule = namespace('localStorage');
+
+@Component
+export default class SocialsAuth extends Vue {
+  @localStorageModule.State('socialAuthUser') socialAuthUser!: any;
+  @localStorageModule.Action('signInWithGoogle') signInWithGoogle!: any;
+  @localStorageModule.Action('signInWithFacebook') signInWithFacebook!: any;
+  @localStorageModule.Action('register') register!: any;
+  agreed = false;
+
+  async validate() {
+    if (!(this.$refs.form as any).validate() || !this.agreed) {
+      return;
+    }
+    this.register();
+  }
+}
 </script>
 <style lang="scss" scoped>
 .google {

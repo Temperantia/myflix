@@ -61,10 +61,17 @@ v-container(fluid)
         .white-font--text - This review is public.
         .white-font--text.mt-5 Note: this area is only to be used for posting a review of the series after you have seen it. This is not discussion area.
 </template>
-<script>
-export default {
-  props: ['title', 'review', 'updateEpisodes', 'updateRating', 'submit'],
-};
+<script lang='ts'>
+import { Vue, Component, Prop } from 'nuxt-property-decorator';
+
+@Component
+export default class extends Vue {
+  @Prop({ type: Object }) title!: any;
+  @Prop({ type: Object }) review!: any;
+  @Prop({ type: Function }) updateEpisodes!: any;
+  @Prop({ type: Function }) updateRating!: any;
+  @Prop({ type: Function }) submit!: any;
+}
 </script>
 <style lang="scss" scoped>
 textarea {

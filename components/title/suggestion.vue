@@ -18,7 +18,7 @@ v-container.section-border(fluid, :id='"suggestion-" + suggestion.id')
                 :url='$config.baseUrl + $route.path + "#suggestion-" + suggestion.id'
               )
               template(
-                v-if='$store.state.localStorage.connected && !$store.getters["profile/SELF"] && !suggestion.reports.includes($store.state.localStorage.user.id)'
+                v-if='connected && !self && !suggestion.reports.includes(id)'
               )
                 span.white-font--text {{ " | " }}
                 span.white-font--text.click(@click='overlay = true') report
@@ -37,23 +37,33 @@ v-container.section-border(fluid, :id='"suggestion-" + suggestion.id')
     type='suggestion',
     :username='suggestion.author.username',
     :title='suggestion.title.title',
-    :confirm='report',
+    :confirm='validate',
     :cancel='() => (overlay = false)'
   )
 </template>
-<script>
-export default {
-  data: () => ({
-    overlay: false,
-  }),
-  props: ['suggestion'],
-  methods: {
-    report() {
-      this.$report('suggestions', this.suggestion.id);
-      this.overlay = false;
-    },
-  },
-};
+<script lang='ts'>
+import { Vue, Component, Prop, namespace } from 'nuxt-property-decorator';
+
+const suggestionsModule = namespace('reviews');
+const localStorageModule = namespace('localStorage');
+const profileModule = namespace('profile');
+
+@Component
+export default class Suggestion extends Vue {
+  @Prop({ type: Object }) suggestion!: any;
+
+  @localStorageModule.State('connected') connected!: boolean;
+  @localStorageModule.Getter('id') id!: string;
+  @profileModule.Getter('self') self!: boolean;
+  @suggestionsModule.Action('report') report!: any;
+
+  overlay = false;
+
+  validate() {
+    this.report(this.suggestion.id);
+    this.overlay = false;
+  }
+}
 </script>
 <style lang="scss" scoped>
 .section-border {

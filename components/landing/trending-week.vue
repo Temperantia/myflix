@@ -7,7 +7,7 @@ div
       h4.font-weight-light {{ getWeek() }}
   swiper(:options='swiperOption', style='height: 600px; z-index: 0')
     swiper-slide(
-      v-for='item in trendingWeek',
+      v-for='item in trendingWeek(isNewReleases)',
       :key='item.id',
       style='position: relative; height: 100%'
     )
@@ -39,50 +39,47 @@ div
             nuxt-link(:to='item.r')
               button.button MORE >
 </template>
-<script>
+<script lang='ts'>
 import { Swiper as SwiperClass, Autoplay } from 'swiper/swiper.esm';
 import getAwesomeSwiper from 'vue-awesome-swiper/dist/exporter';
-SwiperClass.use([Autoplay]);
+import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
 
+SwiperClass.use([Autoplay]);
 const { Swiper, SwiperSlide } = getAwesomeSwiper(SwiperClass);
+const browseModule = namespace('browse');
+
 import 'swiper/swiper-bundle.css';
 
-export default {
-  props: { isNewReleases: Boolean },
-  components: { Swiper, SwiperSlide },
-  data: () => ({
-    trendingWeek: [],
-    swiperOption: {
-      autoplay: {
-        delay: 4000,
-        disableOnInteraction: false,
-      },
-      loop: true,
-    },
-  }),
-  created() {
-    this.trendingWeek = this.$search
-      .filter((title) => (this.isNewReleases ? title.n : title.w))
-      .sort((a, b) => (a.p < b.p ? -1 : 1))
-      .slice(0, 10);
-  },
-  methods: {
-    availability(a) {
-      return this.$moment(a).format('D MMM, yyyy').toUpperCase();
-    },
-    getWeek() {
-      let start = this.$moment().startOf('isoWeek');
-      if (this.isNewReleases) {
-        start = start.subtract(7, 'days');
-      }
+@Component({ components: { Swiper, SwiperSlide } })
+export default class TrendingWeek extends Vue {
+  @Prop({ type: Boolean }) isNewReleases!: boolean;
 
-      const week =
-        start.format('MMM D').toUpperCase() +
-        ' - ' +
-        this.$moment().endOf('isoWeek').format('MMM D').toUpperCase();
+  @browseModule.Getter('trendingWeek') trendingWeek!: any;
 
-      return week;
+  swiperOption = {
+    autoplay: {
+      delay: 4000,
+      disableOnInteraction: false,
     },
-  },
-};
+    loop: true,
+  };
+
+  availability(a: number) {
+    return this.$moment(a).format('D MMM, yyyy').toUpperCase();
+  }
+
+  getWeek() {
+    let start = this.$moment().startOf('isoWeek');
+    if (this.isNewReleases) {
+      start = start.subtract(7, 'days');
+    }
+
+    const week =
+      start.format('MMM D').toUpperCase() +
+      ' - ' +
+      this.$moment().endOf('isoWeek').format('MMM D').toUpperCase();
+
+    return week;
+  }
+}
 </script>

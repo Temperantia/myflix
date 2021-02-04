@@ -1,7 +1,7 @@
 <script lang='ts'>
 import { ChartData, ChartOptions } from 'chart.js';
 import { HorizontalBar } from 'vue-chartjs';
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'nuxt-property-decorator';
 
 @Component({
   extends: HorizontalBar,

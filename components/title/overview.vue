@@ -31,11 +31,11 @@ v-container(fluid)
               v-select(
                 :items='statuses',
                 outlined,
-                :value='$store.state.title.status',
+                :value='status',
                 dense,
                 placeholder='Change status',
                 :hide-details='true',
-                @change='updateStatus'
+                @change='(value) => updateStatus(value)'
               )
                 template(v-slot:selection='{ item }')
                   span(
@@ -43,15 +43,15 @@ v-container(fluid)
                     :class='$titleStatusColor(item)'
                   ) {{ item }}
               span.d-flex.align-center(
-                v-if='title.summary.type === "show" && $store.state.title.status && $store.state.title.status !== "Save for Later"',
+                v-if='title.summary.type === "show" && status && status !== "Save for Later"',
                 style='position: absolute; top: 0; bottom: 0; right: 35px'
               )
                 input.pr-1.border.white-font--border.text-right(
-                  :class='$titleStatusColor($store.state.title.status)',
+                  :class='$titleStatusColor(status)',
                   style='width: 30px',
                   type='number',
-                  :value='$store.state.title.episodes',
-                  @input='updateEpisodes'
+                  :value='episodes',
+                  @input='(event) => updateEpisodes(event.target.value)'
                 )
                 span.ml-1 {{ " / " + title.episodeCount }}
         v-col(cols='12', lg='4')
@@ -59,11 +59,11 @@ v-container(fluid)
             v-select(
               :items='Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`).reverse()',
               outlined,
-              :value='$store.state.title.score',
+              :value='score',
               dense,
               placeholder='Rate this title',
               :hide-details='true',
-              @change='(value) => $store.commit("title/UPDATE_SCORE", value)'
+              @change='(value) => setScore(value)'
             )
         v-col(cols='12', lg='4')
           v-btn(color='blue-completed', @click='$router.push("/vpn")') GET IT IN YOUR COUNTRY
@@ -71,17 +71,17 @@ v-container(fluid)
         v-col
           v-btn.mr-3(
             color='black-search',
-            @click='$store.commit("title/UPDATE_BINGEWORTHY", !$store.state.title.bingeworthy)'
+            @click='setBingeworthy(!bingeworthy)'
           )
             v-icon(
-              :class='$store.state.title.bingeworthy ? "green-watching--text" : "greyButton--text"',
+              :class='bingeworthy ? "green-watching--text" : "greyButton--text"',
               left
             ) mdi-check
             span.font-weight-light(
-              :class='$store.state.title.bingeworthy ? "white--text" : "white-font--text"'
+              :class='bingeworthy ? "white--text" : "white-font--text"'
             ) Would you binge-watch this series?
           button.mr-3.button.white--text(@click='update')
-            v-icon(color='green-watching', v-if='$store.state.title.saved') mdi-check
+            v-icon(color='green-watching', v-if='title.saved') mdi-check
             span(v-else) UPDATE
           share(isButton, :url='$config.baseUrl + $route.path')
 
@@ -148,82 +148,45 @@ v-container(fluid)
           v-col(v-else)
             p Not Available
 </template>
-<script>
-export default {
-  data: () => ({
-    expanded: {},
-  }),
+<script lang='ts'>
+import { Vue, Component, namespace } from 'nuxt-property-decorator';
+
+const localStorageModule = namespace('localStorage');
+const titleModule = namespace('title');
+
+@Component
+export default class Title extends Vue {
+  @titleModule.State('title') title!: any;
+  @titleModule.State('status') status!: string;
+  @titleModule.State('episodes') episodes!: number;
+  @titleModule.State('score') score!: string;
+  @titleModule.State('bingeworthy') bingeworthy!: boolean;
+  @titleModule.State('saved') saved!: boolean;
+  @localStorageModule.State('connected') connected!: boolean;
+  @localStorageModule.State('user') user!: any;
+  @localStorageModule.Getter('favorites') favorites!: any;
+  @titleModule.Mutation('setScore') setScore!: any;
+  @titleModule.Mutation('setBingeworthy') setBingeworthy!: any;
+  @titleModule.Mutation('updateStatus') updateStatus!: any;
+  @titleModule.Mutation('updateEpisodes') updateEpisodes!: any;
+  @titleModule.Action('loadFlixlist') loadflixlist!: any;
+  @titleModule.Action('update') update!: any;
+
+  expanded: { [key: string]: any } = {};
+
   mounted() {
     if (this.title.credits) {
       for (const category in this.title.credits) {
         this.expanded[category] = false;
       }
     }
-  },
-  created() {
-    if (this.flixlist) {
-      if (this.flixlist.status) {
-        this.status = this.flixlist.status;
-      }
-      if (this.flixlist.episodes) {
-        this.episodes = this.flixlist.episodes;
-      }
-      if (this.flixlist.score) {
-        this.score = `${this.flixlist.score} - ${
-          this.$ratings[this.flixlist.score]
-        }`;
-      }
-    }
-  },
-  computed: {
-    user() {
-      return this.$store.getters['localStorage/USER'];
-    },
-    flixlist() {
-      return this.user ? this.user.flixlist[this.title.id] : null;
-    },
-    title() {
-      return this.$store.getters['title/TITLE'];
-    },
-    statuses() {
-      const statuses = this.$statusesTvShow;
-      return [...statuses, 'Remove from List'];
-    },
-  },
-  methods: {
-    async update() {
-      if (!this.$store.state.title.saved) {
-        await this.$updateFlixlist(
-          {
-            id: this.title.id,
-            summary: this.title.summary,
-            title: this.title.title,
-            tallBoxArt: this.title.tallBoxArt,
-            releaseYear: this.title.releaseYear,
-            maturity: this.title.maturity,
-            episodeCount: this.title.episodeCount,
-          },
-          this.$store.state.title.status,
-          Number(this.$store.state.title.episodes),
-          this.$store.state.title.score
-            ? Number(this.$store.state.title.score.split('-')[0])
-            : null,
-          this.$store.state.title.bingeworthy
-        );
-      }
-    },
-    updateStatus(value) {
-      this.$store.commit('title/UPDATE_STATUS', {
-        value,
-        title: this.title,
-      });
-    },
-    updateEpisodes(event) {
-      const value = event.target.value;
-      this.$store.commit('title/UPDATE_EPISODES', { value, title: this.title });
-    },
-  },
-};
+  }
+
+  get statuses() {
+    const statuses = this.$statusesTvShow;
+    return [...statuses, 'Remove from List'];
+  }
+}
 </script>
 <style lang="scss" scoped>
 .title-border {

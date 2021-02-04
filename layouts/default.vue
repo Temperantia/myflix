@@ -10,7 +10,7 @@ v-app(app)
       template(v-if='$vuetify.breakpoint.mdAndUp')
         client-only
           v-col.d-flex.justify-end(md='4')
-            v-menu(v-if='$store.state.localStorage.connected')
+            v-menu(v-if='connected')
               template(v-slot:activator='{ on, attrs }')
                 div(v-bind='attrs', v-on='on') {{ user.username }}
               v-list
@@ -55,8 +55,13 @@ v-app(app)
                 :class='{ "red-netflix--text": item.route === currentTab }'
               ) {{ item.name }}
   v-main.blackBody
-    nuxt(v-if='!$slots.default')
-    slot
+    v-container(fluid)
+      v-row
+        v-col(v-if='$vuetify.breakpoint.xl', cols='1')
+        v-col(cols='12', xl='10')
+          nuxt(v-if='!$slots.default')
+          slot
+        v-col(v-if='$vuetify.breakpoint.xl', cols='1')
   v-container.px-0.pt-0(fluid)
     footer
       .top
@@ -82,37 +87,35 @@ v-app(app)
           v-col.pb-0(cols='12')
             p.mb-0.text-center All Rights Reserved. Copyright MyFlix {{ new Date().getFullYear() }}. MyFlix is a website of Inclusive Corp.
 </template>
-<script>
-export default {
-  data: () => ({
-    currentTab: 'index',
-    tabs: [],
-    items: [],
-    itemsMobileConnected: [],
-    itemsMobileDisconnected: [],
-  }),
-  computed: {
-    user() {
-      return this.$store.state.localStorage.user;
-    },
-    itemsMobile() {
-      return this.$store.getters['localStorage/CONNECTED']
-        ? this.itemsMobileConnected
-        : this.itemsMobileDisconnected;
-    },
-  },
-  methods: {
-    async signOut() {
-      await this.$fire.auth.signOut();
-      this.$store.commit('localStorage/USER_LOGOUT');
-      this.$router.push('/');
-    },
-  },
+<script lang='ts'>
+import { Vue, Component, namespace, Watch } from 'nuxt-property-decorator';
+
+const localStorageModule = namespace('localStorage');
+const profileModule = namespace('profile');
+
+@Component
+export default class Default extends Vue {
+  currentTab: string = 'index';
+  tabs: any = [];
+  items: any = [];
+  itemsMobileConnected: any = [];
+  itemsMobileDisconnected: any = [];
+
+  @localStorageModule.State('user') user!: any;
+  @localStorageModule.State('connected') connected!: boolean;
+  @localStorageModule.Action('signOut') signOut!: any;
+
+  itemsMobile() {
+    return this.connected
+      ? this.itemsMobileConnected
+      : this.itemsMobileDisconnected;
+  }
+
   mounted() {
     if (this.$route.params.path) {
       this.currentTab = this.$route.params.path;
     } else {
-      this.currentTab = this.$route.name;
+      this.currentTab = this.$route.name as string;
     }
     this.tabs = [
       {
@@ -155,29 +158,19 @@ export default {
       {
         name: 'PROFILE',
         hook: () => {
-          this.$router.push(
-            '/profile/' + this.$store.state.localStorage.user.username
-          );
+          this.$router.push('/profile/' + this.user.username);
         },
       },
       {
         name: 'REVIEWS',
         hook: () => {
-          this.$router.push(
-            '/profile/' +
-              this.$store.state.localStorage.user.username +
-              '/reviews'
-          );
+          this.$router.push('/profile/' + this.user.username + '/reviews');
         },
       },
       {
         name: 'SUGGESTIONS',
         hook: () => {
-          this.$router.push(
-            '/profile/' +
-              this.$store.state.localStorage.user.username +
-              '/suggestions'
-          );
+          this.$router.push('/profile/' + this.user.username + '/suggestions');
         },
       },
       {
@@ -209,19 +202,17 @@ export default {
         },
       ],
     ];
-  },
-  watch: {
-    $route() {
-      if (this.$route.params.path) {
-        this.currentTab = this.$route.params.path;
-      } else {
-        this.currentTab = this.$route.matched[0].name;
-      }
-    },
-  },
-};
-</script>
+  }
 
+  @Watch('$route') onRouteChanged() {
+    if (this.$route.params.path) {
+      this.currentTab = this.$route.params.path;
+    } else {
+      this.currentTab = this.$route.matched[0].name as string;
+    }
+  }
+}
+</script>
 <style lang="scss">
 .blackHeader {
   display: flex;

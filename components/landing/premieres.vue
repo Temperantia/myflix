@@ -23,28 +23,19 @@ v-container.px-10(fluid)
             )
             b.my-5 Coming: {{ $moment(item.a).format("MMM D, yyyy").toUpperCase() }}
 </template>
-<script>
+<script lang='ts'>
 import { directive } from 'vue-awesome-swiper';
+import { Vue, Component, namespace } from 'nuxt-property-decorator';
+const browseModule = namespace('browse');
 
-export default {
-  directives: {
-    swiper: directive,
-  },
-  data: () => ({
-    swiperOption: {
-      freeMode: true,
-      loop: true,
-      slidesPerView: 3,
-      spaceBetween: 30,
-    },
-  }),
-  computed: {
-    premieres() {
-      return this.$search
-        .filter((title) => title.m)
-        .sort((a, b) => (a.p < b.p ? -1 : 1))
-        .slice(0, 10);
-    },
-  },
-};
+@Component({ directives: { swiper: directive } })
+export default class Premieres extends Vue {
+  @browseModule.Getter('premieres') premieres!: any;
+  swiperOption = {
+    freeMode: true,
+    loop: true,
+    slidesPerView: 3,
+    spaceBetween: 30,
+  };
+}
 </script>

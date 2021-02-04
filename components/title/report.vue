@@ -27,10 +27,20 @@ v-overlay(:value='display', opacity='0.7', dark)
           @click='cancel'
         ) CANCEL
 </template>
-<script>
-export default {
-  props: ['username', 'display', 'type', 'title', 'confirm', 'cancel'],
-};
+<script lang='ts'>
+import { Vue, Component, Prop, namespace } from 'nuxt-property-decorator';
+
+const titleModule = namespace('title');
+
+@Component
+export default class Report extends Vue {
+  @Prop({ type: String }) username!: string;
+  @Prop({ type: Boolean }) display!: boolean;
+  @Prop({ type: String }) type!: string;
+  @Prop({ type: String }) title!: string;
+  @Prop({ type: Function }) confirm!: any;
+  @Prop({ type: Function }) cancel!: any;
+}
 </script>
 <style lang="scss" scoped>
 .report {

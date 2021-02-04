@@ -2,11 +2,11 @@
 v-container(fluid, :id='"review-" + review.id')
   v-row.header-border
     v-col(lg='2')
-      img(:src='user && user.image ? user.image : "/defaultUser.png"')
+      img(:src='image')
     v-col(cols='10', lg='7')
       client-only
-        nuxt-link(:to='"/profile/" + user.username')
-          a.red-netflix--text {{ user.username }}
+        nuxt-link(:to='"/profile/" + profile.username')
+          a.red-netflix--text {{ profile.username }}
       div(v-if='!preview')
         b {{ review.likes.length + " " }}
         span people found this review helpful
@@ -41,21 +41,19 @@ v-container(fluid, :id='"review-" + review.id')
   client-only
     v-row.section-border
       v-col(cols='9', lg='5', offset-lg='3')
-        template(v-if='!preview && !$store.getters["profile/SELF"]')
+        template(v-if='!preview && connected && !self')
           button.button-action.activated(
-            v-if='!$store.getters["localStorage/CONNECTED"] || review.likes.includes($store.getters["localStorage/USER"].id)',
-            @click='$unlike(review.id)'
+            v-if='!connected || review.likes.includes(id)',
+            @click='unlike(review.id)'
           ) I found this review helpful
-          button.button-action(v-else, @click='$like(review.id)') I found this review helpful
+          button.button-action(v-else, @click='like(review.id)') I found this review helpful
       v-col.text-lg-right(cols='3', lg='4')
         span.white-font--text.click(
           @click='$copyText($config.baseUrl + $route.path + "#review-" + review.id); $toast.success("Copied to clipboard")'
         ) permalink
         span.white-font--text {{ " | " }}
         share(:url='$config.baseUrl + $route.path + "#review-" + review.id')
-        template(
-          v-if='$store.state.localStorage.connected && !$store.getters["profile/SELF"] && !review.reports.includes($store.state.localStorage.user.id)'
-        )
+        template(v-if='connected && !self && !review.reports.includes(id)')
           span.white-font--text {{ " | " }}
           span.white-font--text.click(@click='overlay = true') report
   report(
@@ -63,43 +61,59 @@ v-container(fluid, :id='"review-" + review.id')
     type='review',
     :username='review.author.username',
     :title='review.title.title',
-    :confirm='report',
+    :confirm='validate',
     :cancel='() => (overlay = false)'
   )
 </template>
-<script>
-export default {
-  data: () => ({
-    expanded: false,
-    overlay: false,
-  }),
-  props: { review: Object, title: Object, preview: Boolean },
-  computed: {
-    content() {
-      return !this.expanded && this.review.content.length > 500
-        ? this.review.content.substring(0, 500) + ' ...'
-        : this.review.content;
-    },
-    user() {
-      return this.preview
-        ? this.$store.state.localStorage.user
-        : this.review.author;
-    },
-    postedOn() {
-      return this.$moment(
-        this.preview
-          ? new Date()
-          : new Date(this.review.postedOn.seconds * 1000)
-      ).format('MMM D, yyyy');
-    },
-  },
-  methods: {
-    report() {
-      this.$report('reviews', this.review.id);
-      this.overlay = false;
-    },
-  },
-};
+<script lang='ts'>
+import { Vue, Component, Prop, namespace } from 'nuxt-property-decorator';
+
+const reviewsModule = namespace('reviews');
+const localStorageModule = namespace('localStorage');
+const profileModule = namespace('profile');
+
+@Component
+export default class Review extends Vue {
+  @Prop({ type: Object }) review!: any;
+  @Prop({ type: Object }) title!: any;
+  @Prop({ type: Boolean }) preview!: boolean;
+
+  @localStorageModule.State('user') user!: any;
+  @localStorageModule.State('connected') connected!: boolean;
+  @localStorageModule.Getter('id') id!: string;
+  @profileModule.Getter('self') self!: boolean;
+  @reviewsModule.Action('report') report!: any;
+  @reviewsModule.Action('like') like!: any;
+  @reviewsModule.Action('unlike') unlike!: any;
+
+  expanded = false;
+  overlay = false;
+
+  get image() {
+    return this.profile?.image ?? '/defaultUser.png';
+  }
+
+  get content() {
+    return !this.expanded && this.review.content.length > 500
+      ? this.review.content.substring(0, 500) + ' ...'
+      : this.review.content;
+  }
+
+  get profile() {
+    return this.preview ? this.user : this.review.author;
+  }
+
+  get postedOn() {
+    return this.$moment(
+      this.preview ? new Date() : new Date(this.review.postedOn.seconds * 1000)
+    ).format('MMM D, yyyy');
+  }
+
+  validate() {
+    this.report(this.review.id);
+    this.overlay = false;
+  }
+}
 </script>
 <style lang="scss" scoped>
 .ratings {

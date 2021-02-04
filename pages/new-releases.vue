@@ -44,42 +44,45 @@ div
         )
     title-list(:source='newReleases')
 </template>
-<script>
-import genres from '~/netflix/data/categories';
-export default {
-  data: () => ({
-    score: 'All',
-    category: 'All',
-    genre: 'All',
-    original: false,
-    genres,
-  }),
-  methods: {
-    getWeek() {
-      const week =
-        this.$moment().subtract(7, 'days').startOf('isoWeek').format('MMM D') +
-        ' - ' +
-        this.$moment().endOf('isoWeek').format('MMM D');
-      return week;
-    },
-  },
-  computed: {
-    newReleases() {
-      return this.$search.filter((title) => {
-        if (!title.n) {
-          return false;
-        }
-        return (
-          (this.category === 'All' ||
-            (this.category === 'TV Shows' && title.u) ||
-            (this.category === 'Films' && !title.u)) &&
-          (this.score === 'All' ||
-            Number(this.score.match(/(([^()]+))/)[1]) === parseInt(title.z)) &&
-          (this.genre === 'All' || title.c.includes(this.genre)) &&
-          (!this.original || title.o)
-        );
-      });
-    },
-  },
-};
+<script lang='ts'>
+import { Vue, Component, namespace } from 'nuxt-property-decorator';
+import genres from '~/netflix/data/categories.json';
+
+const browseModule = namespace('browse');
+
+@Component
+export default class NewReleases extends Vue {
+  score: string = 'All';
+  category: string = 'All';
+  genre: string = 'All';
+  original: boolean = false;
+  genres = genres;
+
+  @browseModule.Getter('titles') titles!: any;
+
+  getWeek() {
+    const week =
+      this.$moment().subtract(7, 'days').startOf('isoWeek').format('MMM D') +
+      ' - ' +
+      this.$moment().endOf('isoWeek').format('MMM D');
+    return week;
+  }
+
+  get newReleases() {
+    return this.titles.filter((title: any) => {
+      if (!title.n) {
+        return false;
+      }
+      return (
+        (this.category === 'All' ||
+          (this.category === 'TV Shows' && title.u) ||
+          (this.category === 'Films' && !title.u)) &&
+        (this.score === 'All' ||
+          Number(this.score.match(/(([^()]+))/)?.[1]) === parseInt(title.z)) &&
+        (this.genre === 'All' || title.c.includes(this.genre)) &&
+        (!this.original || title.o)
+      );
+    });
+  }
+}
 </script>

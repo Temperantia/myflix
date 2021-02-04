@@ -10,7 +10,7 @@ v-container(v-if='edition', fluid)
       h4 Choose a similar {{ title.summary.type === "show" ? "TV Show" : "Film" }} title
       search(
         :title='suggestion.similar',
-        @click='(id, title, image, route) => (suggestion.similar = { id, title, image, route })'
+        @click='(title) => (suggestion.similar = title)'
       )
     v-col.text-lg-right(cols='12', lg='2')
       button.red-netflix--text(@click='edition = false') CANCEL
@@ -36,10 +36,7 @@ div(v-else)
         h3 SUGGESTIONS
       v-col.text-lg-right(cols='12', lg='4')
         client-only
-          button(
-            v-if='$store.state.localStorage.connected',
-            @click='edition = true'
-          ) MAKE A SUGGESTION
+          button(v-if='connected', @click='edition = true') MAKE A SUGGESTION
           button(v-else, @click='$router.push("/sign-in")') SIGN IN TO MAKE A SUGGESTION
   template(v-if='suggestions.length > 0')
     suggestion(
@@ -57,21 +54,33 @@ div(v-else)
       v-col
         p No suggestions yet
 </template>
-<script>
-export default {
-  data: () => ({
-    suggestionsPerPage: 20,
-    page: 1,
-    edition: false,
-    suggestion: {
-      content: '',
-      similar: null,
-    },
-  }),
+<script lang='ts'>
+import { Vue, Component, namespace } from 'nuxt-property-decorator';
+
+const localStorageModule = namespace('localStorage');
+const suggestionsModule = namespace('suggestions');
+const titleModule = namespace('title');
+
+@Component
+export default class Suggestions extends Vue {
+  @titleModule.State('title') title!: any;
+  @suggestionsModule.State('suggestions') source!: any;
+  @localStorageModule.State('connected') connected!: boolean;
+  @suggestionsModule.Action('create') createSuggestion!: any;
+  suggestionsPerPage = 20;
+  page = 1;
+  edition = false;
+  suggestion = {
+    content: '',
+    similar: null,
+  };
+
   mounted() {
     const id = this.$route.hash.substring(1);
     if (id) {
-      const index = this.source.findIndex((suggestion) => suggestion.id === id);
+      const index = this.source.findIndex(
+        (suggestion: any) => suggestion.id === id
+      );
       if (index !== -1) {
         this.page = Math.floor(index / this.suggestionsPerPage) + 1;
         const checkExist = setInterval(() => {
@@ -82,47 +91,22 @@ export default {
         }, 100);
       }
     }
-  },
-  methods: {
-    submit() {
-      if (
-        this.suggestion.content.length < 200 ||
-        this.suggestion.content.length > 1000
-      ) {
-        this.$toast.error(
-          'Your suggestion needs between 200 and 1000 characters.'
-        );
-        return;
-      }
-      if (!this.suggestion.similar) {
-        this.$toast.error('You need to pick a similar title');
-        return;
-      }
-      this.$createSuggestion(
-        this.title,
-        this.suggestion,
-        this.$store.state.localStorage.user
-      );
-      this.edition = false;
-      this.$forceUpdate();
-    },
-  },
-  computed: {
-    title() {
-      return this.$store.state.title.data;
-    },
-    suggestions() {
-      const offset = (this.page - 1) * this.suggestionsPerPage;
-      return this.source.slice(offset, offset + this.suggestionsPerPage);
-    },
-    source() {
-      return this.$store.getters['title/SUGGESTIONS'];
-    },
-    pages() {
-      return Math.ceil(this.source.length / this.suggestionsPerPage);
-    },
-  },
-};
+  }
+
+  submit() {
+    this.createSuggestion(this.suggestion);
+    this.edition = false;
+  }
+
+  get suggestions() {
+    const offset = (this.page - 1) * this.suggestionsPerPage;
+    return this.source.slice(offset, offset + this.suggestionsPerPage);
+  }
+
+  get pages() {
+    return Math.ceil(this.source.length / this.suggestionsPerPage);
+  }
+}
 </script>
 <style lang="scss" scoped>
 .section-border {
