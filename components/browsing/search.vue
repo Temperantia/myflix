@@ -1,7 +1,7 @@
 <template lang="pug">
 v-autocomplete(
   v-if='nav',
-  :items='items',
+  :items='titles',
   outlined,
   dense,
   :hide-details='true',
@@ -11,18 +11,20 @@ v-autocomplete(
   background-color='#0f0f0f',
   placeholder='SEARCH FOR TITLES',
   cache-items,
+  item-text='t',
+  item-value='t',
+  :value='value',
   width='0'
 )
   template(v-slot:item='{ item }')
-    nuxt-link.w-100(:to='getRoute(item)')
+    nuxt-link.w-100(:to='item.r')
       v-list-item.pa-0
         .searchImage
-          img(:src='getImage(item)')
-        .searchText {{ item }}
+          img(:src='item.b')
+        .searchText {{ item.t }}
 v-autocomplete(
   v-else,
-  :items='items',
-  v-model='selected',
+  :items='titles',
   :menu-props='{ closeOnContentClick: true }',
   outlined,
   dense,
@@ -30,15 +32,16 @@ v-autocomplete(
   cache-items,
   :search-input='input',
   :filter='search',
+  :value='value',
   append-icon='mdi-magnify',
   background-color='#0f0f0f'
 )
   template(v-slot:item='{ item }')
     v-list-item(@click='click(item)')
       v-list-item-avatar.rounded-0(width='auto', height='100')
-        img(:src='getImage(item)')
+        img(:src='item.b')
       v-list-item-content
-        v-list-item-title(v-text='item')
+        v-list-item-title(v-text='item.t')
 </template>
 <script lang='ts'>
 import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
@@ -48,9 +51,9 @@ const browseModule = namespace('browse');
 @Component
 export default class Search extends Vue {
   @Prop({ type: Boolean }) nav!: boolean;
-  @browseModule.Getter('titleFromTitle') getTitle!: Function;
-  selected: string = '';
+  @browseModule.State('titles') titles!: Function;
   input: string = '';
+  value: string = '';
   items: any[] = [];
   map: any = {
     a: 'á|à|ã|â|À|Á|Ã|Â',
@@ -62,14 +65,14 @@ export default class Search extends Vue {
     n: 'ñ|Ñ',
   };
 
-  click(value: string) {
-    this.selected = value;
-    this.$emit('click', this.getTitle(value));
+  click(item: any) {
+    this.value = item.t;
+    this.$emit('click', item);
   }
 
-  search(_: any, queryText: string, itemText: any) {
+  search(item: any, queryText: string, itemText: any) {
     return (
-      this.slugify(itemText)
+      this.slugify(item.t)
         .toLocaleLowerCase()
         .indexOf(this.slugify(queryText).toLocaleLowerCase()) > -1
     );

@@ -12,7 +12,7 @@ import { Vue, Component, Prop } from 'nuxt-property-decorator';
 @Component
 export default class Card extends Vue {
   @Prop({ type: String }) title!: string;
-  @Prop({ type: String }) content!: string;
+  @Prop({ type: Number }) content!: number;
   @Prop({ type: String }) subtitle!: string;
 }
 </script>

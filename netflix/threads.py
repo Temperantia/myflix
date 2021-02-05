@@ -9,10 +9,11 @@ def thread(target, args, cooldown):
     t = Thread(target=target, args=arg)
     threads.append(t)
   bar = Bar('Processing', max=len(threads))
-  for t in threads:
+  for i, t in enumerate(threads):
     t.start()
     bar.next()
     sleep(cooldown)
+
   for t in threads:
     t.join()
   bar.finish()

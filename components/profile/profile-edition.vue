@@ -14,7 +14,7 @@ v-container(fluid)
         :class='{ "red-netflix--text": isCurrentTab(tab.name) }'
       ) {{ tab.name }}
     v-col.text-md-right
-      a(@click='validate') SAVE CHANGES
+      a(@click='check') SAVE CHANGES
   v-container(fluid, v-if='currentTab === "EDIT PROFILE"')
     v-row.subtitle-border
       v-col(cols='12', lg='3')
@@ -80,25 +80,25 @@ v-container(fluid)
   v-container(fluid, v-if='currentTab === "FAVORITES"')
     v-row
       v-col(cols='12', lg='6')
-        h4.subtitle-border TV SHOWS
         v-container(fluid)
+          h4.subtitle-border TV SHOWS
           v-row(v-for='(show, id) in copy.favorites.shows', :key='id')
             v-col(cols='12', lg='9')
               h3 {{ show.title }}
               .white-font--text {{ show.year + " " + show.maturity + " " + show.season + " Seasons" }}
-              .white-font--text {{ show.genres.map((genre) => genre.name).join(", ") }}
+              .white-font--text {{ show.genres.join(", ") }}
             v-col.text-right(cols='12', lg='3')
               a.click.white-font--text(
                 @click='removeFavorite(copy.favorites.shows, id)'
               ) REMOVE
       v-col(cols='12', lg='6')
-        h4.subtitle-border FILMS
         v-container(fluid)
+          h4.subtitle-border FILMS
           v-row(v-for='(film, id) in copy.favorites.films', :key='id')
             v-col(cols='12', lg='9')
               h3 {{ film.title }}
               .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
-              .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
+              .white-font--text {{ film.genres.join(", ") }}
             v-col.text-right(cols='12', lg='3')
               a.click.white-font--text(
                 @click='removeFavorite(copy.favorites.films, id)'
@@ -208,16 +208,16 @@ v-container(fluid)
 <script lang='ts'>
 import { listTimeZones } from 'timezone-support';
 import { formatToTimeZone } from 'date-fns-timezone';
-import clonedeep from 'lodash.clonedeep';
-import { Vue, Component, Prop, namespace } from 'nuxt-property-decorator';
+import { Vue, Component, namespace } from 'nuxt-property-decorator';
 
+const profileModule = namespace('profile');
 const localStorageModule = namespace('localStorage');
 
 @Component
 export default class ProfileEdition extends Vue {
-  @Prop({ type: Object }) user!: any;
-  @Prop({ type: Function }) save!: any;
+  @profileModule.State('profile') profile!: any;
   @localStorageModule.Action('deleteUser') deleteUser!: any;
+  @localStorageModule.Action('update') update!: any;
 
   listTimeZones = listTimeZones;
   formatToTimeZone = formatToTimeZone;
@@ -230,11 +230,28 @@ export default class ProfileEdition extends Vue {
   deletionEmail = '';
   deletionPassword = '';
 
-  validate() {
-    if (!(this.$refs.form as any)?.validate()) {
+  created() {
+    this.copy = JSON.parse(JSON.stringify(this.profile));
+    if (!this.copy.timeZone) {
+      this.$set(
+        this.copy,
+        'timeZone',
+        Intl.DateTimeFormat().resolvedOptions().timeZone
+      );
+    }
+  }
+
+  mounted() {
+    if (this.$route.params.tab) {
+      this.currentTab = this.$route.params.tab;
+    }
+  }
+
+  check() {
+    if (this.$refs.form && !(this.$refs.form as any).validate()) {
       return;
     }
-    this.save(
+    this.update(
       this.copy,
       this.passwordNew,
       this.passwordCurrent,
@@ -269,6 +286,7 @@ export default class ProfileEdition extends Vue {
     reader.onload = async (e: ProgressEvent<FileReader>) => {
       const img: HTMLImageElement = document.createElement('img');
       img.src = e.target?.result as string;
+
       await new Promise((r) => setTimeout(r, 2000));
 
       const canvas = document.createElement('canvas');
@@ -337,17 +355,6 @@ export default class ProfileEdition extends Vue {
   signInWithFacebook() {
     const provider = new this.$fireModule.auth.FacebookAuthProvider();
     this.link(provider, 'facebook');
-  }
-
-  created() {
-    this.copy = clonedeep(this.user);
-    if (!this.copy.timeZone) {
-      this.$set(
-        this.copy,
-        'timeZone',
-        Intl.DateTimeFormat().resolvedOptions().timeZone
-      );
-    }
   }
 
   get isSocial() {

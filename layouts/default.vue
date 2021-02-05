@@ -58,7 +58,7 @@ v-app(app)
     v-container(fluid)
       v-row
         v-col(v-if='$vuetify.breakpoint.xl', cols='1')
-        v-col(cols='12', xl='10')
+        v-col.pa-0(cols='12', xl='10')
           nuxt(v-if='!$slots.default')
           slot
         v-col(v-if='$vuetify.breakpoint.xl', cols='1')
@@ -176,7 +176,10 @@ export default class Default extends Vue {
       {
         name: 'ACCOUNT SETTINGS',
         hook: () => {
-          this.$router.push('/account-settings');
+          this.$router.push({
+            name: 'profile-username',
+            params: { username: this.user.username, tab: 'ACCOUNT SETTINGS' },
+          });
         },
       },
       {

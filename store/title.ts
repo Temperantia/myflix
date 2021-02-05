@@ -115,13 +115,15 @@ export default class TitleStore extends VuexModule {
     if (!result) {
       return $redirect("/");
     }
-    $route.params.id = result.id;
+
     if (
       (parts.length === 3 && $route.path[$route.path.length - 1] !== "/") ||
       (parts.length === 4 && $route.path[$route.path.length - 1] === "/")
     ) {
       return $redirect($route.path + "/overview");
     }
+
+    await this.context.dispatch("get", result.id);
   }
 
   @VuexAction({ rawError: true }) async update(): Promise<void> {
@@ -178,12 +180,8 @@ export default class TitleStore extends VuexModule {
     $toast.success("Flixlist updated");
   }
 
-  @VuexAction({ rawError: true }) loadFlixlist() {
-    console.log(this.context.rootGetters);
-    const flixlist: any = this.context.rootGetters[
-      "localStorage/flixlistTitle"
-    ];
-    console.log(flixlist());
+  @VuexAction({ rawError: true }) loadFlixlist(id: string) {
+    const flixlist: any = this.context.rootGetters["localStorage/flixlist"]?.[id];
     if (!flixlist) {
       return;
     }
@@ -229,10 +227,9 @@ export default class TitleStore extends VuexModule {
       information.Rating = this.maturities[title.maturity];
     }
 
-    this.context.dispatch("localStorage/loadFlixlist", null, { root: true });
-    this.context.dispatch("reviews/id", id, { root: true });
-    this.context.dispatch("suggestions/id", id, { root: true });
-
+    this.context.dispatch("loadFlixlist", id);
+    this.context.dispatch("reviews/get", id, { root: true });
+    this.context.dispatch("suggestions/get", id, { root: true });
     return {
       ...title,
       information,

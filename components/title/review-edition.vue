@@ -30,7 +30,7 @@ v-container(fluid)
       :key='name'
     )
       h3 {{ name.toUpperCase() }}
-      card(:content='rating', :subtitle='$ratings[rating]')
+      card(:content='rating', :subtitle='ratings[rating]')
       v-rating.pa-0(
         v-if='name !== "Overall"',
         :value='rating',
@@ -62,15 +62,19 @@ v-container(fluid)
         .white-font--text.mt-5 Note: this area is only to be used for posting a review of the series after you have seen it. This is not discussion area.
 </template>
 <script lang='ts'>
-import { Vue, Component, Prop } from 'nuxt-property-decorator';
+import { Vue, Component, Prop, namespace } from 'nuxt-property-decorator';
+
+const titleModule = namespace('title');
 
 @Component
-export default class extends Vue {
+export default class ReviewEdition extends Vue {
   @Prop({ type: Object }) title!: any;
   @Prop({ type: Object }) review!: any;
   @Prop({ type: Function }) updateEpisodes!: any;
   @Prop({ type: Function }) updateRating!: any;
   @Prop({ type: Function }) submit!: any;
+
+  @titleModule.State('ratings') ratings!: any;
 }
 </script>
 <style lang="scss" scoped>

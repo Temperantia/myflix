@@ -18,7 +18,7 @@ div
         )
       v-col(cols='12', lg='2') User Score
         v-select(
-          :items='[ "All",...Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`).reverse(), ]',
+          :items='[ "All",...Object.entries(ratings).map(([score, rating]) => `${score} - ${rating}`).reverse(), ]',
           v-model='score',
           hide-details,
           outlined,
@@ -49,6 +49,7 @@ import { Vue, Component, namespace } from 'nuxt-property-decorator';
 import genres from '~/netflix/data/categories.json';
 
 const browseModule = namespace('browse');
+const titleModule = namespace('title');
 
 @Component
 export default class NewReleases extends Vue {
@@ -58,7 +59,8 @@ export default class NewReleases extends Vue {
   original: boolean = false;
   genres = genres;
 
-  @browseModule.Getter('titles') titles!: any;
+  @titleModule.State('ratings') ratings!: any;
+  @browseModule.State('titles') titles!: any;
 
   getWeek() {
     const week =

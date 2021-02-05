@@ -11,7 +11,7 @@ v-container(fluid)
 import { Vue, Component, Prop, Watch } from 'nuxt-property-decorator';
 
 @Component
-export default class Title extends Vue {
+export default class Breadcrumb extends Vue {
   @Prop({ type: String }) titleName!: string;
   typeRoute = '';
   titleRoute = '';

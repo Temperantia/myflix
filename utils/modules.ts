@@ -5,7 +5,6 @@ import { Toasted } from "vue-toasted";
 import { NuxtAppOptions } from "@nuxt/types";
 import { NuxtCookies } from "cookie-universal-nuxt";
 import { Route, Location } from "vue-router";
-import { Dictionary } from "vue-router/types/router";
 
 let $fire: NuxtFireInstance;
 let $fireModule: typeof Firebase;
@@ -27,7 +26,7 @@ export function initialize(
   $fireModule = fireModule;
   $toast = app.$toast;
   $cookies = app.$cookies;
-  $router = app.$router;
+  $router = app.router;
   $route = route;
   $redirect = redirect;
 }
@@ -37,7 +36,7 @@ export {
   $fireModule,
   $toast,
   $cookies,
-  $router,
+ $router,
   $moment,
   $route,
   $redirect

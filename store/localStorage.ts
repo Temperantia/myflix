@@ -15,6 +15,7 @@ export default class localStorageStore extends VuexModule {
   connected: boolean = false;
   socialAuthUser: any = null;
   provider: string = "";
+  cookies: any = {};
 
   get id() {
     return this.user?.id;
@@ -24,12 +25,18 @@ export default class localStorageStore extends VuexModule {
     return this.user?.flixlist;
   }
 
-  get flixlistTitle() {
-    return () => this.flixlist[this.context.rootGetters["title/id"]];
-  }
-
   get favorites() {
     return this.user?.favorites;
+  }
+
+  @VuexMutation addCookie({
+    name,
+    timestamp
+  }: {
+    name: string;
+    timestamp: number;
+  }) {
+    this.cookies[name] = timestamp;
   }
 
   @VuexMutation setSocialAuthUser(socialAuthUser: any) {
@@ -135,19 +142,25 @@ export default class localStorageStore extends VuexModule {
 
   @VuexAction({ rawError: true, commit: "_signIn" })
   async register({
-    id, email, username, password, photoURL, provider, token
-  }:{
-    id: string,
-    email: string,
-    username: string,
-    password: string,
-    photoURL: string,
-    provider: string,
-    token: string
-   } ): Promise<void> {
+    id,
+    email,
+    username,
+    password,
+    photoURL,
+    provider,
+    token
+  }: {
+    id: string;
+    email: string;
+    username: string;
+    password: string;
+    photoURL: string;
+    provider: string;
+    token: string;
+  }): Promise<void> {
     const exists = await $getUser(username);
     if (exists) {
-      $toast.error('Username is taken');
+      $toast.error("Username is taken");
       return;
     }
 
@@ -236,7 +249,9 @@ export default class localStorageStore extends VuexModule {
     if (redirect) {
       $router.push(redirect);
     }
+    $toast.success("Profile updated");
     this.context.commit("_update", user);
+    this.context.commit("profile/setProfile", user, { root: true });
   }
 
   @VuexAction({ rawError: true, commit: "_signOut" }) async signOut() {

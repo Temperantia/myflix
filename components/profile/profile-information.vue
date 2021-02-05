@@ -1,5 +1,5 @@
 <template lang="pug">
-v-col(cols='12', lg='2')
+v-col( cols='12', lg='2')
   img(:src='image')
   v-row
     v-col.pt-1.pb-0
@@ -47,12 +47,12 @@ const profileModule = namespace('profile');
 
 @Component
 export default class ProfileInformation extends Vue {
-  @profileModule.Getter('profile') profile!: any;
+  @profileModule.State('profile') profile!: any;
   @profileModule.Getter('tvShows') tvShows!: any;
   @profileModule.Getter('films') films!: any;
 
   get image() {
-    return this.profile.image ?? '/defaultUser.png';
+    return this.profile?.image ?? '/defaultUser.png';
   }
 }
 </script>

@@ -14,6 +14,7 @@ v-col(cols='12', lg='10')
         p No reviews yet
 </template>
 <script lang='ts'>
+import { Context } from '@nuxt/types';
 import { Vue, Component, namespace } from 'nuxt-property-decorator';
 
 const profileModule = namespace('profile');
@@ -22,13 +23,11 @@ const reviewsModule = namespace('reviews');
 @Component({ layout: 'profile' })
 export default class ProfileReviews extends Vue {
   @profileModule.State('profile') profile!: any;
-  @profileModule.Getter('reviewsProfile') reviews!: any;
-  @profileModule.Action('loadUsername') loadUsername!: any;
-  @reviewsModule.Action('getProfile') getReviews!: any;
+  @reviewsModule.State('profile') reviews!: any;
 
-  created() {
-    this.loadUsername(this.$route.params.username);
-    this.getReviews(this.$route.params.username);
+  async asyncData({ route, store }: Context) {
+    await store.dispatch('profile/loadUsername', route.params.username);
+    await store.dispatch('reviews/getProfile', route.params.username);
   }
 }
 </script>

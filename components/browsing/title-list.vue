@@ -114,9 +114,9 @@ import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
 const localStorageModule = namespace('localStorage');
 
 @Component
-export default class Search extends Vue {
-  @Prop({ type: Object }) source!: any;
-  @Prop({ type: Boolean }) galley!: boolean;
+export default class TitleList extends Vue {
+  @Prop({ type: Array }) source!: any;
+  @Prop({ type: Boolean }) gallery!: boolean;
   @localStorageModule.State('connected') connected!: boolean;
 
   page = 1;

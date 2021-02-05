@@ -57,7 +57,7 @@ v-container(fluid)
         v-col(cols='12', lg='4')
           client-only
             v-select(
-              :items='Object.entries($ratings).map(([score, rating]) => `${score} - ${rating}`).reverse()',
+              :items='Object.entries(ratings).map(([score, rating]) => `${score} - ${rating}`).reverse()',
               outlined,
               :value='score',
               dense,
@@ -123,28 +123,28 @@ v-container(fluid)
       h3.title-border CREDITS
       v-container(fluid)
         v-row
-          v-col(
-            v-if='title.credits',
-            v-for='(credits, category) in title.credits',
-            cols='12',
-            md='4',
-            :key='category'
-          )
-            h4.mb-2 {{ category }}
-            template(v-if='Object.keys(credits).length > 5')
-              template(v-if='expanded[category]')
-                div(v-for='credit in credits', :key='credit') {{ credit }}
-              template(v-else)
-                div(v-for='credit in credits.slice(0, 5)', :key='credit') {{ credit }}
-              .red-netflix--text.click(
-                v-if='expanded[category]',
-                @click='$set(expanded, category, false)'
-              ) {{ " show less" }}
-              .red-netflix--text.click(
-                v-else,
-                @click='$set(expanded, category, true)'
-              ) {{ " show more" }}
-            div(v-else, v-for='credit in credits', :key='credit') {{ credit }}
+          template(v-if='title.credits')
+            v-col(
+              v-for='(credits, category) in title.credits',
+              cols='12',
+              md='4',
+              :key='category'
+            )
+              h4.mb-2 {{ category }}
+              template(v-if='Object.keys(credits).length > 5')
+                template(v-if='expanded[category]')
+                  div(v-for='credit in credits', :key='credit') {{ credit }}
+                template(v-else)
+                  div(v-for='credit in credits.slice(0, 5)', :key='credit') {{ credit }}
+                .red-netflix--text.click(
+                  v-if='expanded[category]',
+                  @click='$set(expanded, category, false)'
+                ) {{ " show less" }}
+                .red-netflix--text.click(
+                  v-else,
+                  @click='$set(expanded, category, true)'
+                ) {{ " show more" }}
+              div(v-else, v-for='credit in credits', :key='credit') {{ credit }}
           v-col(v-else)
             p Not Available
 </template>
@@ -155,7 +155,9 @@ const localStorageModule = namespace('localStorage');
 const titleModule = namespace('title');
 
 @Component
-export default class Title extends Vue {
+export default class Overview extends Vue {
+  @titleModule.State('statusesTvShow') statusesTvShow!: any;
+  @titleModule.State('ratings') ratings!: any;
   @titleModule.State('title') title!: any;
   @titleModule.State('status') status!: string;
   @titleModule.State('episodes') episodes!: number;
@@ -175,16 +177,16 @@ export default class Title extends Vue {
   expanded: { [key: string]: any } = {};
 
   mounted() {
-    if (this.title.credits) {
-      for (const category in this.title.credits) {
-        this.expanded[category] = false;
-      }
+    if (!this.title.credits) {
+      return;
+    }
+    for (const category in this.title.credits) {
+      this.expanded[category] = false;
     }
   }
 
   get statuses() {
-    const statuses = this.$statusesTvShow;
-    return [...statuses, 'Remove from List'];
+    return [...this.statusesTvShow, 'Remove from List'];
   }
 }
 </script>

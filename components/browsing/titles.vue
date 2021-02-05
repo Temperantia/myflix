@@ -48,7 +48,7 @@ v-container(fluid)
       )
     v-col(cols='12', lg='2') Rating
       v-select(
-        :items='["All", ...Object.values($maturities)]',
+        :items='["All", ...Object.values(maturities)]',
         v-model='maturity',
         outlined,
         dense
@@ -68,12 +68,14 @@ import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
 
 const localStorageModule = namespace('localStorage');
 const browseModule = namespace('browse');
+const titleModule = namespace('title');
 
 @Component
 export default class Titles extends Vue {
   @Prop({ type: Boolean }) show!: boolean;
   @Prop({ type: Boolean }) film!: boolean;
   @browseModule.State('titles') titles!: any;
+  @titleModule.State('maturities') maturities!: any;
   @localStorageModule.Getter('flixlist') flixlist!: any;
   gallery = false;
   settings = false;
@@ -96,17 +98,20 @@ export default class Titles extends Vue {
     c: 'ç|Ç',
     n: 'ñ|Ñ',
   };
+
   mounted() {
     if (this.$route.params.category) {
       this.category = this.$route.params.category;
     }
   }
+
   slugify(str: string): string {
     for (const pattern in this.map) {
       str = str.replace(new RegExp(this.map[pattern], 'g'), pattern);
     }
     return str;
   }
+
   get source() {
     const search = this.slugify(this.search).toLocaleLowerCase();
     return this.titles

@@ -65,7 +65,7 @@ import { Vue, Component, namespace } from 'nuxt-property-decorator';
 const suggestionsModule = namespace('suggestions');
 
 @Component
-export default class Home extends Vue {
+export default class HomeSuggestions extends Vue {
   slugify = slugify;
   @suggestionsModule.State('latest') latestSuggestions!: any;
 

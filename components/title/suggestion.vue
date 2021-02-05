@@ -37,7 +37,7 @@ v-container.section-border(fluid, :id='"suggestion-" + suggestion.id')
     type='suggestion',
     :username='suggestion.author.username',
     :title='suggestion.title.title',
-    :confirm='validate',
+    :confirm='() => validate()',
     :cancel='() => (overlay = false)'
   )
 </template>

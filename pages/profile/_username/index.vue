@@ -5,7 +5,7 @@ v-col(cols='12', lg='10')
       v-col
         h3 STATISTICS
       v-col.text-right(v-if='self')
-        a(@click='$nuxt.$emit("edit", true)') EDIT
+        a(@click='setEdition(true)') EDIT
   v-container(fluid)
     v-row
       v-col(cols='12', lg='6')
@@ -106,10 +106,7 @@ v-col(cols='12', lg='10')
     v-row
       v-col(cols='12', lg='6')
         h4.subtitle-border TV SHOWS
-        v-container(
-          v-if='Object.keys(profile.favorites.shows).length > 0',
-          fluid
-        )
+        v-container(v-if='tvShowsFavorites.length > 0', fluid)
           v-row(v-for='(show, id) in profile.favorites.shows', :key='id')
             v-col(cols='12', lg='3')
               img(:src='show.image')
@@ -118,30 +115,28 @@ v-col(cols='12', lg='10')
               .white-font--text
                 span {{ show.year + " " + show.maturity }}
                 span {{ " " + show.season + " Seasons" }}
-              .white-font--text {{ show.genres.map((genre) => genre.name).join(", ") }}
+              .white-font--text {{ show.genres.join(", ") }}
         v-container(v-else, fluid)
           v-row
             v-col
               p No favorites yet
       v-col(cols='12', lg='6')
         h4.subtitle-border FILMS
-        v-container(
-          v-if='Object.keys(profile.favorites.films).length > 0',
-          fluid
-        )
+        v-container(v-if='filmsFavorites.length > 0', fluid)
           v-row(v-for='(film, id) in profile.favorites.films', :key='id')
             v-col(cols='12', lg='3')
               img(:src='film.image')
             v-col(cols='12', lg='9')
               h3 {{ film.title }}
               .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
-              .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
+              .white-font--text {{ film.genres.join(", ") }}
         v-container(v-else, fluid)
           v-row
             v-col
               p No favorites yet
 </template>
 <script lang='ts'>
+import { Context } from '@nuxt/types';
 import { Vue, Component, Prop, namespace } from 'nuxt-property-decorator';
 
 const profileModule = namespace('profile');
@@ -155,17 +150,25 @@ export default class Profile extends Vue {
   @profileModule.Getter('tvShows') tvShows!: any;
   @profileModule.Getter('tvShowsStats') tvShowsStats!: any;
   @profileModule.Getter('tvShowsChartData') tvShowsChartData!: any;
+  @profileModule.Getter('tvShowsFavorites') tvShowsFavorites!: any;
   @profileModule.Getter('films') films!: any;
   @profileModule.Getter('filmsStats') filmsStats!: any;
   @profileModule.Getter('filmsChartData') filmsChartData!: any;
+  @profileModule.Getter('filmsFavorites') filmsFavorites!: any;
   @profileModule.Getter('tvShowsWatching') tvShowsWatching!: any;
-  @profileModule.Action('loadUsername') loadUsername!: any;
+  @profileModule.Mutation('setEdition') setEdition!: any;
 
-  created() {
-    this.loadUsername(this.$route.params.username);
+  async asyncData({ route, store }: Context) {
+    await store.dispatch('profile/loadUsername', route.params.username);
   }
 
-  optionsDoughnut = {
+  mounted() {
+    if (this.$route.params.tab) {
+      this.setEdition(true);
+    }
+  }
+
+  readonly optionsDoughnut = {
     cutoutPercentage: 95,
     elements: {
       arc: {

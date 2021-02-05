@@ -12,15 +12,12 @@ div
     home-suggestions
 </template>
 <script lang='ts'>
-import { Vue, Component, namespace } from 'nuxt-property-decorator';
-
-const browseModule = namespace('browse');
+/*
+import { Vue, Component } from 'nuxt-property-decorator';
 
 @Component
 export default class Home extends Vue {
-  @browseModule.State('categories') categories!: any;
-
-  /*   isFavorite(id) {
+     isFavorite(id) {
     if (!id) {
       return false;
     }
@@ -66,6 +63,7 @@ export default class Home extends Vue {
   removeFavoriteFromId(id) {
     const title = this.$search.find((title) => Number(title.id) === Number(id));
     this.$removeFavorite({ id: title.id }, title.u ? 'shows' : 'films');
-  } */
+  }
 }
+ */
 </script>

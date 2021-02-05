@@ -61,7 +61,7 @@ v-container(fluid, :id='"review-" + review.id')
     type='review',
     :username='review.author.username',
     :title='review.title.title',
-    :confirm='validate',
+    :confirm='() => validate()',
     :cancel='() => (overlay = false)'
   )
 </template>

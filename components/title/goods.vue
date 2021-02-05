@@ -34,6 +34,10 @@ export default class Goods extends Vue {
   };
 
   mounted() {
+    const element: any = document.getElementById('ad');
+    if (!element) {
+      return;
+    }
     const config = document.createElement('script');
     config.innerHTML = '';
     for (const key in this.config) {
@@ -42,7 +46,8 @@ export default class Goods extends Vue {
     config.innerHTML +=
       'amzn_assoc_default_search_phrase = "netflix ' + this.title.title + '";';
 
-    document.getElementById('ad')?.appendChild(config);
+    element.appendChild(config);
+    console.log(document.getElementById('ad'));
 
     this.$loadAd('#ad');
     const checkExist = setInterval(() => {

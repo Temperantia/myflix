@@ -9,6 +9,7 @@ import { $getUser } from "~/plugins/auth";
 @Module({ name: "profile", stateFactory: true, namespaced: true })
 export default class ProfileStore extends VuexModule {
   profile: any = null;
+  edition: boolean = false;
 
   get self() {
     return () => {
@@ -18,13 +19,13 @@ export default class ProfileStore extends VuexModule {
   }
 
   get flixlist() {
-    return Object.values(this.profile.flixlist).sort((a: any, b: any) =>
+    return Object.values(this.profile?.flixlist ?? []).sort((a: any, b: any) =>
       a.postedOn.seconds > b.postedOn.seconds ? -1 : 1
     );
   }
 
   get tvShows() {
-    return Object.values(this.profile.flixlist).filter(
+    return Object.values(this.profile?.flixlist ?? []).filter(
       (element: any) => element.title.summary.type === "show"
     );
   }
@@ -130,8 +131,12 @@ export default class ProfileStore extends VuexModule {
     );
   }
 
+  get tvShowsFavorites() {
+    return this.profile?.favorites?.shows ?? [];
+  }
+
   get films() {
-    return Object.values(this.profile.flixlist).filter(
+    return Object.values(this.profile?.flixlist ?? []).filter(
       (element: any) => element.title.summary.type === "movie"
     );
   }
@@ -225,11 +230,23 @@ export default class ProfileStore extends VuexModule {
     );
   }
 
-  @VuexMutation setProfile(profile: any) {
-    this.profile = profile;
+  get filmsFavorites() {
+    return this.profile?.favorites?.films ?? [];
   }
 
-  @VuexAction({ commit: "setProfile" }) async loadUsername(username: string) {
+  @VuexMutation
+  setProfile(profile: any) {
+    this.profile = profile;
+    this.edition = false;
+  }
+
+  @VuexMutation
+  setEdition(edition: boolean) {
+    this.edition = edition;
+  }
+
+  @VuexAction({ commit: "setProfile" })
+  async loadUsername(username: string) {
     if (this.profile?.username !== username) {
       let user = this.context.rootGetters["localStorage/user"];
       if (!user || username !== user.username) {
@@ -237,5 +254,6 @@ export default class ProfileStore extends VuexModule {
       }
       return user;
     }
+    return this.profile;
   }
 }

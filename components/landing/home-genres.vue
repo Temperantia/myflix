@@ -24,7 +24,7 @@ import { Vue, Component, namespace } from 'nuxt-property-decorator';
 const browseModule = namespace('browse');
 
 @Component
-export default class Home extends Vue {
+export default class HomeGenres extends Vue {
   @browseModule.State('categories') categories!: any;
 }
 </script>
