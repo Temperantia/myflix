@@ -10,7 +10,6 @@ import {
   $fireModule,
   $toast,
   $moment,
-  $route,
   $redirect
 } from "~/utils/modules";
 
@@ -106,8 +105,8 @@ export default class TitleStore extends VuexModule {
     }
   }
 
-  @VuexAction({ rawError: true }) async redirect() {
-    const parts: string[] = $route.path.split("/");
+  @VuexAction({ rawError: true }) async redirect(route: any) {
+    const parts: string[] = route.path.split("/");
     const toFind: string = "/" + parts[1] + "/" + parts[2];
     const result: any = this.context.rootGetters["browse/titleFromRoute"](
       toFind
@@ -117,10 +116,10 @@ export default class TitleStore extends VuexModule {
     }
 
     if (
-      (parts.length === 3 && $route.path[$route.path.length - 1] !== "/") ||
-      (parts.length === 4 && $route.path[$route.path.length - 1] === "/")
+      (parts.length === 3 && route.path[route.path.length - 1] !== "/") ||
+      (parts.length === 4 && route.path[route.path.length - 1] === "/")
     ) {
-      return $redirect($route.path + "/overview");
+      return $redirect(route.path + "/overview");
     }
 
     await this.context.dispatch("get", result.id);

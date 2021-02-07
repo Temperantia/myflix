@@ -316,8 +316,8 @@ export default class localStorageStore extends VuexModule {
   }
 
   @VuexAction({ rawError: true, commit: "_addFavorite" }) addFavorite() {
-    const title = this.context.rootGetters["title/title"];
-    const type = title.summary.type === "show" ? "tvshows" : "films";
+    const title = this.context.rootState.title.title;
+    const type = title.summary.type === "show" ? "shows" : "films";
     const favorite = {
       [title.id]: {
         image: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
@@ -331,42 +331,53 @@ export default class localStorageStore extends VuexModule {
     $fire.firestore
       .collection("users")
       .doc(this.id)
-      .update({
-        favorites: {
-          [type]: favorite
-        }
-      });
+      .set(
+        {
+          favorites: {
+            [type]: favorite
+          }
+        },
+        { merge: true }
+      );
 
     $fire.firestore
-      .collection("users")
+      .collection("videos")
       .doc(title.id)
-      .update({
-        favorites: $fireModule.firestore.FieldValue.arrayUnion(this.id)
-      });
+      .set(
+        {
+          favorites: $fireModule.firestore.FieldValue.arrayUnion(this.id)
+        },
+        { merge: true }
+      );
 
     return { type, favorite };
   }
 
   @VuexAction({ rawError: true, commit: "_removeFavorite" }) removeFavorite() {
-    const idUser = this.context.rootGetters["localStorage/id"];
-    const title = this.context.rootGetters["title/title"];
-    const type = title.summary.type === "show" ? "tvshows" : "films";
+    const title = this.context.rootState.title.title;
+    const type = title.summary.type === "show" ? "shows" : "films";
     $fire.firestore
       .collection("users")
-      .doc(idUser)
-      .update({
-        ["favorites." +
-        type +
-        "." +
-        title.id]: $fireModule.firestore.FieldValue.delete()
-      });
+      .doc(this.id)
+      .set(
+        {
+          ["favorites." +
+          type +
+          "." +
+          title.id]: $fireModule.firestore.FieldValue.delete()
+        },
+        { merge: true }
+      );
 
     $fire.firestore
-      .collection("users")
+      .collection("videos")
       .doc(title.id)
-      .update({
-        favorites: $fireModule.firestore.FieldValue.arrayRemove(idUser)
-      });
+      .set(
+        {
+          favorites: $fireModule.firestore.FieldValue.arrayRemove(this.id)
+        },
+        { merge: true }
+      );
     return { type, id: title.id };
   }
 }

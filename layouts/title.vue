@@ -91,18 +91,20 @@ defaultLayout
                 span Add to Favorites
           v-row
             v-col
-              table(v-for='(data, name) in title.information', :key='name')
-                th {{ name }}:
-                td {{ data || "-" }}
+              client-only
+                table(v-for='(data, name) in title.information', :key='name')
+                  th {{ name }}:
+                  td {{ data || "-" }}
         v-container(fluid)
           v-row.title-border(align='center')
             v-col
               h3 STATISTICS
           v-row
             v-col
-              table(v-for='(data, name) in title.statistics', :key='name')
-                th {{ name }}:
-                td {{ data }}
+              client-only
+                table(v-for='(data, name) in title.statistics', :key='name')
+                  th {{ name }}:
+                  td {{ data }}
       v-col(cols='12', md='10', xl='8')
         v-container(fluid)
           ul.title-border
@@ -145,8 +147,8 @@ export default class Title extends Vue {
   @localStorageModule.Action('addFavorite') addFavorite!: any;
   @localStorageModule.Action('removeFavorite') removeFavorite!: any;
 
-  async middleware({ store }: Context) {
-    await store.dispatch('title/redirect');
+  async middleware({ store, route }: Context) {
+    await store.dispatch('title/redirect', route);
   }
 
   get statuses() {

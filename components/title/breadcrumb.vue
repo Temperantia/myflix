@@ -8,7 +8,7 @@ v-container(fluid)
 </template>
 
 <script lang='ts'>
-import { Vue, Component, Prop, Watch } from 'nuxt-property-decorator';
+import { Vue, Component, Prop } from 'nuxt-property-decorator';
 
 @Component
 export default class Breadcrumb extends Vue {
@@ -19,7 +19,7 @@ export default class Breadcrumb extends Vue {
   typeName = '';
   tabName = '';
 
-  created() {
+  mounted() {
     this.update();
   }
 
@@ -30,11 +30,6 @@ export default class Breadcrumb extends Vue {
     this.titleRoute = '/' + parts[1] + '/' + parts[2] + '/overview';
     this.typeName = parts[1] == 'tvshows' ? 'TV Shows' : 'Films';
     this.tabName = parts[3].charAt(0).toUpperCase() + parts[3].slice(1);
-  }
-
-  @Watch('$route')
-  onRouteChanged() {
-    this.update();
   }
 }
 </script>
