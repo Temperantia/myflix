@@ -22,6 +22,7 @@
     "node-sass": "5.0.0",
     "nuxt": "2.14.12",
     "nuxt-clipboard2": "0.2.1",
+    "nuxt-video-player": "1.0.17",
     "postscribe": "2.0.8",
     "pug": "3.0.0",
     "pug-plain-loader": "1.1.0",

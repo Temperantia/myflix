@@ -37,7 +37,7 @@ v-container.section-border(fluid, :id='"suggestion-" + suggestion.id')
     type='suggestion',
     :username='suggestion.author.username',
     :title='suggestion.title.title',
-    :confirm='() => validate()',
+    :confirm='check',
     :cancel='() => (overlay = false)'
   )
 </template>
@@ -59,7 +59,7 @@ export default class Suggestion extends Vue {
 
   overlay = false;
 
-  validate() {
+  check() {
     this.report(this.suggestion.id);
     this.overlay = false;
   }

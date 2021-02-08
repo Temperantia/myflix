@@ -61,7 +61,7 @@ v-container(fluid, :id='"review-" + review.id')
     type='review',
     :username='review.author.username',
     :title='review.title.title',
-    :confirm='() => validate()',
+    :confirm='check',
     :cancel='() => (overlay = false)'
   )
 </template>
@@ -109,7 +109,7 @@ export default class Review extends Vue {
     ).format('MMM D, yyyy');
   }
 
-  validate() {
+  check() {
     this.report(this.review.id);
     this.overlay = false;
   }

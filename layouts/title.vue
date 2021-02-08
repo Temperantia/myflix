@@ -61,7 +61,10 @@ defaultLayout
                 )
             v-row(align='center', v-if='title.summary.type === "show"')
               v-col
-                v-btn(color='black-search', @click='setBingeworthy(!bingeworthy)')
+                v-btn(
+                  color='black-search',
+                  @click='setBingeworthy(!bingeworthy)'
+                )
                   v-icon(
                     :class='title.bingeworthy ? "green-watching--text" : "greyButton--text"',
                     left
@@ -108,7 +111,11 @@ defaultLayout
       v-col(cols='12', md='10', xl='8')
         v-container(fluid)
           ul.title-border
-            li.d-block.d-md-inline(v-for='tab in tabs', :key='tab.name', cols='12')
+            li.d-block.d-md-inline(
+              v-for='tab in tabs',
+              :key='tab.name',
+              cols='12'
+            )
               nuxt-link(:to='tab.route')
                 h3.d-inline.mr-10(
                   :class='{ "red-netflix--text": isCurrentTab(tab.route) }'
@@ -178,11 +185,11 @@ export default class Title extends Vue {
       {
         name: 'GOODS',
         route: routeTitle + 'goods',
-      } /*
+      },
       {
         name: 'MEDIA',
         route: routeTitle + 'media',
-      }, */,
+      },
     ];
   }
 

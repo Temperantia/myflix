@@ -14,7 +14,6 @@ export default class localStorageStore extends VuexModule {
   user: any = null;
   connected: boolean = false;
   socialAuthUser: any = null;
-  provider: string = "";
   cookies: any = {};
 
   get id() {
@@ -109,12 +108,13 @@ export default class localStorageStore extends VuexModule {
         $router.push("/");
         this.context.commit("_signIn", user);
       } else if (provider) {
+        console.log(cred);
         this.setSocialAuthUser({
           id,
           email: cred.user.email,
           image: cred.user.photoURL,
           provider: name,
-          token: cred.user.accessToken
+          token: cred.credential.accessToken
         });
       }
     } catch (error) {

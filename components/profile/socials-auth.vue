@@ -1,44 +1,44 @@
 <template lang="pug">
-v-container(fluid)
-  v-row(align='center')
-    v-col(cols='6')
-      .button-block.google(@click='signInWithGoogle')
-        button Google
-        img(src='/Google.png')
-    v-col(cols='6')
-      .button-block.facebook(@click='signInWithFacebook')
-        button Facebook
-        img(src='/Facebook auth.png')
-    //-v-col(cols='4')
-      .button-block.apple(@click='signInWithApple')
-        button Apple
-        img(src='/Apple.png')
-  v-form(v-if='socialAuthUser', ref='form', @submit.prevent='validate')
-    v-text-field(
-      color='red',
-      v-model='socialAuthUser.username',
-      :rules='[(v) => !!v || "Required", (v) => v.length >= 2 || v.length <= 16 || "(Between 2 and 16 characters)"]',
-      label='Username',
-      required
-    )
-    v-text-field(
-      v-if='!socialAuthUser.email',
-      color='red',
-      v-model='socialUser.email',
-      :rules='[(v) => !!v || "Required", (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"]',
-      label='Email',
-      required
-    )
-    .pt-5.pb-10.d-flex.justify-center
-      v-checkbox(color='red', v-model='agreed')
-        template(v-slot:label)
-          | I have read and agree to the
-          nuxt-link(to='/terms-of-service')
-            b.px-1 Terms of Service
-          | and
-          nuxt-link(to='/privacy-policy')
-            b.px-1 Privacy Policy
-    button.button-red.px-8.py-3.rounded-lg(type='submit') Create Account
+client-only
+  v-container(fluid)
+    v-row(align='center')
+      v-col(cols='6')
+        .button-block.google(@click='signInWithGoogle(); clicked = true')
+          button Google
+          img(src='/Google.png')
+      v-col(cols='6')
+        .button-block.facebook(@click='signInWithFacebook(); clicked = true')
+          button Facebook
+          img(src='/Facebook auth.png')
+      //-v-col(cols='4')
+        .button-block.apple(@click='signInWithApple')
+          button Apple
+          img(src='/Apple.png')
+    v-form(v-if='clicked', ref='form', @submit.prevent='check')
+      v-text-field(
+        color='red',
+        v-model='username',
+        :rules='[(v) => !!v || "Required", (v) => v.length >= 2 || v.length <= 16 || "(Between 2 and 16 characters)"]',
+        label='Username',
+        required
+      )
+      v-text-field(
+        color='red',
+        v-model='email',
+        :rules='[(v) => !!v || "Required", (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"]',
+        label='Email',
+        required
+      )
+      .pt-5.pb-10.d-flex.justify-center
+        v-checkbox(color='red', v-model='agreed')
+          template(v-slot:label)
+            | I have read and agree to the
+            nuxt-link(to='/terms-of-service')
+              b.px-1 Terms of Service
+            | and
+            nuxt-link(to='/privacy-policy')
+              b.px-1 Privacy Policy
+      button.button-red.px-8.py-3.rounded-lg(type='submit') Create Account
 </template>
 <script lang='ts'>
 import { Vue, Component, namespace } from 'nuxt-property-decorator';
@@ -51,13 +51,23 @@ export default class SocialsAuth extends Vue {
   @localStorageModule.Action('signInWithGoogle') signInWithGoogle!: any;
   @localStorageModule.Action('signInWithFacebook') signInWithFacebook!: any;
   @localStorageModule.Action('register') register!: any;
+  clicked = false;
+  username = '';
+  email = '';
   agreed = false;
 
-  async validate() {
+  check() {
     if (!(this.$refs.form as any).validate() || !this.agreed) {
       return;
     }
-    this.register();
+    this.register({
+      id: this.socialAuthUser.id,
+      email: this.email,
+      username: this.username,
+      photoURL: this.socialAuthUser.image,
+      provider: this.socialAuthUser.provider,
+      token: this.socialAuthUser.token,
+    });
   }
 }
 </script>
