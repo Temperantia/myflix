@@ -135,6 +135,7 @@ const titleModule = namespace('title');
   components: { DefaultLayout },
 })
 export default class Title extends Vue {
+  @titleModule.State('statusesTvShow') statusesTvShow!: any;
   @titleModule.State('title') title!: any;
   @titleModule.State('status') status!: string;
   @titleModule.State('episodes') episodes!: number;
@@ -159,7 +160,7 @@ export default class Title extends Vue {
   }
 
   get statuses() {
-    return [...this.$statusesTvShow, 'Remove from List'];
+    return [...this.statusesTvShow, 'Remove from List'];
   }
 
   get tabs() {

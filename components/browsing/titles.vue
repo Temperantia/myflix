@@ -76,6 +76,7 @@ export default class Titles extends Vue {
   @Prop({ type: Boolean }) film!: boolean;
   @browseModule.State('titles') titles!: any;
   @titleModule.State('maturities') maturities!: any;
+  @localStorageModule.State('connected') connected!: boolean;
   @localStorageModule.Getter('flixlist') flixlist!: any;
   gallery = false;
   settings = false;

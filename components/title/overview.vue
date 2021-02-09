@@ -26,45 +26,43 @@ v-container(fluid)
             span.ml-1 {{ title.creators.join(", ") || "-" }}
       v-row
         v-col(cols='12', lg='4')
-          client-only
-            div(style='position: relative')
-              v-select(
-                :items='statuses',
-                outlined,
-                :value='status',
-                dense,
-                placeholder='Change status',
-                :hide-details='true',
-                @change='(value) => updateStatus(value)'
-              )
-                template(v-slot:selection='{ item }')
-                  span(
-                    v-if='item !== "Remove from List"',
-                    :class='$titleStatusColor(item)'
-                  ) {{ item }}
-              span.d-flex.align-center(
-                v-if='title.summary.type === "show" && status && status !== "Save for Later"',
-                style='position: absolute; top: 0; bottom: 0; right: 35px'
-              )
-                input.pr-1.border.white-font--border.text-right(
-                  :class='$titleStatusColor(status)',
-                  style='width: 30px',
-                  type='number',
-                  :value='episodes',
-                  @input='(event) => updateEpisodes(event.target.value)'
-                )
-                span.ml-1 {{ " / " + title.episodeCount }}
-        v-col(cols='12', lg='4')
-          client-only
+          div(style='position: relative')
             v-select(
-              :items='Object.entries(ratings).map(([score, rating]) => `${score} - ${rating}`).reverse()',
+              :items='statuses',
               outlined,
-              :value='score',
+              :value='status',
               dense,
-              placeholder='Rate this title',
+              placeholder='Change status',
               :hide-details='true',
-              @change='(value) => setScore(value)'
+              @change='(value) => updateStatus(value)'
             )
+              template(v-slot:selection='{ item }')
+                span(
+                  v-if='item !== "Remove from List"',
+                  :class='$titleStatusColor(item)'
+                ) {{ item }}
+            span.d-flex.align-center(
+              v-if='title.summary.type === "show" && title.episodeCount > 0 && status && status !== "Save for Later"',
+              style='position: absolute; top: 0; bottom: 0; right: 35px'
+            )
+              input.pr-1.border.white-font--border.text-right(
+                :class='$titleStatusColor(status)',
+                style='width: 30px',
+                type='number',
+                :value='episodes',
+                @input='(event) => updateEpisodes(event.target.value)'
+              )
+              span.ml-1 {{ " / " + title.episodeCount }}
+        v-col(cols='12', lg='4')
+          v-select(
+            :items='Object.entries(ratings).map(([score, rating]) => `${score} - ${rating}`).reverse()',
+            outlined,
+            :value='score',
+            dense,
+            placeholder='Rate this title',
+            :hide-details='true',
+            @change='(value) => setScore(value)'
+          )
         v-col(cols='12', lg='4')
           v-btn(color='blue-completed', @click='$router.push("/vpn")') GET IT IN YOUR COUNTRY
       v-row.my-1
@@ -138,11 +136,11 @@ v-container(fluid)
                   div(v-for='credit in credits.slice(0, 5)', :key='credit') {{ credit }}
                 .red-netflix--text.click(
                   v-if='expanded[category]',
-                  @click='$set(expanded, category, false)'
+                  @click='expanded = Object.assign({}, expanded, { [category]: false })'
                 ) {{ " show less" }}
                 .red-netflix--text.click(
                   v-else,
-                  @click='$set(expanded, category, true)'
+                  @click='expanded = Object.assign({}, expanded, { [category]: true })'
                 ) {{ " show more" }}
               div(v-else, v-for='credit in credits', :key='credit') {{ credit }}
           v-col(v-else)
@@ -176,7 +174,7 @@ export default class Overview extends Vue {
 
   expanded: { [key: string]: any } = {};
 
-  mounted() {
+  created() {
     if (!this.title.credits) {
       return;
     }

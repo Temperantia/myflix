@@ -108,7 +108,6 @@ export default class localStorageStore extends VuexModule {
         $router.push("/");
         this.context.commit("_signIn", user);
       } else if (provider) {
-        console.log(cred);
         this.setSocialAuthUser({
           id,
           email: cred.user.email,

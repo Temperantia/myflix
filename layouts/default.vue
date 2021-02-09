@@ -80,12 +80,12 @@ v-app(app)
           v-col.pa-5(cols='6', lg='1')
             img(src='/myflix-logo.png')
           v-col.pa-5(cols='6', lg='1')
-            img(src='/inclusive.png')
+            img(src='/inc digital.png')
           v-col(lg='10')
             p MyFlix is not endorsed, moderated, owned by or affiliated with Netflix or any of its partners in any capacity. The authors of this site also have no affiliation with Netflix. MyFlix is a unofficial fansite for Netflix. All promotional material including but not limited to trailers, images and videos are all copyright to their respective owners. Netflix is a registered trademark of Netflix, Inc.
         v-row.bottom
           v-col.pb-0(cols='12')
-            p.mb-0.text-center All Rights Reserved. Copyright MyFlix {{ new Date().getFullYear() }}. MyFlix is a website of Inclusive Corp.
+            p.mb-0.text-center All Rights Reserved. Copyright MyFlix {{ new Date().getFullYear() }}. MyFlix is a website of Inc•Digital Corp.
 </template>
 <script lang='ts'>
 import { Vue, Component, namespace, Watch } from 'nuxt-property-decorator';

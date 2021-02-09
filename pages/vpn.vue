@@ -21,11 +21,12 @@ v-container(fluid)
                         h2
                           b {{ vpn.name }}
                         i.white-font--text {{ vpn.tagline }}
-                        .my-3.d-flex
-                          img.icon(src='Layer 46.png')
-                          span.ml-1 {{ " - Rated" }}
-                          img.icon.mx-1(src='Layer 47.png')
-                          b {{ vpn.score }} / 5
+                        .my-3.d-flex.align-center
+                          img.icon(src='Layer 46.png', style='height: fit-content')
+                          .mt-1.d-flex.align-center
+                            span.ml-1 {{ " - Rated" }}
+                            img.mx-1(src='Layer 47.png' style='width: 20px; height: 20px;')
+                            b {{ vpn.score }} / 5
                         v-btn.black-body--bg.px-10.blue-completed--border.border
                           .blue-completed--text.font-weight-bold
                             a(:href='$config.enableAffiliates && vpn.link') Get {{ vpn.name }}

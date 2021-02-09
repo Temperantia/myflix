@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container(fluid)
-  v-row.mt-5.title-border
+  v-row.title-border
     v-col(cols='12', lg='10')
       h3 {{ title.title.toUpperCase() }}
     v-col(cols='12', lg='2')
@@ -16,7 +16,8 @@ v-container(fluid)
       button.red-netflix--text(@click='review.episodes = title.episodeCount') ALL
     //-v-col(offset='10', v-else)
     v-col.text-lg-right(cols='12', offset-lg='10', lg='2')
-      button.red-netflix--text(@click='edition = false') CANCEL
+      v-container(fluid)
+        button.red-netflix--text(@click='$emit("cancel")') CANCEL
   v-row.section-border.py-5
     v-col(cols='12')
       h4.mb-5 How would you rate this {{ title.summary.type === "show" ? "show" : "film" }} ?
@@ -46,7 +47,7 @@ v-container(fluid)
     v-col(cols='12')
       textarea(v-model='review.content')
     v-col.text-center.text-lg-right(cols='12')
-      button.button-action.preview.mr-lg-5(@click='preview = true') PREVIEW
+      button.button-action.preview.mr-lg-5(@click='$emit("preview", true)') PREVIEW
       button.button-action(@click='submit') SUBMIT REVIEW
   v-row
     v-col
@@ -68,12 +69,11 @@ const titleModule = namespace('title');
 
 @Component
 export default class ReviewEdition extends Vue {
-  @Prop({ type: Object }) title!: any;
   @Prop({ type: Object }) review!: any;
   @Prop({ type: Function }) updateEpisodes!: any;
   @Prop({ type: Function }) updateRating!: any;
   @Prop({ type: Function }) submit!: any;
-
+  @titleModule.State('title') title!: any;
   @titleModule.State('ratings') ratings!: any;
 }
 </script>

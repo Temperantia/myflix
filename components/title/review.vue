@@ -4,12 +4,13 @@ v-container(fluid, :id='"review-" + review.id')
     v-col(lg='2')
       img(:src='image')
     v-col(cols='10', lg='7')
-      client-only
-        nuxt-link(:to='"/profile/" + profile.username')
-          a.red-netflix--text {{ profile.username }}
-      div(v-if='!preview')
-        b {{ review.likes.length + " " }}
-        span people found this review helpful
+      v-container(fluid)
+        client-only
+          nuxt-link(:to='"/profile/" + profile.username')
+            a.red-netflix--text {{ profile.username }}
+        div(v-if='!preview')
+          b {{ review.likes.length + " " }}
+          span people found this review helpful
     v-col.text-lg-right(cols='12', lg='3')
       div {{ postedOn }}
       //-div(v-if='title.summary.type === "show"') {{ review.episodes }} of {{ title.episodeCount }} episodes seen
@@ -41,26 +42,27 @@ v-container(fluid, :id='"review-" + review.id')
   client-only
     v-row.section-border
       v-col(cols='9', lg='5', offset-lg='3')
-        template(v-if='!preview && connected && !self')
+        v-container(v-if='!preview && connected && !self', fluid)
           button.button-action.activated(
             v-if='!connected || review.likes.includes(id)',
             @click='unlike(review.id)'
           ) I found this review helpful
           button.button-action(v-else, @click='like(review.id)') I found this review helpful
       v-col.text-lg-right(cols='3', lg='4')
-        span.white-font--text.click(
-          @click='$copyText($config.baseUrl + $route.path + "#review-" + review.id); $toast.success("Copied to clipboard")'
-        ) permalink
-        span.white-font--text {{ " | " }}
-        share(:url='$config.baseUrl + $route.path + "#review-" + review.id')
-        template(v-if='connected && !self && !review.reports.includes(id)')
+        v-container(fluid)
+          span.white-font--text.click(
+            @click='$copyText($config.baseUrl + $route.path + "#review-" + review.id); $toast.success("Copied to clipboard")'
+          ) permalink
           span.white-font--text {{ " | " }}
-          span.white-font--text.click(@click='overlay = true') report
+          share(:url='$config.baseUrl + $route.path + "#review-" + review.id')
+          template(v-if='connected && !self && !review.reports.includes(id)')
+            span.white-font--text {{ " | " }}
+            span.white-font--text.click(@click='overlay = true') report
   report(
     :display='overlay',
     type='review',
-    :username='review.author.username',
-    :title='review.title.title',
+    :username='profile.username',
+    :title='title.title',
     :confirm='check',
     :cancel='() => (overlay = false)'
   )

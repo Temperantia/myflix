@@ -1,12 +1,19 @@
 <template lang="pug">
-review-preview(v-if='preview', :review='review', :title='title')
+review-preview(
+  v-if='preview',
+  :review='review',
+  :submit='submit',
+  @preview='(value) => (preview = value)',
+  @cancel='() => (edition = false)'
+)
 review-edition(
   v-else-if='edition',
-  :title='title',
   :review='review',
   :updateEpisodes='updateEpisodes',
   :updateRating='updateRating',
-  :submit='submit'
+  :submit='submit',
+  @preview='(value) => (preview = value)',
+  @cancel='() => (edition = false)'
 )
 div(v-else)
   v-container(fluid)

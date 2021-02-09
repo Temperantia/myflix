@@ -18,7 +18,10 @@ export async function docs(
   ) {
     const data = await query.get({ source: "server" });
     if (name) {
-      $store.commit("localStorage/addCookie", Date.now() + 1000 * 60 * 60 * 24);
+      $store.commit("localStorage/addCookie", {
+        name,
+        timestamp: Date.now() + 1000 * 60 * 60 * 24
+      });
     }
     return data.docs.map((doc: any) => parse(doc));
   }
@@ -37,7 +40,10 @@ export async function doc(query: any, name?: string) {
   if (!name || (name && (!cookies[name] || cookies[name] > Date.now() || e))) {
     const data = await query.get({ source: "server" });
     if (name) {
-      $store.commit("localStorage/addCookie", Date.now() + 1000 * 60 * 60 * 24);
+      $store.commit("localStorage/addCookie", {
+        name,
+        timestamp: Date.now() + 1000 * 60 * 60 * 24
+      });
     }
     return parse(data);
   }
