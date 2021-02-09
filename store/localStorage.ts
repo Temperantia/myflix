@@ -35,8 +35,8 @@ export default class localStorageStore extends VuexModule {
     name: string;
     timestamp: number;
   }) {
-    console.log(name, timestamp)
-    this.cookies[name] = timestamp;
+    console.log(name, timestamp);
+    this.cookies = Object.assign({}, this.cookies, { [name]: timestamp });
   }
 
   @VuexMutation setSocialAuthUser(socialAuthUser: any) {
