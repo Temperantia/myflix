@@ -35,6 +35,7 @@ export default class localStorageStore extends VuexModule {
     name: string;
     timestamp: number;
   }) {
+    console.log(name, timestamp)
     this.cookies[name] = timestamp;
   }
 

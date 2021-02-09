@@ -16,17 +16,10 @@
     "fibers": "5.0.0",
     "firebase": "8.2.3",
     "i18n-iso-countries": "6.4.0",
-    "lodash.clonedeep": "4.5.0",
-    "lodash.merge": "4.6.2",
-    "node-sass": "5.0.0",
     "nuxt": "2.14.12",
     "nuxt-clipboard2": "0.2.1",
     "nuxt-video-player": "1.0.17",
     "postscribe": "2.0.8",
-    "pug": "3.0.0",
-    "pug-plain-loader": "1.1.0",
-    "sass": "1.32.4",
-    "sass-loader": "10.1.1",
     "slugify": "1.4.6",
     "swiper": "6.4.5",
     "timezone-support": "2.0.2",
@@ -51,6 +44,11 @@
     "@types/lodash.clonedeep": "4.5.6",
     "nuxt-property-decorator": "2.9.1",
     "nuxt-vuex-localstorage": "1.2.7",
-    "nuxt-webfontloader": "1.1.0"
+    "node-sass": "5.0.0",
+    "nuxt-webfontloader": "1.1.0",
+    "pug": "3.0.0",
+    "pug-plain-loader": "1.1.0",
+    "sass": "1.32.4",
+    "sass-loader": "10.1.1"
   }
 }
