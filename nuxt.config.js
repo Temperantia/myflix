@@ -32,6 +32,7 @@ export default {
     "@nuxtjs/pwa"
   ],
   modules: [
+    "cookie-universal-nuxt",
     "vue-scrollto/nuxt",
     "nuxt-clipboard2",
     "@nuxtjs/firebase",

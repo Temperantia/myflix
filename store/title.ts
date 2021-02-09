@@ -75,7 +75,8 @@ export default class TitleStore extends VuexModule {
     this.saved = saved;
   }
 
-  @VuexMutation updateStatus(value: string) {
+  @VuexMutation
+  updateStatus(value: string) {
     if (value === "Remove from List") {
       this.status = "";
       return;
@@ -90,7 +91,8 @@ export default class TitleStore extends VuexModule {
     }
   }
 
-  @VuexMutation updateEpisodes(value: number) {
+  @VuexMutation
+  updateEpisodes(value: number) {
     if (value <= 0) {
       this.episodes = 0;
       this.status = "";
@@ -105,7 +107,12 @@ export default class TitleStore extends VuexModule {
     }
   }
 
-  @VuexAction({ rawError: true }) async redirect(route: any) {
+  @VuexAction({ rawError: true })
+  async redirect({ route, cookies }: any) {
+    if (process.server) {
+      return;
+    }
+    await this.context.dispatch("browse/init", cookies, { root: true });
     const parts: string[] = route.path.split("/");
     const toFind: string = "/" + parts[1] + "/" + parts[2];
     const result: any = this.context.rootGetters["browse/titleFromRoute"](
@@ -114,6 +121,7 @@ export default class TitleStore extends VuexModule {
     if (!result) {
       return $redirect("/");
     }
+    await this.context.dispatch("get", result.id);
 
     if (
       (parts.length === 3 && route.path[route.path.length - 1] !== "/") ||
@@ -121,11 +129,10 @@ export default class TitleStore extends VuexModule {
     ) {
       return $redirect(route.path + "/overview");
     }
-
-    await this.context.dispatch("get", result.id);
   }
 
-  @VuexAction({ rawError: true }) async update(): Promise<void> {
+  @VuexAction({ rawError: true })
+  async update(): Promise<void> {
     if (this.saved) {
       return;
     }
@@ -143,7 +150,7 @@ export default class TitleStore extends VuexModule {
         id: this.title.id,
         title: this.title.title,
         summary: this.title.summary,
-        tallBoxArt: this.title.tallBoxArt,
+        tallBoxArt: this.title.tallBoxArt ?? '',
         releaseYear: this.title.releaseYear,
         maturity: this.title.maturity,
         episodeCount: this.title.episodeCount
@@ -179,9 +186,11 @@ export default class TitleStore extends VuexModule {
     $toast.success("Flixlist updated");
   }
 
-  @VuexAction({ rawError: true }) loadFlixlist(id: string) {
-    console.log(this.context.rootGetters["localStorage/flixlist"])
-    const flixlist: any = this.context.rootGetters["localStorage/flixlist"]?.[id];
+  @VuexAction({ rawError: true })
+  loadFlixlist(id: string) {
+    const flixlist: any = this.context.rootGetters["localStorage/flixlist"]?.[
+      id
+    ];
     if (!flixlist) {
       return;
     }

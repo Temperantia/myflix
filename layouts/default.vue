@@ -91,7 +91,9 @@ v-app(app)
 import { Vue, Component, namespace, Watch } from 'nuxt-property-decorator';
 
 const localStorageModule = namespace('localStorage');
-const profileModule = namespace('profile');
+const browseModule = namespace('browse');
+const reviewsModule = namespace('reviews');
+const suggestionsModule = namespace('suggestions');
 
 @Component
 export default class Default extends Vue {
@@ -104,11 +106,20 @@ export default class Default extends Vue {
   @localStorageModule.State('user') user!: any;
   @localStorageModule.State('connected') connected!: boolean;
   @localStorageModule.Action('signOut') signOut!: any;
+  @browseModule.Action('init') initBrowse!: Function;
+  @reviewsModule.Action('getLatest') initReviews!: Function;
+  @suggestionsModule.Action('getLatest') initSuggestions!: Function;
 
   itemsMobile() {
     return this.connected
       ? this.itemsMobileConnected
       : this.itemsMobileDisconnected;
+  }
+
+  async created() {
+     await this.initBrowse(this.$cookies);
+     await this.initReviews(this.$cookies);
+     await this.initSuggestions(this.$cookies);
   }
 
   mounted() {

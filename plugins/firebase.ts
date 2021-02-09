@@ -1,5 +1,4 @@
 import firebase from "firebase";
-import { $store } from "~/utils/store-accessor";
 
 function parse(doc: firebase.firestore.DocumentSnapshot) {
   return { id: doc.id, ...doc.data() };
@@ -7,47 +6,23 @@ function parse(doc: firebase.firestore.DocumentSnapshot) {
 
 export async function docs(
   query: firebase.firestore.Query<firebase.firestore.DocumentData>,
-  name?: string | undefined
+  name?: string | undefined,
+  cookies?: any
 ) {
-  const cache = await query.get({ source: "cache" });
-  const cookies = $store.state.localStorage.cookies;
-  if (
-    !name ||
-    (name &&
-      (!cookies[name] || cookies[name] > Date.now() || cache.docs.length === 0))
-  ) {
+ /*  const cache = await query.get({ source: "cache" });
+  if (!name || (name && cookies && !cookies.get(name))) { */
     const data = await query.get({ source: "server" });
-    if (name) {
-      $store.commit("localStorage/addCookie", {
-        name,
-        timestamp: Date.now() + 1000 * 60 * 60 * 24
-      });
-    }
+    /* if (name) {
+      cookies.set(name, true, { maxAge: 60 * 60 * 24 });
+    } */
     return data.docs.map((doc: any) => parse(doc));
-  }
-  return cache.docs.map((doc: any) => parse(doc));
+ /*  }
+  return cache.docs.map((doc: any) => parse(doc)); */
 }
 
 export async function doc(query: any, name?: string) {
-  const cookies = $store.state.localStorage.cookies;
-  let cache;
-  let e;
-  try {
-    cache = await query.get({ source: "cache" });
-  } catch (error) {
-    e = error;
-  }
-  if (!name || (name && (!cookies[name] || cookies[name] > Date.now() || e))) {
-    const data = await query.get({ source: "server" });
-    if (name) {
-      $store.commit("localStorage/addCookie", {
-        name,
-        timestamp: Date.now() + 1000 * 60 * 60 * 24
-      });
-    }
-    return parse(data);
-  }
-  return parse(cache);
+  const data = await query.get({ source: "server" });
+  return parse(data);
 }
 
 const maturitiesEurope = {

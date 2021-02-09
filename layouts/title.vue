@@ -1,6 +1,6 @@
 <template lang="pug">
 defaultLayout
-  v-container(fluid)
+  v-container(fluid, v-if='title')
     v-row
       v-col(cols='12', md='2')
         v-container(fluid)
@@ -37,7 +37,7 @@ defaultLayout
                           :class='$titleStatusColor(item)'
                         ) {{ item }}
                     span.d-flex.align-center(
-                      v-if='title.summary.type === "show" && status && status !== "Save for Later"',
+                      v-if='title.summary.type === "show" && title.episodeCount > 0 && status && status !== "Save for Later"',
                       style='position: absolute; top: 0; bottom: 0; right: 35px'
                     )
                       input.pr-1.border.white-font--border.text-right(
@@ -57,7 +57,7 @@ defaultLayout
                   :value='score',
                   dense,
                   :hide-details='true',
-                  @change='setScore(value)'
+                  @change='(value) => setScore(value)'
                 )
             v-row(align='center', v-if='title.summary.type === "show"')
               v-col
@@ -126,7 +126,6 @@ defaultLayout
 <script lang='ts'>
 import DefaultLayout from '~/layouts/default.vue';
 import { Vue, Component, namespace } from 'nuxt-property-decorator';
-import { Context } from '@nuxt/types';
 
 const localStorageModule = namespace('localStorage');
 const titleModule = namespace('title');
@@ -152,11 +151,12 @@ export default class Title extends Vue {
   @titleModule.Mutation('updateEpisodes') updateEpisodes!: any;
   @titleModule.Action('update') update!: any;
   @titleModule.Action('get') get!: any;
+  @titleModule.Action('redirect') redirect!: any;
   @localStorageModule.Action('addFavorite') addFavorite!: any;
   @localStorageModule.Action('removeFavorite') removeFavorite!: any;
 
-  async middleware({ store, route }: Context) {
-    await store.dispatch('title/redirect', route);
+  mounted() {
+    this.redirect({ route: this.$route, cookies: this.$cookies });
   }
 
   get statuses() {

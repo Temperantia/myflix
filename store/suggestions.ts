@@ -45,8 +45,8 @@ export default class SuggestionsStore extends VuexModule {
       $toast.error("Your suggestion needs between 200 and 1000 characters.");
       return;
     }
-    const author = this.context.rootGetters["localStorage/user"];
-    const title = this.context.rootGetters["title/title"];
+    const author = this.context.rootState.localStorage.user;
+    const title = this.context.rootState.title.title;
     const data = {
       author: {
         id: author.id,
@@ -79,25 +79,28 @@ export default class SuggestionsStore extends VuexModule {
   }
 
   @VuexAction({ rawError: true, commit: "setLatest" })
-  async getLatest() {
+  async getLatest(cookies: any) {
     const titles: any = this.context.rootState.browse.titles;
     const latest: any = await docs(
       $fire.firestore
         .collection("suggestions")
         .orderBy("postedOn", "desc")
         .limit(3),
-      "getSuggestionsLatest"
+      "getSuggestionsLatest",
+      cookies
     );
 
-    for (const suggestion of latest) {
-      const title: any = titles.find(
-        (item: any) => item.id === String(suggestion.title.id)
-      );
-      suggestion.title.route = title.r;
-      const similar: any = titles.find(
-        (item: any) => item.id === String(suggestion.similar.id)
-      );
-      suggestion.similar.route = similar.r;
+    if (process.client) {
+      for (const suggestion of latest) {
+        const title: any = titles.find(
+          (item: any) => item.id === String(suggestion.title.id)
+        );
+        suggestion.title.route = title.r;
+        const similar: any = titles.find(
+          (item: any) => item.id === String(suggestion.similar.id)
+        );
+        suggestion.similar.route = similar.r;
+      }
     }
     return latest;
   }

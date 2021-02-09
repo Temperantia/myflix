@@ -13,51 +13,53 @@ export default class ReviewsStore extends VuexModule {
   latest: any[] = [];
   reviews: any[] = [];
 
-  @VuexMutation setProfile(profile: any[]) {
+  @VuexMutation
+  setProfile(profile: any[]) {
     this.profile = profile;
   }
 
-  @VuexMutation setLatest(latest: any[]) {
+  @VuexMutation
+  setLatest(latest: any[]) {
     this.latest = latest;
   }
 
-  @VuexMutation setReviews(reviews: any[]) {
+  @VuexMutation
+  setReviews(reviews: any[]) {
     this.reviews = reviews;
   }
 
-  @VuexMutation add(review: any) {
+  @VuexMutation
+  add(review: any) {
     this.reviews.unshift(review);
   }
 
-  @VuexMutation addLike({ id, idUser }: { id: string; idUser: string }): void {
+  @VuexMutation
+  addLike({ id, idUser }: { id: string; idUser: string }): void {
     const review = this.reviews.find(review => review.id === id);
     review.likes.push(idUser);
   }
 
-  @VuexMutation removeLike({
-    id,
-    idUser
-  }: {
-    id: string;
-    idUser: string;
-  }): void {
+  @VuexMutation
+  removeLike({ id, idUser }: { id: string; idUser: string }): void {
     const review = this.reviews.find(review => review.id === id);
     const index = review.likes.indexOf(idUser);
     review.likes.splice(index, 1);
   }
 
-  @VuexMutation report({ id, idUser }: { id: string; idUser: string }): void {
+  @VuexMutation
+  report({ id, idUser }: { id: string; idUser: string }): void {
     const review = this.reviews.find(review => review.id === id);
     review.reports.push(idUser);
   }
 
-  @VuexAction({ rawError: true }) async create(review: any) {
+  @VuexAction({ rawError: true })
+  async create(review: any) {
     if (review.content.length < 200 || review.content.length > 1000) {
       $toast.error("Your review needs between 200 and 1000 characters.");
       return;
     }
-    const author = this.context.rootGetters["localStorage/user"];
-    const title = this.context.rootGetters["title/title"];
+    const author = this.context.rootState.localStorage.user;
+    const title = this.context.rootState.title.title;
     const data = {
       author: {
         id: author.id,
@@ -91,22 +93,25 @@ export default class ReviewsStore extends VuexModule {
   }
 
   @VuexAction({ rawError: true, commit: "setLatest" })
-  async getLatest() {
+  async getLatest(cookies: any) {
     const titles: any = this.context.rootState.browse.titles;
     const latest: any = await docs(
       $fire.firestore
         .collection("reviews")
         .orderBy("postedOn", "desc")
         .limit(3),
-      "getReviewsLatest"
+      "getReviewsLatest",
+      cookies
     );
-
-    for (const review of latest) {
-      const title: any = titles.find(
-        (item: any) => item.id === String(review.title.id)
-      );
-      review.title.route = title.r;
+    if (process.client) {
+      for (const review of latest) {
+        const title: any = titles.find(
+          (item: any) => item.id === String(review.title.id)
+        );
+        review.title.route = title.r;
+      }
     }
+
     return latest;
   }
 
@@ -119,7 +124,8 @@ export default class ReviewsStore extends VuexModule {
     );
   }
 
-  @VuexAction({ rawError: true, commit: "setReviews" }) async get(id: string) {
+  @VuexAction({ rawError: true, commit: "setReviews" })
+  async get(id: string) {
     return (
       await docs(
         $fire.firestore
@@ -130,7 +136,8 @@ export default class ReviewsStore extends VuexModule {
     ).sort((a: any, b: any) => b.postedOn - a.postedOn);
   }
 
-  @VuexAction({ rawError: true, commit: "addLike" }) like(id: string) {
+  @VuexAction({ rawError: true, commit: "addLike" })
+  like(id: string) {
     const idUser = this.context.rootGetters["localStorage/id"];
     $fire.firestore
       .collection("reviews")
@@ -141,7 +148,8 @@ export default class ReviewsStore extends VuexModule {
     return { id, idUser };
   }
 
-  @VuexAction({ rawError: true, commit: "removeLike" }) unlike(id: string) {
+  @VuexAction({ rawError: true, commit: "removeLike" })
+  unlike(id: string) {
     const idUser = this.context.rootGetters["localStorage/id"];
     $fire.firestore
       .collection("reviews")

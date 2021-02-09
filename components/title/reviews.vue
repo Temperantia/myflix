@@ -25,7 +25,12 @@ div(v-else)
           button(v-if='connected', @click='edition = true') MAKE A REVIEW
           button(v-else, @click='$router.push("/sign-in")') SIGN IN TO MAKE A REVIEW
   template(v-if='reviews.length > 0')
-    review(:review='review', v-for='review in reviews', :key='review.id')
+    review(
+      :review='review',
+      :title='title',
+      v-for='review in reviews',
+      :key='review.id'
+    )
     client-only(v-if='pages > 1')
       v-container(fluid)
         v-row.ma-0(justify='center')

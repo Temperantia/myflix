@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(fluid)
+v-container(fluid v-if='title')
   v-row.title-border
     v-col(cols='12', lg='8')
       h3 {{ title.title.toUpperCase() + " RELATED GOODS" }}
@@ -47,7 +47,6 @@ export default class Goods extends Vue {
       'amzn_assoc_default_search_phrase = "netflix ' + this.title.title + '";';
 
     element.appendChild(config);
-    console.log(document.getElementById('ad'));
 
     this.$loadAd('#ad');
     const checkExist = setInterval(() => {

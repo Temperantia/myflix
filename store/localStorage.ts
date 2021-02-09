@@ -6,7 +6,7 @@ import {
   VuexAction
 } from "nuxt-property-decorator";
 import { $fire, $fireModule, $moment, $router, $toast } from "~/utils/modules";
-import { doc } from "~/plugins/firebase";
+import { doc, docs } from "~/plugins/firebase";
 import { $getUser, $userExists } from "~/plugins/auth";
 
 @Module({ name: "localStorage", stateFactory: true, namespaced: true })
@@ -14,7 +14,7 @@ export default class localStorageStore extends VuexModule {
   user: any = null;
   connected: boolean = false;
   socialAuthUser: any = null;
-  cookies: any = {};
+  titles: any = [];
 
   get id() {
     return this.user?.id;
@@ -26,17 +26,6 @@ export default class localStorageStore extends VuexModule {
 
   get favorites() {
     return this.user?.favorites;
-  }
-
-  @VuexMutation addCookie({
-    name,
-    timestamp
-  }: {
-    name: string;
-    timestamp: number;
-  }) {
-    console.log(name, timestamp);
-    this.cookies = Object.assign({}, this.cookies, { [name]: timestamp });
   }
 
   @VuexMutation setSocialAuthUser(socialAuthUser: any) {
@@ -315,7 +304,8 @@ export default class localStorageStore extends VuexModule {
     $router.push("/");
   }
 
-  @VuexAction({ rawError: true, commit: "_addFavorite" }) addFavorite() {
+  @VuexAction({ rawError: true, commit: "_addFavorite" })
+  addFavorite() {
     const title = this.context.rootState.title.title;
     const type = title.summary.type === "show" ? "shows" : "films";
     const favorite = {

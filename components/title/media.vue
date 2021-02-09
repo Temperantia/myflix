@@ -1,5 +1,5 @@
 <template lang="pug">
-video-player(v-if='title.trailer', :src='title.trailer')
+video-player(v-if='title && title.trailer', :src='title.trailer')
 </template>
 <script lang="ts">
 import { Vue, Component, namespace } from 'nuxt-property-decorator';

@@ -6,6 +6,7 @@ import {
 } from "nuxt-property-decorator";
 import { docs } from "~/plugins/firebase";
 import { $fire } from "~/utils/modules";
+import { openDB } from "idb";
 
 @Module({ name: "browse", stateFactory: true, namespaced: true })
 export default class BrowseStore extends VuexModule {
@@ -54,9 +55,23 @@ export default class BrowseStore extends VuexModule {
     this.categories = categories;
   }
 
-  @VuexAction({ rawError: true }) async init(): Promise<void> {
-    this.setTitles(
-      (await docs($fire.firestore.collection("data"), "getSearch"))
+  @VuexAction({ rawError: true })
+  async init(cookies: any): Promise<void> {
+    if (process.server) {
+      return;
+    }
+    const db = await openDB("Titles", 1, {
+      upgrade(db) {
+        db.createObjectStore("titles", {
+          keyPath: "id"
+        });
+      }
+    });
+    let titles: any;
+    if (cookies.get("getSearch")) {
+      titles = await db.getAll("titles");
+    } else {
+      titles = (await docs($fire.firestore.collection("data")))
         .reduce(
           (data: any, current: any) => [...data, ...JSON.parse(current.search)],
           []
@@ -72,11 +87,17 @@ export default class BrowseStore extends VuexModule {
             title.s = 1;
           }
           return title;
-        })
-    );
+        });
+      cookies.set("getSearch", true, { maxAge: 60 * 60 * 24 });
+      const tx = db.transaction("titles", "readwrite");
+      const promises: any = titles.map((title: any) => tx.store.put(title));
+      promises.push(tx.done);
+      await Promise.all(promises);
+    }
 
+    this.setTitles(titles);
     let categories: any = {};
-    for (const item of this.titles) {
+    for (const item of titles) {
       for (const category of item.c) {
         if (categories[category]) {
           categories[category].value++;

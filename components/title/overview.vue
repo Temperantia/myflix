@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(fluid)
+v-container(fluid, v-if='title')
   v-row
     v-col(cols='12', md='9')
       v-row
@@ -65,7 +65,7 @@ v-container(fluid)
           )
         v-col(cols='12', lg='4')
           v-btn(color='blue-completed', @click='$router.push("/vpn")') GET IT IN YOUR COUNTRY
-      v-row.my-1
+      v-row.my-1(v-if='title.summary.type === "show"')
         v-col
           v-btn.mr-3(
             color='black-search',
@@ -175,7 +175,7 @@ export default class Overview extends Vue {
   expanded: { [key: string]: any } = {};
 
   created() {
-    if (!this.title.credits) {
+    if (!this.title?.credits) {
       return;
     }
     for (const category in this.title.credits) {
