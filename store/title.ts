@@ -180,6 +180,7 @@ export default class TitleStore extends VuexModule {
   }
 
   @VuexAction({ rawError: true }) loadFlixlist(id: string) {
+    console.log(this.context.rootGetters["localStorage/flixlist"])
     const flixlist: any = this.context.rootGetters["localStorage/flixlist"]?.[id];
     if (!flixlist) {
       return;
