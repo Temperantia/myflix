@@ -36,6 +36,14 @@ div
       v-col.py-0(cols='12') More filters
       v-col(cols='12', lg='2')
         v-switch.my-0(
+          label='Bingeworthiness',
+          v-model='bingeworthiness',
+          dense,
+          outlined,
+          hide-details
+        )
+      v-col(cols='12', lg='2')
+        v-switch.my-0(
           label='Netflix Original',
           v-model='original',
           dense,
@@ -56,6 +64,7 @@ export default class NewReleases extends Vue {
   score: string = 'All';
   category: string = 'All';
   genre: string = 'All';
+  bingeworthiness: boolean = false;
   original: boolean = false;
   genres = genres;
 
@@ -82,7 +91,7 @@ export default class NewReleases extends Vue {
         (this.score === 'All' ||
           Number(this.score.match(/(([^()]+))/)?.[1]) === parseInt(title.z)) &&
         (this.genre === 'All' || title.c.includes(this.genre)) &&
-        (!this.original || title.o)
+        (!this.original || title.o) && (!this.bingeworthiness || title.h)
       );
     });
   }

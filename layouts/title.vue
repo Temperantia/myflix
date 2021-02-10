@@ -125,7 +125,7 @@ defaultLayout
 </template>
 <script lang='ts'>
 import DefaultLayout from '~/layouts/default.vue';
-import { Vue, Component, namespace } from 'nuxt-property-decorator';
+import { Vue, Component, namespace, Watch } from 'nuxt-property-decorator';
 
 const localStorageModule = namespace('localStorage');
 const titleModule = namespace('title');
@@ -156,6 +156,11 @@ export default class Title extends Vue {
   @localStorageModule.Action('removeFavorite') removeFavorite!: any;
 
   mounted() {
+    this.redirect({ route: this.$route, cookies: this.$cookies });
+  }
+
+  @Watch('$route')
+  onRouteChanged() {
     this.redirect({ route: this.$route, cookies: this.$cookies });
   }
 

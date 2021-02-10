@@ -110,7 +110,7 @@ export default class Default extends Vue {
   @reviewsModule.Action('getLatest') initReviews!: Function;
   @suggestionsModule.Action('getLatest') initSuggestions!: Function;
 
-  itemsMobile() {
+  get itemsMobile() {
     return this.connected
       ? this.itemsMobileConnected
       : this.itemsMobileDisconnected;

@@ -1,6 +1,5 @@
 from json import load, dumps, dump
 from random import uniform
-from time import sleep
 from firebase import video_collection, data_collection
 from slugify import slugify
 from threads import threads
@@ -15,6 +14,7 @@ d : description / synopsis
 e : episode number
 f : follower number
 g : genres
+h : bingeworthy
 i : image / tall box art
 m : current month
 n : current new release (< 2 weeks)
@@ -128,6 +128,7 @@ def upload(id, index, data):
     video['popularity'] = None
     video['followers'] = {}  # {str(i): now for i in range(randint(0, 5))}
     video['favorites'] = []
+    video['bingeworthiness'] = []
     video['exists'] = True
 
   search_videos(video, id, index)

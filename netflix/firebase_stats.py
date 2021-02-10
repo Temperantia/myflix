@@ -11,6 +11,7 @@ followers = {}
 videos = {}
 rank = {}
 popularity = {}
+bingeworthiness = {}
 
 dt = datetime.now()
 start = (dt - timedelta(days=dt.weekday())).replace(hour=0,
@@ -19,8 +20,8 @@ end = (start + timedelta(days=7)).timestamp()
 start_release = (start - timedelta(days=7)).timestamp()
 start = start.timestamp()
 
-month_day_start, month_day_end = monthrange(dt.year, dt.month)
-month_start = (dt.replace(day=month_day_start, minute=0,
+_, month_day_end = monthrange(dt.year, dt.month)
+month_start = (dt.replace(day=1, minute=0,
                           second=0, microsecond=0)).timestamp()
 month_end = (dt.replace(day=month_day_end, minute=0,
                         second=0, microsecond=0)).timestamp()
@@ -52,6 +53,7 @@ def get_video_stats():
     followers[id] = len(video['followers'])
     video['score'] = mean(list(video['scores'].values()))
     scores[id] = video['score']
+    bingeworthiness[id] = len(video['bingeworthiness']) / 2
 
   ordered = sorted(scores.items(), key=lambda elem: elem[1], reverse=True)
   for index, id in enumerate(ordered):
@@ -79,11 +81,16 @@ def update_search_tables():
     video['z'] = scores[video['id']]
     video['q'] = rank[video['id']]
     video['p'] = popularity[video['id']]
+    if bingeworthiness[video['id']] >= 0.5:
+      video['h'] = 1
     if video['a']:
       availability = video['a'] / 1000
-      video['w'] = 1 if availability >= start and availability <= end else 0
-      video['n'] = 1 if availability >= start_release and availability <= end else 0
-      video['m'] = 1 if availability >= month_start and availability <= month_end else 0
+      if availability >= start and availability <= end:
+        video['w'] = 1
+      if availability >= start_release and availability <= end:
+        video['n'] = 1
+      if availability >= month_start and availability <= month_end:
+        video['m'] = 1
 
   print('Uploading search tables')
   searches = [search[x:x+CUT] for x in range(0, len(search), CUT)]

@@ -82,9 +82,6 @@ v-container(fluid, v-if='title')
             v-icon(color='green-watching', v-if='title.saved') mdi-check
             span(v-else) UPDATE
           share(isButton, :url='$config.baseUrl + $route.path')
-
-    //-v-col(cols='12', md='3')
-      video(:src='title.trailer')
   v-row
     v-col
       client-only
