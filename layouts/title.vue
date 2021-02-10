@@ -84,7 +84,7 @@ defaultLayout
             v-col.text-xl-right(
               md='12',
               xl='6',
-              v-if='isCurrentTab(tabs[0].route)'
+              v-if='connected && isCurrentTab(tabs[0].route)'
             )
               .click(v-if='isFavorite(title.id)', @click='removeFavorite')
                 v-icon mdi-star
