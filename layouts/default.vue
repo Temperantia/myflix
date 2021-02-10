@@ -38,7 +38,7 @@ v-app(app)
               v-icon mdi-twitter
             a.mr-3(href='https://www.facebook.com/myflixnet/')
               v-icon mdi-facebook
-            a.mr-3(href='https://discord.gg/c9qVMWcdNe')
+            a.mr-3(href='https://discord.gg/X96R4AKtWk')
               v-icon mdi-discord
       v-col.pl-0(v-else, cols='1')
         v-menu

@@ -28,12 +28,10 @@ v-container(fluid)
       p MYFLIX team welcomes constructive ideas or improvements.
       p
         span {{ "To suggest and idea, contact us at " }}
-        a(mailto='feedback@my-flix.net')
-          span.red-netflix--text.text-decoration-underline {{ "feedback@my-flix.net" }}
-      p
-        span {{ "You can also contact us for other inquiries or business related subjects at " }}
         a(mailto='support@my-flix.net')
           span.red-netflix--text.text-decoration-underline {{ "support@my-flix.net" }}
+      p
+        span {{ "You can also contact us with this email for other inquiries or business related matters." }}
 </template>
 <script lang='ts'>
 import countries from 'i18n-iso-countries';
