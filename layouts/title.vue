@@ -114,7 +114,6 @@ defaultLayout
             li.d-block.d-md-inline(
               v-for='tab in tabs',
               :key='tab.name',
-              cols='12'
             )
               nuxt-link(:to='tab.route')
                 h3.d-inline.mr-10(

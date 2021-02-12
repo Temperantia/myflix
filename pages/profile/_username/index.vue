@@ -41,8 +41,7 @@ v-col(cols='12', lg='10')
               progress-bar(
                 :status='element.status',
                 :episodes='element.episodes',
-                :episodeCount='element.title.episodeCount',
-                :width='200'
+                :episodeCount='element.title.episodeCount'
               )
               div
                 span.white-font--text {{ element.status }}

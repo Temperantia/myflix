@@ -123,9 +123,10 @@ export default class ProfileStore extends VuexModule {
   }
 
   get tvShowsEpisodes() {
+    const flixlist: any = this.flixlist;
     return Number(
       this.tvShows.reduce(
-        (sum: number, tvShow: any) => sum + tvShow.episodes,
+        (sum: number, tvShow: any) => sum + flixlist[tvShow.id]?.episodes ?? 0,
         0
       )
     );

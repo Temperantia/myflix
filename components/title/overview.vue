@@ -1,7 +1,7 @@
 <template lang="pug">
 v-container(fluid, v-if='title')
   v-row
-    v-col(cols='12', md='9')
+    v-col(cols='12')
       v-row
         v-col(cols='10', offset='1', offset-md='0', md='3')
           card(
@@ -25,63 +25,70 @@ v-container(fluid, v-if='title')
             span.white-font--text Creators:
             span.ml-1 {{ title.creators.join(", ") || "-" }}
       v-row
-        v-col(cols='12', lg='4')
-          div(style='position: relative')
-            v-select(
-              :items='statuses',
-              outlined,
-              :value='status',
-              dense,
-              placeholder='Change status',
-              :hide-details='true',
-              @change='(value) => updateStatus(value)'
-            )
-              template(v-slot:selection='{ item }')
-                span(
-                  v-if='item !== "Remove from List"',
-                  :class='$titleStatusColor(item)'
-                ) {{ item }}
-            span.d-flex.align-center(
-              v-if='title.summary.type === "show" && title.episodeCount > 0 && status && status !== "Save for Later"',
-              style='position: absolute; top: 0; bottom: 0; right: 35px'
-            )
-              input.pr-1.border.white-font--border.text-right(
-                :class='$titleStatusColor(status)',
-                style='width: 30px',
-                type='number',
-                :value='episodes',
-                @input='(event) => updateEpisodes(event.target.value)'
-              )
-              span.ml-1 {{ " / " + title.episodeCount }}
-        v-col(cols='12', lg='4')
-          v-select(
-            :items='Object.entries(ratings).map(([score, rating]) => `${score} - ${rating}`).reverse()',
-            outlined,
-            :value='score',
-            dense,
-            placeholder='Rate this title',
-            :hide-details='true',
-            @change='(value) => setScore(value)'
-          )
-        v-col(cols='12', lg='4')
-          v-btn(color='blue-completed', @click='$router.push("/vpn")') GET IT IN YOUR COUNTRY
-      v-row.my-1(v-if='title.summary.type === "show"')
         v-col
-          v-btn.mr-3(
-            color='black-search',
-            @click='setBingeworthy(!bingeworthy)'
-          )
-            v-icon(
-              :class='bingeworthy ? "green-watching--text" : "greyButton--text"',
-              left
-            ) mdi-check
-            span.font-weight-light(
-              :class='bingeworthy ? "white--text" : "white-font--text"'
-            ) Would you binge-watch this series?
-          button.mr-3.button.white--text(@click='update')
-            v-icon(color='green-watching', v-if='title.saved') mdi-check
-            span(v-else) UPDATE
-          share(isButton, :url='$config.baseUrl + $route.path')
+          ul(style='list-style-type: none')
+            li.mr-3.d-md-inline
+              share(isButton, :url='$config.baseUrl + $route.path')
+            li.mr-3.d-md-inline
+              nuxt-link(to='/vpn')
+                v-btn.px-10(color='blue-completed') GET IT IN YOUR COUNTRY
+            li.d-md-inline
+              a(:href='"https://netflix.com/title/" + title.id')
+                v-btn.px-10(color='red-netflix') WATCH ON NETFLIX
+      v-row(v-if='connected')
+        v-col
+          ul(style='list-style-type: none')
+            li.mr-3.d-md-inline(style='position: relative; width: 200px')
+              v-select.d-md-inline-flex(
+                :items='statuses',
+                outlined,
+                :value='status',
+                dense,
+                placeholder='Change status',
+                :hide-details='true',
+                @change='(value) => updateStatus(value)'
+              )
+                template(v-slot:selection='{ item }')
+                  span(
+                    v-if='item !== "Remove from List"',
+                    :class='$titleStatusColor(item)'
+                  ) {{ item }}
+              span.d-flex.align-center(
+                v-if='title.summary.type === "show" && title.episodeCount > 0 && status && status !== "Save for Later"',
+                style='position: absolute; top: 0; bottom: 0; right: 35px'
+              )
+                input.pr-1.border.white-font--border.text-right(
+                  :class='$titleStatusColor(status)',
+                  style='width: 30px',
+                  type='number',
+                  :value='episodes',
+                  @input='(event) => updateEpisodes(event.target.value)'
+                )
+                span.ml-1 {{ " / " + title.episodeCount }}
+            li.mr-3.d-md-inline(style='width: 200px')
+              v-select.d-md-inline-flex(
+                :items='Object.entries(ratings).map(([score, rating]) => `${score} - ${rating}`).reverse()',
+                outlined,
+                :value='score',
+                dense,
+                placeholder='Rate this title',
+                :hide-details='true',
+                @change='(value) => setScore(value)'
+              )
+            v-btn.mr-3(
+              color='black-search',
+              @click='setBingeworthy(!bingeworthy)'
+            )
+              v-icon(
+                :class='bingeworthy ? "green-watching--text" : "greyButton--text"',
+                left
+              ) mdi-check
+              span.font-weight-light(
+                :class='bingeworthy ? "white--text" : "white-font--text"'
+              ) Would you binge-watch this series?
+            button.button.white--text(@click='update')
+              v-icon(color='green-watching', v-if='title.saved') mdi-check
+              span(v-else) UPDATE
   v-row
     v-col
       client-only
@@ -160,8 +167,6 @@ export default class Overview extends Vue {
   @titleModule.State('bingeworthy') bingeworthy!: boolean;
   @titleModule.State('saved') saved!: boolean;
   @localStorageModule.State('connected') connected!: boolean;
-  @localStorageModule.State('user') user!: any;
-  @localStorageModule.Getter('favorites') favorites!: any;
   @titleModule.Mutation('setScore') setScore!: any;
   @titleModule.Mutation('setBingeworthy') setBingeworthy!: any;
   @titleModule.Mutation('updateStatus') updateStatus!: any;

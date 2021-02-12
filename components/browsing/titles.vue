@@ -78,6 +78,7 @@ export default class Titles extends Vue {
   @titleModule.State('maturities') maturities!: any;
   @localStorageModule.State('connected') connected!: boolean;
   @localStorageModule.Getter('flixlist') flixlist!: any;
+  @localStorageModule.Getter('titleStatus') titleStatus!: any;
   gallery = false;
   settings = false;
   category = 'All';
@@ -117,6 +118,7 @@ export default class Titles extends Vue {
     const search = this.slugify(this.search).toLocaleLowerCase();
     return this.titles
       .filter((title: any) => {
+        const status = this.titleStatus(title.id);
         if (title.y === 0 || title.a > this.now || title.y > this.nowYear) {
           return false;
         }
@@ -127,21 +129,12 @@ export default class Titles extends Vue {
           (this.search === '' ||
             this.slugify(title.t).toLocaleLowerCase().indexOf(search) > -1) &&
           (!this.original || title.o) &&
-          (((!this.completed || title.status === 'Completed') &&
-            (!this.watching || title.status === 'Watching')) ||
+          (((!this.completed || status === 'Completed') &&
+            (!this.watching || status === 'Watching')) ||
             (this.completed &&
               this.watching &&
-              (title.status === 'Completed' || title.status === 'Watching')))
+              (status === 'Completed' || status === 'Watching')))
         );
-      })
-      .map((title: any) => {
-        if (this.flixlist?.[title.id]) {
-          title.status = this.flixlist[title.id].status;
-          if (title.s) {
-            title.episodes = this.flixlist[title.id].episodes;
-          }
-        }
-        return title;
       })
       .sort((a: any, b: any) => {
         if (this.sort === 'Most Popular') {

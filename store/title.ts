@@ -150,7 +150,7 @@ export default class TitleStore extends VuexModule {
         id: this.title.id,
         title: this.title.title,
         summary: this.title.summary,
-        tallBoxArt: this.title.tallBoxArt ?? '',
+        tallBoxArt: this.title.tallBoxArt ?? "",
         releaseYear: this.title.releaseYear,
         maturity: this.title.maturity,
         episodeCount: this.title.episodeCount
@@ -173,7 +173,7 @@ export default class TitleStore extends VuexModule {
 
     const video: any = { ["followers." + idUser]: new Date() };
     if (this.score) {
-      video["scores." + idUser] = { time: new Date(), value: this.score };
+      video["scores." + idUser] = Number(this.score.split('-')[0]);
     }
     video.bingeworthiness = this.bingeworthy
       ? $fireModule.firestore.FieldValue.arrayUnion(idUser)
@@ -212,7 +212,9 @@ export default class TitleStore extends VuexModule {
     const information: any = {
       Type: title.summary.type === "show" ? "TV Show" : "Movie",
       Premiered: title.availability.availabilityStartTime
-        ? $moment(title.availability.availabilityStartTime, "MMM d, yyyy")
+        ? $moment(title.availability.availabilityStartTime).format(
+            "MMM d, yyyy"
+          )
         : null,
       Producers: title.creators.join(", "),
       Genres: title.genres.map((genre: any) => genre.name).join(", "),

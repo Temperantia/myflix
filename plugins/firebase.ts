@@ -53,6 +53,21 @@ function titleStatusColor(status: string): string {
   return "grey-button--text";
 }
 
+function statusColor(status: string): string {
+  if (status === "Watching") {
+    return "green-watching";
+  } else if (status === "Dropped") {
+    return "red-dropped";
+  } else if (status === "Save for Later") {
+    return "grey-save-for-later";
+  } else if (status === "On-Hold") {
+    return "yellow-on-hold";
+  } else if (status === "Completed") {
+    return "blue-completed";
+  }
+  return "grey-button";
+}
+
 export default async ({ $fire, $fireModule, store }: any, inject: any) => {
   const firestore = $fire.firestore;
   const collectionGlobals = firestore.collection("globals");
@@ -78,6 +93,7 @@ export default async ({ $fire, $fireModule, store }: any, inject: any) => {
   const globals = await getGlobals();
 
   inject("titleStatusColor", titleStatusColor);
+  inject("statusColor", statusColor);
   inject("requestContent", requestContent);
   inject("globals", globals);
   return { doc, docs };

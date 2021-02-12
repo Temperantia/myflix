@@ -6,7 +6,7 @@ import {
   VuexAction
 } from "nuxt-property-decorator";
 import { $fire, $fireModule, $moment, $router, $toast } from "~/utils/modules";
-import { doc, docs } from "~/plugins/firebase";
+import { doc,  } from "~/plugins/firebase";
 import { $getUser, $userExists } from "~/plugins/auth";
 
 @Module({ name: "localStorage", stateFactory: true, namespaced: true })
@@ -22,6 +22,14 @@ export default class localStorageStore extends VuexModule {
 
   get flixlist() {
     return this.user?.flixlist;
+  }
+
+  get titleStatus() {
+    return (idTitle: string) => this.flixlist?.[idTitle]?.status;
+  }
+
+  get episodes() {
+    return (idTitle: string) => this.flixlist?.[idTitle]?.episodes;
   }
 
   get favorites() {
@@ -56,6 +64,16 @@ export default class localStorageStore extends VuexModule {
 
   @VuexMutation setFlixlist({ idTitle, data }: { idTitle: string; data: any }) {
     Vue.set(this.user.flixlist, idTitle, data);
+  }
+
+  @VuexMutation
+  _addToFlixlist(data: any) {
+    Vue.set(this.user.flixlist, data.title.id, data);
+  }
+
+  @VuexMutation
+  _removeFromFlixlist(idTitle: string) {
+    Vue.delete(this.user.flixlist, idTitle);
   }
 
   @VuexMutation _addFavorite({
@@ -302,6 +320,40 @@ export default class localStorageStore extends VuexModule {
     }
 
     $router.push("/");
+  }
+
+  @VuexAction({ rawError: true, commit: "_addToFlixlist" })
+  addToFlixlist(title: any) {
+    const data = {
+      status: "Save for Later",
+      title: {
+        id: title.id,
+        title: title.t,
+        summary: { type: title.u ? "show" : "movie" },
+        tallBoxArt: title.b ?? "",
+        releaseYear: title.y,
+        maturity: title.v,
+        episodeCount: title.e ?? null
+      },
+      postedOn: $fireModule.firestore.Timestamp.now()
+    };
+
+    $fire.firestore
+      .collection("users")
+      .doc(this.id)
+      .update({ [`flixlist.${title.id}`]: data });
+    return data;
+  }
+
+  @VuexAction({ rawError: true, commit: "_removeFromFlixlist" })
+  removeFromFlixlist(idTitle: string) {
+    $fire.firestore
+      .collection("users")
+      .doc(this.id)
+      .update({
+        [`flixlist.${idTitle}`]: $fireModule.firestore.FieldValue.delete()
+      });
+    return idTitle;
   }
 
   @VuexAction({ rawError: true, commit: "_addFavorite" })

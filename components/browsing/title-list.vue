@@ -4,18 +4,19 @@ v-container(fluid)
     v-col.click.pa-0.item-wrap(
       v-for='title in titles',
       :key='title.id',
+      :set='(status = titleStatus(title.id))',
       cols='12',
       lg='4',
       style='position: relative; height: 300px'
     )
       nuxt-link(:to='title.r')
         div(
-          v-if='title.status',
+          v-if='status',
           style='width: 100%; position: absolute; top: 0; left: 0'
         )
           progress-bar(
-            :status='title.status',
-            :episodes='episodes',
+            :status='status',
+            :episodes='episodes(title.id)',
             :episodeCount='title.e'
           )
         div(
@@ -26,17 +27,10 @@ v-container(fluid)
             .mb-2
               h2.d-inline.font-weight-regular {{ title.t }}
               b.ml-2(v-if='connected')
-                i.green-watching--text(v-if='title.status === "Watching"') {{ title.episodes }}
+                i.green-watching--text(v-if='status === "Watching"') {{ episodes(title.id) }}
                   span {{ " / " + title.e }}
-                i(
-                  v-else,
-                  :class='textColor(title.u ? "show" : "movie", title.status)'
-                ) {{ title.status }}
-              //-v-icon.click.fave(
-                v-if='isFavorite(title.id)',
-                @click='removeFavoriteFromId(title.id)'
-                ) mdi-star
-              //-v-icon.click.fave(v-else, @click='addFavoriteFromId(title.id)') mdi-star-outline
+                i(v-else, :class='$titleStatusColor(status)') {{ status }}
+              flixlist-add(v-if='connected', :title='title')
           .hover-item
             .mb-2
               span.white-font--text {{ title.y + " " }}
@@ -48,7 +42,12 @@ v-container(fluid)
             .titleDetails
               span {{ "Genres: " }}
               span.white-font--text {{ title.g.join(", ") }}
-  v-row.subtitle-border(v-else, v-for='title in titles', :key='title.id')
+  v-row.subtitle-border(
+    v-else,
+    v-for='title in titles',
+    :key='title.id',
+    :set='(status = titleStatus(title.id))'
+  )
     v-col(cols='12', lg='1')
       v-container(fluid)
         v-row
@@ -64,42 +63,33 @@ v-container(fluid)
             img.icon.mr-3(src='/netflix.png')
             span.white-font--text O R I G I N A L
         v-row(v-else, align='center')
-          v-col(cols='8')
+          v-col
             nuxt-link(:to='title.r')
               h2.d-inline.mr-5 {{ title.t }}
             .d-inline-flex.align-center.justify-space-between(v-if='title.o')
               img.icon.mr-3(src='/netflix.png')
               span.white-font--text O R I G I N A L
-          v-col.text-right(cols='4')
-            //-client-only(v-if='favorites')
-              .click(
-                v-if='isFavorite(title.id)',
-                @click='removeFavoriteFromId(title.id)'
-              )
-                v-icon mdi-star
-                span In Favorites
-              .click(v-else, @click='addFavoriteFromId(title.id)')
-                v-icon mdi-star-outline
-                span Add to Favorites
+          v-col.text-right
+            flixlist-add(v-if='connected', :title='title')
         .my-1
           span.white-font--text.mr-2 {{ title.y }}
           span.white-font--text.mr-1.py-0.px-1.border.white-font--border {{ title.v }}
           span.white-font--text.mr-1(v-if='title.s') {{ title.s }} SEASONS
           b(v-if='connected')
-            i.green-watching--text(v-if='title.status === "Watching"') {{ title.episodes }}
+            i.green-watching--text(v-if='status === "Watching"') {{ episodes(title.id) }}
               span {{ " / " + title.e }}
             i(
               v-else,
-              :class='$titleStatusColor(title.u ? "show" : "movie", title.status)'
-            ) {{ title.status }}
+              :class='$titleStatusColor(title.u ? "show" : "movie", status)'
+            ) {{ status }}
         .my-1(v-html='title.d')
         div
           span Genres:
           span.white-font--text {{ " " + title.g.join(", ") }}
-        .mt-3(v-if='connected && title.status')
+        .mt-3(v-if='connected && status')
           progress-bar(
-            :status='title.status',
-            :episodes='title.episodes',
+            :status='status',
+            :episodes='episodes(title.id)',
             :episodeCount='title.e',
             :width='200'
           )
@@ -118,11 +108,15 @@ export default class TitleList extends Vue {
   @Prop({ type: Array }) source!: any;
   @Prop({ type: Boolean }) gallery!: boolean;
   @localStorageModule.State('connected') connected!: boolean;
+  @localStorageModule.Getter('titleStatus') titleStatus!: any;
+  @localStorageModule.Getter('episodes') episodes!: any;
 
   page = 1;
+
   get pages() {
     return Math.ceil(this.source.length / 24);
   }
+
   get titles() {
     const offset = (this.page - 1) * 24;
     return this.source.slice(offset, offset + 24);

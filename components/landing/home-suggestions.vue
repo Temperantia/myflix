@@ -18,35 +18,14 @@ div
           v-col(cols='8', lg='4') If you liked
             nuxt-link(:to='suggestion.title.route')
               .red-netflix--text {{ suggestion.title.title }}
-            //-client-only(v-if='favorites')
-              .click(
-                v-if='isFavorite(suggestion.title.id)',
-                @click='removeFavoriteFromId(suggestion.title.id)'
-              )
-                v-icon mdi-star
-                span In Favorites
-              .click(v-else, @click='addFavoriteFromId(suggestion.title.id)')
-                v-icon mdi-star-outline
-                span Add to Favorites
+            flixlist-add(v-if='connected', :id='suggestion.title.id')
           v-col(cols='4', lg='2')
             nuxt-link(:to='suggestion.similar.route')
             img(:src='suggestion.similar.image')
           v-col(cols='8', lg='4') Then you might like...
             nuxt-link(:to='suggestion.similar.route')
               .red-netflix--text {{ suggestion.similar.title }}
-            //-client-only(v-if='favorites')
-              .click(
-                v-if='isFavorite(suggestion.similar.id)',
-                @click='removeFavoriteFromId(suggestion.similar.id)'
-              )
-                v-icon mdi-star
-                span In Favorites
-              .click(
-                v-else,
-                @click='addFavoriteFromId(suggestion.similar.id)'
-              )
-                v-icon mdi-star-outline
-                span Add to Favorites
+            flixlist-add(v-if='connected', :title='suggestion.similar')
         v-row
           v-col
             p
@@ -63,10 +42,12 @@ import slugify from 'slugify';
 import { Vue, Component, namespace } from 'nuxt-property-decorator';
 
 const suggestionsModule = namespace('suggestions');
+const localStorageModule = namespace('localStorage');
 
 @Component
 export default class HomeSuggestions extends Vue {
   slugify = slugify;
+  @localStorageModule.State('connected') connected!: boolean;
   @suggestionsModule.State('latest') latestSuggestions!: any;
 
   content(content: string) {

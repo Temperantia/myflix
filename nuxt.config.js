@@ -39,7 +39,6 @@ export default {
     "nuxt-vuex-localstorage",
     "@nuxtjs/google-adsense",
     ["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
-    "@nuxtjs/robots",
     "vue-social-sharing/nuxt"
   ],
   firebase: {
@@ -113,20 +112,20 @@ export default {
   },
   pwa: {
     meta: {
-      name: "MYFLIX",
+      name: "MyFlix.net - Netflix Search and Community - Recommendations, Reviews,  Ratings and more!",
       author: "Inc • Digital",
       ogSiteName: "my-flix.net",
-      ogTitle: "MYFLIX",
+      ogTitle: "MyFlix.net - Netflix Search and Community - Recommendations, Reviews,  Ratings and more!",
       ogDescription:
-        "Find User recommendations/suggestions, reviews, ratings, look at your personal statistics, and more! 😍 The project is currently in a development phase, but we are looking forward to hearing from you. (75%)",
+        "Welcome to MYFLIX, the world's  most promising active online  Netflix  community  en database. Find User recommendations, reviews, ratings, look at your personal statistics, Show/Movie ranking and more!",
       ogHost: "https://my-flix.net",
       ogImage: "/myflixFavicon2.png"
     },
     manifest: {
-      name: "MYFLIX",
+      name: "MyFlix.net - Netflix Search and Community - Recommendations, Reviews,  Ratings and more!",
       short_name: "MYFLIX",
       description:
-        "Find User recommendations/suggestions, reviews, ratings, look at your personal statistics, and more! 😍 The project is currently in a development phase, but we are looking forward to hearing from you. (75%)"
+        "Welcome to MYFLIX, the world's  most promising active online  Netflix  community  en database. Find User recommendations, reviews, ratings, look at your personal statistics, Show/Movie ranking and more!"
     }
   },
   "google-adsense": {

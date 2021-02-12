@@ -1,14 +1,14 @@
 from firebase_admin import credentials, firestore, initialize_app
 
 # prototype
-# cred = credentials.Certificate(
-#    'my-flix-91e46-firebase-adminsdk-tx9sq-c48bb4e2a9.json')
+cred = credentials.Certificate(
+   'my-flix-91e46-firebase-adminsdk-tx9sq-c48bb4e2a9.json')
 # dev
 # cred = credentials.Certificate(
 #    'myflix-dev-firebase-adminsdk-54m6q-5162a29bbe.json')
 # prod
-cred = credentials.Certificate(
-    'myflix-prod-firebase-adminsdk-un9jx-59d53b5c76.json')
+#cred = credentials.Certificate(
+ #   'myflix-prod-firebase-adminsdk-un9jx-59d53b5c76.json')
 initialize_app(cred)
 db = firestore.client()
 video_collection = db.collection('videos')

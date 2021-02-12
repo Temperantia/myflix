@@ -50,10 +50,14 @@ def get_video_stats():
     id = video.id
     video = video.to_dict()
     videos[id] = video
-    followers[id] = len(video['followers'])
-    video['score'] = mean(list(video['scores'].values()))
+    followers[id] = len(video['followers']) if video['followers'] else 0
+    try:
+      video['score'] = mean(list(video['scores'].values())) if video['scores'] else None
+    except:
+      print(video)
     scores[id] = video['score']
-    bingeworthiness[id] = len(video['bingeworthiness']) / 2
+    bingeworthiness[id] = len(video['bingeworthiness']) / \
+        2 if 'bingeworthiness' in video and video['bingeworthiness'] else 0
 
   ordered = sorted(scores.items(), key=lambda elem: elem[1], reverse=True)
   for index, id in enumerate(ordered):
@@ -81,8 +85,7 @@ def update_search_tables():
     video['z'] = scores[video['id']]
     video['q'] = rank[video['id']]
     video['p'] = popularity[video['id']]
-    if bingeworthiness[video['id']] >= 0.5:
-      video['h'] = 1
+    video['h'] = bingeworthiness[video['id']]
     if video['a']:
       availability = video['a'] / 1000
       if availability >= start and availability <= end:

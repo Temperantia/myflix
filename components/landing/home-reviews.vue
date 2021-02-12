@@ -8,16 +8,6 @@ v-col(cols='12', lg='5')
           img(
             :src='review.title.tallBoxArt ? review.title.tallBoxArt : review.title.boxArt'
           )
-        //-client-only(v-if='favorites')
-          .click(
-            v-if='isFavorite(review.title.id)',
-            @click='removeFavoriteFromId(review.title.id)'
-          )
-            v-icon mdi-star
-            span In Favorites
-          .click(v-else, @click='addFavoriteFromId(review.title.id)')
-            v-icon mdi-star-outline
-            span Add to Favorites
       v-col.py-0.reviewText(cols='12', md='10')
         v-row.ma-0
           v-col.pl-0(cols='12', lg='6')
@@ -36,29 +26,19 @@ v-col(cols='12', lg='5')
           nuxt-link(:to='"/profile/" + review.author.username')
             span.red-netflix--text.font-weight-bold {{ " " + review.author.username }}
           span {{ " - " + $moment(review.postedOn.seconds * 1000).format("MMM D, yyyy").toUpperCase() }}
-        //-client-only(v-if='favorites')
-          .click.faveButton(
-            v-if='isFavorite(review.title.id)',
-            @click='removeFavoriteFromId(review.title.id)'
-          )
-            v-icon.mr-2 mdi-star
-            span.d-none.d-md-inline-flex In Favorites
-          .click.faveButton(
-            v-else,
-            @click='addFavoriteFromId(review.title.id)'
-          )
-            v-icon.mr-2 mdi-star-outline
-            span.d-none.d-md-inline-flex Add to Favorites
+      flixlist-add(v-if='connected', :id='review.title.id')
 </template>
 <script lang="ts">
 import slugify from 'slugify';
 import { Vue, Component, namespace } from 'nuxt-property-decorator';
 
 const reviewsModule = namespace('reviews');
+const localStorageModule = namespace('localStorage');
 
 @Component
 export default class HomeReviews extends Vue {
   slugify = slugify;
+  @localStorageModule.State('connected') connected!: boolean;
   @reviewsModule.State('latest') latestReviews!: any;
 
   content(content: string) {

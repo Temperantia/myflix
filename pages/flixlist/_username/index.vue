@@ -30,7 +30,7 @@ v-container(fluid)
       h4 {{ index + 1 }}
     v-col(cols='6', lg='1')
       img(
-        :class='[borderColor(element.title.summary.type, element.status), "box-art"]',
+        :class='[borderColor(element.status), "box-art"]',
         :src='element.title.tallBoxArt'
       )
     v-col(cols='6', lg='3') {{ element.title.title }}
@@ -40,9 +40,9 @@ v-container(fluid)
     v-col.text-center(
       cols='6',
       lg='2',
-      v-if='element.title.summary.type === "show"'
+      v-if='element.title.summary.type === "show" && element.title.episodeCount'
     )
-      b(:class='textColor(element.title.summary.type, element.status)') {{ element.episodes }}
+      b(:class='textColor(element.status)') {{ element.episodes || "-" }}
       span.white-font--text {{ " / " + element.title.episodeCount }}
 </template>
 <script lang='ts'>

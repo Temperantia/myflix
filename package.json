@@ -35,7 +35,6 @@
     "@nuxtjs/imagemin": "0.2.0",
     "@nuxtjs/moment": "1.6.1",
     "@nuxtjs/pwa": "3.3.4",
-    "@nuxtjs/robots": "2.4.2",
     "@nuxtjs/style-resources": "1.0.0",
     "@nuxtjs/toast": "3.3.1",
     "@nuxtjs/vercel-builder": "0.18.1",
