@@ -3,7 +3,8 @@ from json import dump, dumps, load
 from time import sleep
 from threads import threads
 from netflix import url, headers
-
+from pathlib import Path
+from os import path
 
 error = 0
 
@@ -50,7 +51,8 @@ def get_ids():
                         '28630857',
                         '28631029',
                         '28631995',
-                        '28634944'], {}) | load(open('data/video_ids.json', 'r', encoding='utf-8'))
+                        '28634944'], {}) | load(open(path.join(
+                            Path(__file__).parent.absolute(), 'data/video_ids.json'), 'r', encoding='utf-8'))
   ids = []
   # 60 000 000 to 82 000 000
   for i in range(5):  # 60_037_677
@@ -72,7 +74,8 @@ def get_ids():
   #  dump(videos, outfile, ensure_ascii=False)
 
   videos_cleaned = {} | load(
-      open('data/video_cleaned.json', 'r', encoding='utf-8'))
+      open(path.join(
+          Path(__file__).parent.absolute(), 'data/video_cleaned.json'), 'r', encoding='utf-8'))
   count = 0
   id_list = []
   for id in videos:
@@ -85,9 +88,10 @@ def get_ids():
   id_list[-1] = [id_list[-1], videos_cleaned, videos]
   threads(get_titles, id_list, 0.02)
   print('Collected ' + str(len(videos_cleaned)) + ' titles and trailers')
-  with open('data/video_cleaned.json', 'w', encoding='utf-8') as outfile:
+  with open(path.join(
+          Path(__file__).parent.absolute(), 'data/video_cleaned.json'), 'w', encoding='utf-8') as outfile:
     dump(videos_cleaned, outfile, ensure_ascii=False)
   return videos_cleaned
 
 
-#get_ids()
+# get_ids()

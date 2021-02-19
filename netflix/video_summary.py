@@ -5,6 +5,8 @@ from time import sleep
 from threads import threads
 from netflix import url, headers
 from video_ids import get_ids
+from pathlib import Path
+from os import path
 
 
 def fetch_video(id, shows_with_summary):
@@ -28,12 +30,14 @@ def fetch_video(id, shows_with_summary):
 
 def get_summary():
   shows_with_summary = load(
-      open('data/video_summary.json', 'r', encoding='utf-8'))
+      open(path.join(
+          Path(__file__).parent.absolute(), 'data/video_summary.json'), 'r', encoding='utf-8'))
   ids = []
   for id in get_ids():
     ids.append((id, shows_with_summary))
   threads(fetch_video, ids, 0.02)
   print('Collected ' + str(len(shows_with_summary)) + ' shows and movies')
-  dump(shows_with_summary, open('data/video_summary.json',
-                                'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+  dump(shows_with_summary, open(path.join(
+      Path(__file__).parent.absolute(), 'data/video_summary.json'),
+      'w', encoding='utf-8'), ensure_ascii=False, indent=2)
   return shows_with_summary

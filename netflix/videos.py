@@ -5,6 +5,8 @@ from time import sleep
 from threads import threads
 from netflix import url, headers
 from jsonmerge import merge
+from pathlib import Path
+from os import path
 
 from video_summary import get_summary
 from media import get_media
@@ -103,9 +105,12 @@ def fetch_video(id, shows, genre_dict):
 
 
 def get_videos():
-  genre_dict = load(open('data/genres.json', 'r', encoding='utf-8'))
+  genre_dict = load(open(path.join(
+      Path(__file__).parent.absolute(), 'data/genres.json'), 'r', encoding='utf-8'))
 
-  shows = merge(get_summary(), load(open('data/videos.json', 'r', encoding='utf-8')))
+  shows = merge(get_summary(), load(
+      open(path.join(
+          Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8')))
   #shows = merge({}, load(open('data/video_summary.json', 'r', encoding='utf-8')))
   showCount = 0
   movieCount = 0
@@ -128,7 +133,8 @@ def get_videos():
   shows = get_media(shows)
   print('Collected ' + str(showCount) +
         ' shows and ' + str(movieCount) + ' movies')
-  dump(shows, open('data/videos.json', 'w', encoding='utf-8'),
+  dump(shows, open(path.join(
+      Path(__file__).parent.absolute(), 'data/videos.json'), 'w', encoding='utf-8'),
        ensure_ascii=False, indent=2, sort_keys=True)
 
 
