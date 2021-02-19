@@ -9,7 +9,12 @@
   "routes": [
     {
       "src": "/api/date",
-      "dest": "/api/date.go"
+      "dest": "/api/date.go",
+      "methods": ["GET", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Methods": "GET",
+        "Access-Control-Allow-Headers": "Content-Type"
+      }
     }
   ]
 }
