@@ -5,6 +5,7 @@ from threads import threads
 from netflix import url, headers
 from pathlib import Path
 from os import path
+from jsonmerge import merge
 
 error = 0
 
@@ -47,12 +48,12 @@ def get_titles(index, videos_cleaned, videos):
 
 
 def get_ids():
-  videos = {**{}.fromkeys(['28369403',
-                           '28630857',
-                           '28631029',
-                           '28631995',
-                           '28634944'], {}), **load(open(path.join(
-                               Path(__file__).parent.absolute(), 'data/video_ids.json'), 'r', encoding='utf-8'))}
+  videos = merge({}.fromkeys(['28369403',
+                              '28630857',
+                              '28631029',
+                              '28631995',
+                              '28634944'], {}), load(open(path.join(
+                                  Path(__file__).parent.absolute(), 'data/video_ids.json'), 'r', encoding='utf-8')))
   ids = []
   # 60 000 000 to 82 000 000
   for i in range(5):  # 60_037_677
@@ -67,13 +68,13 @@ def get_ids():
   for i in range(3040):  # 80_986_788 - 81 290 762 = 303,974
     index = 80_986_788 + i * 100
     ids.append((index, 100, videos))
-  #threads(rangeCollect, ids, 0.02)
+  threads(rangeCollect, ids, 0.02)
   print(error)
   print('Collected ' + str(len(videos)) + ' ids')
   # with open('data/video_ids.json', 'w', encoding='utf-8') as outfile:
   #  dump(videos, outfile, ensure_ascii=False)
 
-  videos_cleaned = {} | load(
+  videos_cleaned = load(
       open(path.join(
           Path(__file__).parent.absolute(), 'data/video_cleaned.json'), 'r', encoding='utf-8'))
   count = 0
