@@ -5,5 +5,11 @@
       "use": "@nuxtjs/vercel-builder",
       "config": {}
     }
+  ],
+  "routes": [
+    {
+      "src": "/api/date",
+      "dest": "/api/date.go"
+    }
   ]
 }
