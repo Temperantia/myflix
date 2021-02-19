@@ -47,12 +47,12 @@ def get_titles(index, videos_cleaned, videos):
 
 
 def get_ids():
-  videos = {}.fromkeys(['28369403',
-                        '28630857',
-                        '28631029',
-                        '28631995',
-                        '28634944'], {}) | load(open(path.join(
-                            Path(__file__).parent.absolute(), 'data/video_ids.json'), 'r', encoding='utf-8'))
+  videos = {**{}.fromkeys(['28369403',
+                           '28630857',
+                           '28631029',
+                           '28631995',
+                           '28634944'], {}), **load(open(path.join(
+                               Path(__file__).parent.absolute(), 'data/video_ids.json'), 'r', encoding='utf-8'))}
   ids = []
   # 60 000 000 to 82 000 000
   for i in range(5):  # 60_037_677
