@@ -29,14 +29,8 @@ export default class SuggestionsStore extends VuexModule {
     this.suggestions.unshift(review);
   }
 
-  @VuexMutation report({ id, idUser }: { id: string; idUser: string }): void {
-    const suggestion = this.suggestions.find(
-      suggestion => suggestion.id === id
-    );
-    suggestion.reports.push(idUser);
-  }
-
-  @VuexAction({ rawError: true }) async create(suggestion: any) {
+  @VuexAction({ rawError: true })
+  async create(suggestion: any) {
     if (!suggestion.similar) {
       $toast.error("You need to pick a similar title");
       return;
@@ -81,14 +75,16 @@ export default class SuggestionsStore extends VuexModule {
   @VuexAction({ rawError: true, commit: "setLatest" })
   async getLatest(cookies: any) {
     const titles: any = this.context.rootState.browse.titles;
-    const latest: any = await docs(
-      $fire.firestore
-        .collection("suggestions")
-        .orderBy("postedOn", "desc")
-        .limit(3),
-      "getSuggestionsLatest",
-      cookies
-    );
+    const latest: any = (
+      await docs(
+        $fire.firestore
+          .collection("suggestions")
+          .orderBy("postedOn", "desc")
+          .limit(3),
+        "getSuggestionsLatest",
+        cookies
+      )
+    ).filter((suggestion: any) => !suggestion.banned);
 
     if (process.client) {
       for (const suggestion of latest) {
@@ -107,11 +103,13 @@ export default class SuggestionsStore extends VuexModule {
 
   @VuexAction({ rawError: true, commit: "setProfile" })
   async getProfile(username: string) {
-    return await docs(
-      $fire.firestore
-        .collection("suggestions")
-        .where("author.username", "==", username)
-    );
+    return (
+      await docs(
+        $fire.firestore
+          .collection("suggestions")
+          .where("author.username", "==", username)
+      )
+    ).filter((suggestion: any) => !suggestion.banned);
   }
 
   @VuexAction({ rawError: true, commit: "setSuggestions" }) async get(
@@ -124,6 +122,23 @@ export default class SuggestionsStore extends VuexModule {
           .where("title.id", "==", Number(id)),
         "getSuggestions"
       )
-    ).sort((a: any, b: any) => b.postedOn - a.postedOn);
+    )
+      .filter((suggestion: any) => !suggestion.banned)
+      .sort((a: any, b: any) => b.postedOn - a.postedOn);
+  }
+
+  @VuexAction({ rawError: true })
+  report(suggestion: any) {
+    const idUser = this.context.rootGetters["localStorage/id"];
+    const update: any = {
+      reports: $fireModule.firestore.FieldValue.arrayUnion(idUser)
+    };
+    if (suggestion.reports.length >= 9) {
+      update.banned = true;
+    }
+    $fire.firestore
+      .collection("suggestions")
+      .doc(suggestion.id)
+      .update(update);
   }
 }

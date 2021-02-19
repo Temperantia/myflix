@@ -92,7 +92,7 @@ export default class Review extends Vue {
   overlay = false;
 
   get image() {
-    return this.profile?.image ?? '/defaultUser.png';
+    return this.profile?.image ?? '/pfp1.png';
   }
 
   get content() {
@@ -112,7 +112,7 @@ export default class Review extends Vue {
   }
 
   check() {
-    this.report(this.review.id);
+    this.report(this.review);
     this.overlay = false;
   }
 }

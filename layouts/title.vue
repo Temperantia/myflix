@@ -10,14 +10,8 @@ defaultLayout
               v-col
                 h3 YOUR OVERVIEW
               v-col.text-right
-                a.click(
-                  v-if='isFavorite(title.id)',
-                  @click='$removeFavorite(title, title.summary.type === "show" ? "shows" : "films")'
-                ) Remove from Favorites
-                a.click(
-                  v-else,
-                  @click='$addFavorite(title, title.summary.type === "show" ? "shows" : "films")'
-                ) Add to Favorites
+                a.click(v-if='isFavorite(title.id)', @click='removeFavorite') Remove from Favorites
+                a.click(v-else, @click='addFavorite') Add to Favorites
             v-row(align='center')
               v-col(cols='12', xl='4') Status
               v-col(cols='12', xl='8')
@@ -111,10 +105,7 @@ defaultLayout
       v-col(cols='12', md='10', xl='8')
         v-container(fluid)
           ul.title-border
-            li.d-block.d-md-inline(
-              v-for='tab in tabs',
-              :key='tab.name',
-            )
+            li.d-block.d-md-inline(v-for='tab in tabs', :key='tab.name')
               nuxt-link(:to='tab.route')
                 h3.d-inline.mr-10(
                   :class='{ "red-netflix--text": isCurrentTab(tab.route) }'

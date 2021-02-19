@@ -52,7 +52,7 @@ export default class ProfileInformation extends Vue {
   @profileModule.Getter('films') films!: any;
 
   get image() {
-    return this.profile?.image ?? '/defaultUser.png';
+    return this.profile?.image ?? '/pfp1.png';
   }
 }
 </script>

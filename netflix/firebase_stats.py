@@ -1,5 +1,5 @@
 from firebase import get_collection, video_collection, data_collection
-from json import load, dumps, loads
+from json import dumps, loads
 from threads import threads
 from random import uniform
 from statistics import mean
@@ -25,6 +25,10 @@ month_start = (dt.replace(day=1, minute=0,
                           second=0, microsecond=0)).timestamp()
 month_end = (dt.replace(day=month_day_end, minute=0,
                         second=0, microsecond=0)).timestamp()
+
+trending = {
+    "The Queen's Gambit": 3
+}
 
 
 """
@@ -52,7 +56,8 @@ def get_video_stats():
     videos[id] = video
     followers[id] = len(video['followers']) if video['followers'] else 0
     try:
-      video['score'] = mean(list(video['scores'].values())) if video['scores'] else None
+      video['score'] = mean(list(video['scores'].values())
+                            ) if video['scores'] else None
     except:
       print(video)
     scores[id] = video['score']
@@ -94,6 +99,8 @@ def update_search_tables():
         video['n'] = 1
       if availability >= month_start and availability <= month_end:
         video['m'] = 1
+    if video['t'] in trending:
+      video['j'] = trending[video['t']]
 
   print('Uploading search tables')
   searches = [search[x:x+CUT] for x in range(0, len(search), CUT)]

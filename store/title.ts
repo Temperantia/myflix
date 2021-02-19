@@ -24,16 +24,16 @@ export default class TitleStore extends VuexModule {
   suggestions: any[] = [];
   maturities: string[] = ["TV-Y7", "G", "PG", "PG-13", "TV-MA"];
   ratings: any = {
-    10: "Masterpiece",
-    9: "Special",
-    8: "Outstanding",
+    10: "Phenomenal",
+    9: "Amazing",
+    8: "Great",
     7: "Good",
-    6: "Fine",
-    5: "Average",
-    4: "Bad",
-    3: "Terrible",
+    6: "Decent",
+    5: "Mediocre",
+    4: "Poor",
+    3: "Bad",
     2: "Awful",
-    1: "Horrible"
+    1: "Atrocious"
   };
   statusesTvShow: string[] = [
     "Watching",

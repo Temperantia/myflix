@@ -57,11 +57,20 @@ v-app(app)
   v-main.blackBody
     v-container(fluid)
       v-row
-        v-col(v-if='$vuetify.breakpoint.xl', cols='1')
-        v-col.pa-0(cols='12', xl='10')
+        v-col(
+          v-if='$vuetify.breakpoint.xl && $route.path !== "/" && $route.path !== "/new-releases"',
+          cols='1'
+        )
+        v-col.pa-0(
+          cols='12',
+          :xl='$route.path !== "/" && $route.path !== "/new-releases" ? "10" : "12"'
+        )
           nuxt(v-if='!$slots.default')
           slot
-        v-col(v-if='$vuetify.breakpoint.xl', cols='1')
+        v-col(
+          v-if='$vuetify.breakpoint.xl && $route.path !== "/" && $route.path !== "/new-releases"',
+          cols='1'
+        )
   v-container.px-0.pt-0(fluid)
     footer
       .top
@@ -117,17 +126,9 @@ export default class Default extends Vue {
   }
 
   async created() {
-     await this.initBrowse(this.$cookies);
-     await this.initReviews(this.$cookies);
-     await this.initSuggestions(this.$cookies);
-  }
-
-  mounted() {
-    if (this.$route.params.path) {
-      this.currentTab = this.$route.params.path;
-    } else {
-      this.currentTab = this.$route.name as string;
-    }
+    await this.initBrowse(this.$cookies);
+    await this.initReviews(this.$cookies);
+    await this.initSuggestions(this.$cookies);
     this.tabs = [
       {
         name: 'HOME',
@@ -218,11 +219,19 @@ export default class Default extends Vue {
     ];
   }
 
+  mounted() {
+    this._mounted();
+  }
+
   @Watch('$route') onRouteChanged() {
+    this._mounted();
+  }
+
+  private _mounted() {
     if (this.$route.params.path) {
       this.currentTab = this.$route.params.path;
     } else {
-      this.currentTab = this.$route.matched[0].name as string;
+      this.currentTab = this.$route.name as string;
     }
   }
 }

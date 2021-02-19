@@ -61,7 +61,7 @@ export default class Goods extends Vue {
 
   mounted() {
     const element: any = document.getElementById('ad');
-    if (!element) {
+    if (!element || element.hasChildNodes()) {
       return;
     }
     const config = document.createElement('script');

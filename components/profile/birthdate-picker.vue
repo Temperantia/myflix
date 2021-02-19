@@ -62,6 +62,7 @@ export default class BirthdatePicker extends Vue {
     this.month = birthdate.getMonth() + 1;
     this.year = birthdate.getFullYear();
   }
+
   get days() {
     let days: number = this.daysByMonth[this.month - 1];
     if (this.month === 2 && this.year % 4 === 0) {
@@ -69,6 +70,7 @@ export default class BirthdatePicker extends Vue {
     }
     return Array.from({ length: days }, (x, i) => i + 1);
   }
+
   update() {
     this.onUpdate(new Date(this.year, this.month - 1, this.day));
   }

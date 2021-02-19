@@ -26,7 +26,7 @@ v-container(fluid)
     v-row
       v-col.d-flex.justify-center(cols='12', lg='3')
         v-container(fluid)
-          img(:src='copy.image ? copy.image : "/defaultUser.png"')
+          img(:src='copy.image ? copy.image : "/pfp1.png"')
       v-col(cols='12', lg='4')
         v-container(fluid)
           .mb-3 Must be jpg, gif or png format. No NSFW allowed. No copyrighted images. Maximum of 250 x 250 pixels (resized automatically).
@@ -86,7 +86,7 @@ v-container(fluid)
             v-col(cols='12', lg='9')
               h3 {{ show.title }}
               .white-font--text {{ show.year + " " + show.maturity + " " + show.season + " Seasons" }}
-              .white-font--text {{ show.genres.join(", ") }}
+              .white-font--text {{ show.genres.map((genre) => genre.name).join(", ") }}
             v-col.text-right(cols='12', lg='3')
               a.click.white-font--text(
                 @click='removeFavorite(copy.favorites.shows, id)'
@@ -98,7 +98,7 @@ v-container(fluid)
             v-col(cols='12', lg='9')
               h3 {{ film.title }}
               .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
-              .white-font--text {{ film.genres.join(", ") }}
+              .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
             v-col.text-right(cols='12', lg='3')
               a.click.white-font--text(
                 @click='removeFavorite(copy.favorites.films, id)'
@@ -129,8 +129,8 @@ v-container(fluid)
               @click='signInWithFacebook'
             )
       v-row(:class='{ "subtitle-border": !isSocial }')
-        template(v-if='!isSocial')
-          v-col(cols='12', lg='4')
+        v-col(cols='12', lg='4')
+          template(v-if='!isSocial')
             .mb-5.subtitle-border Change Password
             v-text-field.my-2(
               type='password',
@@ -141,7 +141,6 @@ v-container(fluid)
               :rules='[(v) => !v || v.length >= 6 || "Password should be at least 6 characters"]',
               autocomplete='new-password'
             )
-          v-col(cols='12', lg='4')
             .mb-5.subtitle-border Change Email
             v-text-field(
               color='red',
@@ -151,7 +150,6 @@ v-container(fluid)
               :rules='[(v) => !v || /.+@.+\..+/.test(v) || "E-mail must be valid"]',
               autocomplete='email'
             )
-        v-col(cols='12', lg='4')
           .mb-5.subtitle-border Change Username
           v-text-field(
             color='red',
@@ -164,6 +162,73 @@ v-container(fluid)
           div
             .white-font--text - You may only change your username once every month.
             .white-font--text - If you change your username, all links that used to go to your old username will no longer work.
+        v-col(cols='12', lg='4')
+          .mb-5.subtitle-border Notifications Options
+          v-switch(
+            label='Receive marketing emails?',
+            v-model='marketing',
+            dense,
+            outlined,
+            hide-details
+          )
+          .ml-10
+            v-checkbox(
+              :disabled='!marketing',
+              label='News about MyFlix product and feature updates',
+              v-model='copy.notifications.marketing.product',
+              dense,
+              hide-details
+            )
+            v-checkbox(
+              :disabled='!marketing',
+              label='Participation in MyFlix research surveys',
+              v-model='copy.notifications.marketing.survey',
+              dense,
+              hide-details
+            )
+            v-checkbox(
+              :disabled='!marketing',
+              label='News about MyFlix on partner products and other third party services',
+              v-model='copy.notifications.marketing.partner',
+              dense,
+              hide-details
+            )
+            v-checkbox(
+              :disabled='!marketing',
+              label='Things you missed since you last logged into MyFlix',
+              v-model='copy.notifications.marketing.missed',
+              dense,
+              hide-details
+            )
+          v-switch(
+            label='Receive marketing emails?',
+            v-model='notification',
+            dense,
+            outlined,
+            hide-details
+          )
+          .ml-10
+            v-checkbox(
+              :disabled='!notification',
+              label='Direct messages',
+              v-model='copy.notifications.notification.dm',
+              dense,
+              hide-details
+            )
+            v-checkbox(
+              :disabled='!notification',
+              label='Friend requests',
+              v-model='copy.notifications.notification.friend',
+              dense,
+              hide-details
+            )
+            v-checkbox(
+              :disabled='!notification',
+              label='Suggestions based on your FlixList',
+              v-model='copy.notifications.notification.suggestion',
+              dense,
+              hide-details
+            )
       v-row(v-if='!isSocial')
         v-col(cols='12', lg='4')
           v-text-field.my-2(
@@ -216,7 +281,7 @@ const localStorageModule = namespace('localStorage');
 @Component
 export default class ProfileEdition extends Vue {
   @profileModule.State('profile') profile!: any;
-  @localStorageModule.Action('deleteUser') deleteUser!: any;
+  @localStorageModule.Action('delete') deleteUser!: any;
   @localStorageModule.Action('update') update!: any;
 
   listTimeZones = listTimeZones;
@@ -229,6 +294,8 @@ export default class ProfileEdition extends Vue {
   username = '';
   deletionEmail = '';
   deletionPassword = '';
+  marketing: boolean = true;
+  notification: boolean = true;
 
   created() {
     this.copy = JSON.parse(JSON.stringify(this.profile));
@@ -238,6 +305,21 @@ export default class ProfileEdition extends Vue {
         'timeZone',
         Intl.DateTimeFormat().resolvedOptions().timeZone
       );
+    }
+    if (!this.copy.notifications) {
+      this.copy.notifications = {
+        marketing: {
+          product: true,
+          survey: true,
+          partner: true,
+          missed: true,
+        },
+        notification: {
+          dm: true,
+          friend: true,
+          suggestion: true,
+        },
+      };
     }
   }
 
@@ -377,7 +459,7 @@ export default class ProfileEdition extends Vue {
     ];
   }
 
-  time() {
+  get time() {
     return formatToTimeZone(new Date(), 'h:mm A', {
       timeZone: this.copy.timeZone,
     });

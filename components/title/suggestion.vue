@@ -60,7 +60,7 @@ export default class Suggestion extends Vue {
   overlay = false;
 
   check() {
-    this.report(this.suggestion.id);
+    this.report(this.suggestion);
     this.overlay = false;
   }
 }

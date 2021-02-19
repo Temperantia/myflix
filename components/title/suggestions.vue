@@ -55,7 +55,7 @@ div(v-else)
         p No suggestions yet
 </template>
 <script lang='ts'>
-import { Vue, Component, namespace } from 'nuxt-property-decorator';
+import { Vue, Component, namespace, Watch } from 'nuxt-property-decorator';
 
 const localStorageModule = namespace('localStorage');
 const suggestionsModule = namespace('suggestions');
@@ -76,6 +76,15 @@ export default class Suggestions extends Vue {
   };
 
   mounted() {
+    this._mounted();
+  }
+
+  @Watch('$router')
+  onRouteChanged() {
+    this._mounted();
+  }
+
+  private _mounted() {
     const id = this.$route.hash.substring(1);
     if (id) {
       const index = this.source.findIndex(

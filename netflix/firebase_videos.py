@@ -16,6 +16,7 @@ f : follower number
 g : genres
 h : bingeworthy
 i : image / tall box art
+j : trending
 m : current month
 n : current new release (< 2 weeks)
 o : original

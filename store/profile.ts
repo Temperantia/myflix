@@ -25,9 +25,11 @@ export default class ProfileStore extends VuexModule {
   }
 
   get tvShows() {
-    return Object.values(this.profile?.flixlist ?? []).filter(
-      (element: any) => element.title.summary.type === "show"
-    );
+    return Object.values(this.profile?.flixlist ?? [])
+      .filter((element: any) => element.title.summary.type === "show")
+      .sort((a: any, b: any) =>
+        a.postedOn.seconds > b.postedOn.seconds ? -1 : 1
+      );
   }
 
   get tvShowsStats() {
@@ -137,9 +139,11 @@ export default class ProfileStore extends VuexModule {
   }
 
   get films() {
-    return Object.values(this.profile?.flixlist ?? []).filter(
-      (element: any) => element.title.summary.type === "movie"
-    );
+    return Object.values(this.profile?.flixlist ?? [])
+      .filter((element: any) => element.title.summary.type === "movie")
+      .sort((a: any, b: any) =>
+        a.postedOn.seconds > b.postedOn.seconds ? -1 : 1
+      );
   }
 
   get filmsStats() {

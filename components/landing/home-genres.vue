@@ -8,7 +8,7 @@ h1.title-border.font-weight-bold SUGGESTED GENRES
         v-for='category in categories',
         :key='category.category',
         style='position: relative',
-        @click='$router.push({ name: "titles", params: { category: category.category } })'
+        @click='$router.push({ name: "search", params: { category: category.category } })'
       )
         img(:src='category.image')
         div(

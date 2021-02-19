@@ -42,7 +42,7 @@ div(v-else)
         p No reviews yet
 </template>
 <script lang='ts'>
-import { Vue, Component, namespace } from 'nuxt-property-decorator';
+import { Vue, Component, namespace, Watch } from 'nuxt-property-decorator';
 
 const reviewsModule = namespace('reviews');
 const titleModule = namespace('title');
@@ -81,6 +81,15 @@ export default class Reviews extends Vue {
   }
 
   mounted() {
+    this._mounted();
+  }
+
+  @Watch('$router')
+  onRouteChanged() {
+    this._mounted();
+  }
+
+  private _mounted() {
     const id = this.$route.hash.substring(1);
     if (id) {
       const index = this.source.findIndex((review: any) => review.id === id);

@@ -46,12 +46,6 @@ export default class ReviewsStore extends VuexModule {
     review.likes.splice(index, 1);
   }
 
-  @VuexMutation
-  report({ id, idUser }: { id: string; idUser: string }): void {
-    const review = this.reviews.find(review => review.id === id);
-    review.reports.push(idUser);
-  }
-
   @VuexAction({ rawError: true })
   async create(review: any) {
     if (review.content.length < 200 || review.content.length > 1000) {
@@ -95,14 +89,16 @@ export default class ReviewsStore extends VuexModule {
   @VuexAction({ rawError: true, commit: "setLatest" })
   async getLatest(cookies: any) {
     const titles: any = this.context.rootState.browse.titles;
-    const latest: any = await docs(
-      $fire.firestore
-        .collection("reviews")
-        .orderBy("postedOn", "desc")
-        .limit(3),
-      "getReviewsLatest",
-      cookies
-    );
+    const latest: any = (
+      await docs(
+        $fire.firestore
+          .collection("reviews")
+          .orderBy("postedOn", "desc")
+          .limit(3),
+        "getReviewsLatest",
+        cookies
+      )
+    ).filter((review: any) => !review.banned);
     if (process.client) {
       for (const review of latest) {
         const title: any = titles.find(
@@ -117,11 +113,13 @@ export default class ReviewsStore extends VuexModule {
 
   @VuexAction({ rawError: true, commit: "setProfile" })
   async getProfile(username: string) {
-    return await docs(
-      $fire.firestore
-        .collection("reviews")
-        .where("author.username", "==", username)
-    );
+    return (
+      await docs(
+        $fire.firestore
+          .collection("reviews")
+          .where("author.username", "==", username)
+      )
+    ).filter((review: any) => !review.banned);
   }
 
   @VuexAction({ rawError: true, commit: "setReviews" })
@@ -133,7 +131,9 @@ export default class ReviewsStore extends VuexModule {
           .where("title.id", "==", Number(id)),
         "getReviews"
       )
-    ).sort((a: any, b: any) => b.postedOn - a.postedOn);
+    )
+      .filter((review: any) => !review.banned)
+      .sort((a: any, b: any) => b.postedOn - a.postedOn);
   }
 
   @VuexAction({ rawError: true, commit: "addLike" })
@@ -158,5 +158,16 @@ export default class ReviewsStore extends VuexModule {
         likes: $fireModule.firestore.FieldValue.arrayRemove(idUser)
       });
     return { id, idUser };
+  }
+
+  @VuexAction({ rawError: true })
+  report(review: any) {
+    const idUser = this.context.rootGetters["localStorage/id"];
+    $fire.firestore
+      .collection("reviews")
+      .doc(review.id)
+      .update({
+        reports: $fireModule.firestore.FieldValue.arrayUnion(idUser)
+      });
   }
 }

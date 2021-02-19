@@ -91,7 +91,7 @@ export default class NewReleases extends Vue {
         (this.score === 'All' ||
           Number(this.score.match(/(([^()]+))/)?.[1]) === parseInt(title.z)) &&
         (this.genre === 'All' || title.c.includes(this.genre)) &&
-        (!this.original || title.o) && (!this.bingeworthiness || title.h)
+        (!this.original || title.o) && (!this.bingeworthiness || title.h > 0.5)
       );
     });
   }

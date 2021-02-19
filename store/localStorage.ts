@@ -6,7 +6,7 @@ import {
   VuexAction
 } from "nuxt-property-decorator";
 import { $fire, $fireModule, $moment, $router, $toast } from "~/utils/modules";
-import { doc,  } from "~/plugins/firebase";
+import { doc } from "~/plugins/firebase";
 import { $getUser, $userExists } from "~/plugins/auth";
 
 @Module({ name: "localStorage", stateFactory: true, namespaced: true })
@@ -204,7 +204,8 @@ export default class localStorageStore extends VuexModule {
     return { id, ...user };
   }
 
-  @VuexAction({ rawError: true }) async update(
+  @VuexAction({ rawError: true })
+  async update(
     user: any,
     passwordNew: string,
     passwordCurrent: string,
@@ -253,6 +254,40 @@ export default class localStorageStore extends VuexModule {
       .collection("users")
       .doc(user.id)
       .set(user);
+    await $fire.firestore
+      .collection("globals")
+      .doc("newsletters")
+      .set(
+        {
+          marketing: {
+            product: user.notifications.marketing.product
+              ? $fireModule.firestore.FieldValue.arrayUnion(user.email)
+              : $fireModule.firestore.FieldValue.arrayRemove(user.email),
+            survey: user.notifications.marketing.survey
+              ? $fireModule.firestore.FieldValue.arrayUnion(user.email)
+              : $fireModule.firestore.FieldValue.arrayRemove(user.email),
+            partner: user.notifications.marketing.partner
+              ? $fireModule.firestore.FieldValue.arrayUnion(user.email)
+              : $fireModule.firestore.FieldValue.arrayRemove(user.email),
+            missed: user.notifications.marketing.missed
+              ? $fireModule.firestore.FieldValue.arrayUnion(user.email)
+              : $fireModule.firestore.FieldValue.arrayRemove(user.email)
+          },
+          notification: {
+            dm: user.notifications.notification.dm
+              ? $fireModule.firestore.FieldValue.arrayUnion(user.email)
+              : $fireModule.firestore.FieldValue.arrayRemove(user.email),
+            friend: user.notifications.notification.friend
+              ? $fireModule.firestore.FieldValue.arrayUnion(user.email)
+              : $fireModule.firestore.FieldValue.arrayRemove(user.email),
+            suggestion: user.notifications.notification.suggestion
+              ? $fireModule.firestore.FieldValue.arrayUnion(user.email)
+              : $fireModule.firestore.FieldValue.arrayRemove(user.email)
+          }
+        },
+        { merge: true }
+      );
+
     if (redirect) {
       $router.push(redirect);
     }
@@ -261,18 +296,14 @@ export default class localStorageStore extends VuexModule {
     this.context.commit("profile/setProfile", user, { root: true });
   }
 
-  @VuexAction({ rawError: true, commit: "_signOut" }) async signOut() {
+  @VuexAction({ rawError: true, commit: "_signOut" })
+  async signOut() {
     await $fire.auth.signOut();
     $router.push("/");
   }
 
-  @VuexAction({ rawError: true, commit: "_signOut" }) async delete({
-    email,
-    password
-  }: {
-    email: string;
-    password: string;
-  }) {
+  @VuexAction({ rawError: true, commit: "_signOut" })
+  async delete({ email, password }: { email: string; password: string }) {
     if (email && password) {
       const id = $fire.auth.currentUser?.uid;
       let userCheck;
@@ -395,7 +426,8 @@ export default class localStorageStore extends VuexModule {
     return { type, favorite };
   }
 
-  @VuexAction({ rawError: true, commit: "_removeFavorite" }) removeFavorite() {
+  @VuexAction({ rawError: true, commit: "_removeFavorite" })
+  removeFavorite() {
     const title = this.context.rootState.title.title;
     const type = title.summary.type === "show" ? "shows" : "films";
     $fire.firestore

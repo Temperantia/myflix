@@ -10,15 +10,16 @@ v-container(fluid)
       style='position: relative; height: 300px'
     )
       nuxt-link(:to='title.r')
-        div(
-          v-if='status',
-          style='width: 100%; position: absolute; top: 0; left: 0'
-        )
+        div(style='width: 100%; position: absolute; top: 0; left: 0')
           progress-bar(
+            v-if='status',
             :status='status',
             :episodes='episodes(title.id)',
             :episodeCount='title.e'
           )
+          div(v-if='title.j')
+            img.icon(src='/trending.png')
+            div(style='position: absolute; top: 0; left: 0; font-size: 14px') {{ "Trending #" + title.j }}
         div(
           :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + title.b + ");"'
         )

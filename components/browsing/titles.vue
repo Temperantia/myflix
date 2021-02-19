@@ -2,7 +2,7 @@
 v-container(fluid)
   v-row.subtitle-border
     v-col.pr-0(cols='12', lg='2')
-      h1.pageSubHead.font-weight-black {{ show ? "TV SHOWS" : film ? "FILMS" : "TITLES" }}
+      h1.pageSubHead.font-weight-black {{ show ? "TV SHOWS" : film ? "FILMS" : "SEARCH" }}
       h2.pageSubHead_1 {{ parseFloat(source.length).toLocaleString("en") }} titles currently available on Netflix
     v-col.searchContainer(cols='8', offset-lg='2', lg='4')
       input#search.titlePageSearch(
@@ -55,7 +55,7 @@ v-container(fluid)
       )
     v-col(cols='12', lg='2') Sort
       v-select(
-        :items='["Most Popular", "Netflix Original", "Release date (Newest first)", "Release date (Oldest first)", "Alphabetical (A - Z)"]',
+        :items='["Most Popular", "Netflix Original", "Bingeworthy", "Release date (Newest first)", "Release date (Oldest first)", "Alphabetical (A - Z)"]',
         v-model='sort',
         outlined,
         dense
@@ -105,6 +105,10 @@ export default class Titles extends Vue {
     if (this.$route.params.category) {
       this.category = this.$route.params.category;
     }
+
+    if (this.$route.query.search) {
+      this.search = (this.$route.query.search as string) ?? '';
+    }
   }
 
   slugify(str: string): string {
@@ -141,6 +145,8 @@ export default class Titles extends Vue {
           return a.p - b.p;
         } else if (this.sort === 'Netflix Original') {
           return a.o ? -1 : 1;
+        } else if (this.sort === 'Bingeworthy') {
+          return a.h > b.h ? -1 : 1;
         } else if (this.sort === 'Release date (Newest first)') {
           return a.a && b.a ? (a.a > b.a ? -1 : 1) : a.y > b.y ? -1 : 1;
         } else if (this.sort === 'Release date (Oldest first)') {
