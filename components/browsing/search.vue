@@ -30,11 +30,12 @@ v-autocomplete(
   dense,
   :hide-details='true',
   cache-items,
-  :search-input='input',
   :filter='search',
-  :value='value',
   append-icon='mdi-magnify',
-  background-color='#0f0f0f'
+  background-color='#0f0f0f',
+  item-text='t',
+  item-value='t',
+  :value='value'
 )
   template(v-slot:item='{ item }')
     v-list-item(@click='click(item)')
@@ -51,7 +52,9 @@ const browseModule = namespace('browse');
 @Component
 export default class Search extends Vue {
   @Prop({ type: Boolean }) nav!: boolean;
+
   @browseModule.State('titles') titles!: Function;
+
   input: string = '';
   value: string = '';
   items: any[] = [];
@@ -67,7 +70,14 @@ export default class Search extends Vue {
 
   click(item: any) {
     this.value = item.t;
-    this.$emit('click', item);
+    this.$emit('click', {
+      boxArt: item.x,
+      id: item.id,
+      storyArt: item.b,
+      tallBoxArt: item.i,
+      title: item.t,
+      type: item.u ? 'show' : 'movie',
+    });
   }
 
   search(item: any, queryText: string, itemText: any) {

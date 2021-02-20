@@ -163,7 +163,7 @@ def upload_search():
   for index, search in enumerate(searches):
     arr = []
     for key in search:
-      arr.append({'id': key} | search[key])
+      arr.append({**{'id': key}, **search[key]})
     json = dumps(arr)
     print(len(json.encode('utf-8')))  # must not exceed 1048487
     data_collection.document('search' + str(index)).set({'search': json})
