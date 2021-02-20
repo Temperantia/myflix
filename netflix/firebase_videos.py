@@ -5,6 +5,8 @@ from slugify import slugify
 from threads import threads
 from random import randint
 from datetime import datetime
+from pathlib import Path
+from os import path
 
 """
 a : availability
@@ -34,13 +36,30 @@ z : score
 
 """
 
+
+def filter_dict(d, f):
+  newDict = dict()
+  for key, value in d.items():
+    print(value)
+    if f(key, value):
+      newDict[key] = value
+
+  return newDict
+
+
 searches = []
 types = {}
 title_ids = {}
 CUT = 1000
 now = datetime.now()
-data = {k: v for k, v in sorted(
-    load(open('data/videos.json', 'r', encoding='utf-8')).items(), key=lambda item: (not item[1]['title'][0].isalpha(), item[1]['title']) if item[1]['title'] else (False, item[1]['title']))}
+file = load(open(path.join(
+    Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8'))
+items = {}
+for id, video in file.items():
+  if 'title' in video and video['title']:
+    items[id] = video
+data = {k: v for k, v in sorted(items.items(), key=lambda item: (not item[1]['title'][0].isalpha(
+), item[1]['title']))}
 dict_genres = load(open('data/genres_tagged.json', 'r', encoding='utf-8'))
 
 
@@ -48,8 +67,9 @@ def extract_categories():
   categories = []
   for category in dict_genres:
     categories.append(category)
-  dump(categories, open('data/categories.json', 'w', encoding='utf-8'),
-       ensure_ascii=False, indent=2, sort_keys=True)
+  dump(categories, open(path.join(
+      Path(__file__).parent.absolute(), 'data/categories.json'), 'w', encoding='utf-8'),
+      ensure_ascii=False, indent=2, sort_keys=True)
 
 
 def create_route(title, type, id):
@@ -138,7 +158,7 @@ def upload(id, index, data):
 
 def upload_search():
   global searches
-  #for doc in data_collection.stream():
+  # for doc in data_collection.stream():
   #  doc.reference.delete()
   for index, search in enumerate(searches):
     arr = []
@@ -158,8 +178,9 @@ def launch():
         data
     ])
   threads(upload, ids, 0)
-  dump(data, open('data/videos.json',
-                  'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+  dump(data, open(path.join(
+      Path(__file__).parent.absolute(), 'data/videos.json'),
+      'w', encoding='utf-8'), ensure_ascii=False, indent=2)
   upload_search()
 
 

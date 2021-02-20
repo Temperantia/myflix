@@ -252,13 +252,10 @@ export default class ProfileStore extends VuexModule {
 
   @VuexAction({ commit: "setProfile" })
   async loadUsername(username: string) {
-    if (this.profile?.username !== username) {
-      let user = this.context.rootGetters["localStorage/user"];
-      if (!user || username !== user.username) {
-        user = await $getUser(username);
-      }
-      return user;
+    let user = this.context.rootGetters["localStorage/user"];
+    if (!user || username !== user.username) {
+      user = await $getUser(username);
     }
-    return this.profile;
+    return user;
   }
 }
