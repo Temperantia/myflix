@@ -138,8 +138,8 @@ def upload(id, index, data):
 
 def upload_search():
   global searches
-  for doc in data_collection.stream():
-    doc.reference.delete()
+  #for doc in data_collection.stream():
+  #  doc.reference.delete()
   for index, search in enumerate(searches):
     arr = []
     for key in search:

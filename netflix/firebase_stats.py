@@ -60,7 +60,7 @@ def get_video_stats():
                             ) if video['scores'] else None
     except:
       print(video)
-    scores[id] = video['score']
+    scores[id] = video['score'] if video['score'] else 0
     bingeworthiness[id] = len(video['bingeworthiness']) / \
         2 if 'bingeworthiness' in video and video['bingeworthiness'] else 0
 
