@@ -65,11 +65,16 @@ export default class BrowseStore extends VuexModule {
         db.createObjectStore("titles", {
           keyPath: "id"
         });
+        db.createObjectStore("categories", {
+          keyPath: "category"
+        });
       }
     });
     let titles: any;
+    let categories: any = {};
     if (cookies.get("getSearch")) {
       titles = await db.getAll("titles");
+      categories = await db.getAll("categories");
     } else {
       titles = (await docs($fire.firestore.collection("data")))
         .reduce(
@@ -88,28 +93,34 @@ export default class BrowseStore extends VuexModule {
           }
           return title;
         });
+      for (const item of titles) {
+        for (const category of item.c) {
+          if (categories[category]) {
+            categories[category].value++;
+          } else {
+            categories[category] = {
+              category: category,
+              value: 1,
+              image: item.i
+            };
+          }
+        }
+      }
       cookies.set("getSearch", true, { maxAge: 60 * 60 * 24 });
-      const tx = db.transaction("titles", "readwrite");
-      const promises: any = titles.map((title: any) => tx.store.put(title));
+
+      let tx: any;
+      let promises: any;
+      tx = db.transaction("titles", "readwrite");
+      promises = titles.map((title: any) => tx.store.put(title));
+      promises.push(tx.done);
+      await Promise.all(promises);
+
+      tx = db.transaction("categories", "readwrite");
+      promises = Object.values(categories).map((category: any) => tx.store.put(category));
       promises.push(tx.done);
       await Promise.all(promises);
     }
-
     this.setTitles(titles);
-    let categories: any = {};
-    for (const item of titles) {
-      for (const category of item.c) {
-        if (categories[category]) {
-          categories[category].value++;
-        } else {
-          categories[category] = {
-            category: category,
-            value: 1,
-            image: item.b
-          };
-        }
-      }
-    }
     this.setCategories(
       Object.values(categories)
         .sort((a: any, b: any) => b.value - a.value)

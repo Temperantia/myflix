@@ -54,6 +54,8 @@ export default class ReviewsStore extends VuexModule {
     }
     const author = this.context.rootState.localStorage.user;
     const title = this.context.rootState.title.title;
+    const titles: any = this.context.rootState.browse.titles;
+    const t: any = titles.find((title: any) => title.id === String(title.id));
     const data = {
       author: {
         id: author.id,
@@ -63,10 +65,10 @@ export default class ReviewsStore extends VuexModule {
       title: {
         id: title.summary.id,
         type: title.summary.type,
+        route: t.r,
         title: title.title,
         boxArt: title.boxArt,
-        Poster: title.Poster,
-        storyArt: title.storyArt
+        Poster: title.Poster
       },
       ...review,
       reports: [],
@@ -88,7 +90,6 @@ export default class ReviewsStore extends VuexModule {
 
   @VuexAction({ rawError: true, commit: "setLatest" })
   async getLatest(cookies: any) {
-    const titles: any = this.context.rootState.browse.titles;
     const latest: any = (
       await docs(
         $fire.firestore
@@ -99,15 +100,6 @@ export default class ReviewsStore extends VuexModule {
         cookies
       )
     ).filter((review: any) => !review.banned);
-    if (process.client) {
-      for (const review of latest) {
-        const title: any = titles.find(
-          (item: any) => item.id === String(review.title.id)
-        );
-        review.title.route = title.r;
-      }
-    }
-
     return latest;
   }
 

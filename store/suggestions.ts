@@ -41,6 +41,10 @@ export default class SuggestionsStore extends VuexModule {
     }
     const author = this.context.rootState.localStorage.user;
     const title = this.context.rootState.title.title;
+    const titles: any = this.context.rootState.browse.titles;
+    const t: any = titles.find((title: any) => title.id === String(title.id));
+    const s: any = titles.find((title: any) => suggestion.similar.id === String(title.id));
+    suggestion.similar.route = s.r;
     const data = {
       author: {
         id: author.id,
@@ -51,9 +55,9 @@ export default class SuggestionsStore extends VuexModule {
         id: title.summary.id,
         type: title.summary.type,
         title: title.title,
+        route: t.r,
         boxArt: title.boxArt,
-        Poster: title.Poster,
-        storyArt: title.storyArt
+        Poster: title.Poster
       },
       ...suggestion,
       reports: [],
@@ -74,7 +78,6 @@ export default class SuggestionsStore extends VuexModule {
 
   @VuexAction({ rawError: true, commit: "setLatest" })
   async getLatest(cookies: any) {
-    const titles: any = this.context.rootState.browse.titles;
     const latest: any = (
       await docs(
         $fire.firestore
@@ -86,18 +89,6 @@ export default class SuggestionsStore extends VuexModule {
       )
     ).filter((suggestion: any) => !suggestion.banned);
 
-    if (process.client) {
-      for (const suggestion of latest) {
-        const title: any = titles.find(
-          (item: any) => item.id === String(suggestion.title.id)
-        );
-        suggestion.title.route = title.r;
-        const similar: any = titles.find(
-          (item: any) => item.id === String(suggestion.similar.id)
-        );
-        suggestion.similar.route = similar.r;
-      }
-    }
     return latest;
   }
 

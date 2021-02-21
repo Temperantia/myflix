@@ -223,7 +223,8 @@ export default class Default extends Vue {
     this._mounted();
   }
 
-  @Watch('$route') onRouteChanged() {
+  @Watch('$route')
+  onRouteChanged() {
     this._mounted();
   }
 
