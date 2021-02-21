@@ -11,7 +11,7 @@ from video_summary import get_summary
 from imdbpy import get_imdb_data
 from media import request_media
 
-REFRESH_IDS = True
+REFRESH_IDS = False
 
 
 def list_until_empty(data, k=None):
@@ -122,7 +122,7 @@ def get_videos():
         open(path.join(
             Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8')))
   else:
-    shows = load(open('data/videos.json', 'r', encoding='utf-8'))
+    shows = load(open('data/video_summary.json', 'r', encoding='utf-8'))
 
   showCount = 0
   movieCount = 0
@@ -152,7 +152,6 @@ def get_videos():
   for id in s:
     args.append([id, s[id]['title'], s])
   threads(fetch_extra, args, 0.3, 'Fetching media center and imdb')
-
   print('Collected ' + str(showCount) +
         ' shows and ' + str(movieCount) + ' movies')
 

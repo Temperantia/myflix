@@ -101,7 +101,7 @@ export default class BrowseStore extends VuexModule {
             categories[category] = {
               category: category,
               value: 1,
-              image: item.i
+              image: item.b
             };
           }
         }
@@ -116,15 +116,14 @@ export default class BrowseStore extends VuexModule {
       await Promise.all(promises);
 
       tx = db.transaction("categories", "readwrite");
-      promises = Object.values(categories).map((category: any) => tx.store.put(category));
+      promises = Object.values(categories)
+        .sort((a: any, b: any) => b.value - a.value)
+        .slice(0, 3)
+        .map((category: any) => tx.store.put(category));
       promises.push(tx.done);
       await Promise.all(promises);
     }
     this.setTitles(titles);
-    this.setCategories(
-      Object.values(categories)
-        .sort((a: any, b: any) => b.value - a.value)
-        .slice(0, 3)
-    );
+    this.setCategories(categories);
   }
 }

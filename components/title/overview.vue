@@ -96,28 +96,30 @@ v-container(fluid, v-if='title')
         v-container(fluid)
           v-row
             v-col
-              p(v-html='title.synopsis ? title.synopsis : "Not Available"')
+              p(
+                v-html='title.PlotOutline ? title.PlotOutline : "Not Available"'
+              )
   v-row
     v-col
       h3.title-border CAST
       v-container(fluid)
         v-row
-          template(v-if='title.imdbCast')
+          template(v-if='title.Actors')
             v-col(
-              v-for='actor of title.imdbCast',
+              v-for='[name, role] of title.Actors',
               cols='6',
               md='2',
-              :key='actor.name'
+              :key='name'
             )
               v-container(fluid)
                 v-row
-                  v-col(cols='3')
-                    img(:src='actor.image')
+                  //-v-col(cols='3')
+                    img(:src='')
                   v-col.pl-1.pt-1(cols='9')
-                    div {{ actor.name }}
+                    div {{ name }}
                     div as
-                      span.red-netflix--text.pl-2 {{ actor.character }}
-                    div(v-if='title.summary.type === "show"') {{ actor.episodes }}
+                      span.red-netflix--text.pl-2 {{ role }}
+                    //-div(v-if='title.summary.type === "show"') {{ actor.episodes }}
           v-col(v-else)
             p Not Available
   v-row
@@ -125,28 +127,30 @@ v-container(fluid, v-if='title')
       h3.title-border CREDITS
       v-container(fluid)
         v-row
-          template(v-if='title.credits')
+          template(
+            v-if='title.ProductionCompanies || title.DistributorCompanies || title.SpecialEffects || title.OtherCompanies'
+          )
             v-col(
-              v-for='(credits, category) in title.credits',
+              v-for='(value, key) of categories',
               cols='12',
               md='4',
-              :key='category'
+              :key='key'
             )
-              h4.mb-2 {{ category }}
-              template(v-if='Object.keys(credits).length > 5')
-                template(v-if='expanded[category]')
-                  div(v-for='credit in credits', :key='credit') {{ credit }}
+              h4.mb-2 {{ value }}
+              template(v-if='Object.keys(title[key]).length > 5')
+                template(v-if='expanded[key]')
+                  div(v-for='(credit, index) in title[key]', :key='index') {{ credit }}
                 template(v-else)
-                  div(v-for='credit in credits.slice(0, 5)', :key='credit') {{ credit }}
+                  div(v-for='(credit, index) in title[key].slice(0, 5)', :key='index') {{ credit }}
                 .red-netflix--text.click(
-                  v-if='expanded[category]',
-                  @click='expanded = Object.assign({}, expanded, { [category]: false })'
+                  v-if='expanded[key]',
+                  @click='expanded = Object.assign({}, expanded, { [key]: false })'
                 ) {{ " show less" }}
                 .red-netflix--text.click(
                   v-else,
-                  @click='expanded = Object.assign({}, expanded, { [category]: true })'
+                  @click='expanded = Object.assign({}, expanded, { [key]: true })'
                 ) {{ " show more" }}
-              div(v-else, v-for='credit in credits', :key='credit') {{ credit }}
+              div(v-else, v-for='(credit, index) in title[key]', :key='index') {{ credit }}
           v-col(v-else)
             p Not Available
 </template>
@@ -174,16 +178,18 @@ export default class Overview extends Vue {
   @titleModule.Action('loadFlixlist') loadflixlist!: any;
   @titleModule.Action('update') update!: any;
 
-  expanded: { [key: string]: any } = {};
-
-  created() {
-    if (!this.title?.credits) {
-      return;
-    }
-    for (const category in this.title.credits) {
-      this.expanded[category] = false;
-    }
-  }
+  expanded: { [key: string]: any } = {
+    ProductionCompanies: false,
+    DistributorCompanies: false,
+    SpecialEffects: false,
+    OtherCompanies: false,
+  };
+  categories = {
+    ProductionCompanies: 'Production Companies',
+    DistributorCompanies: 'Distributor Companies',
+    SpecialEffects: 'Special Effects',
+    OtherCompanies: 'Other Companies',
+  };
 
   get statuses() {
     return [...this.statusesTvShow, 'Remove from List'];
