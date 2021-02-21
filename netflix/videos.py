@@ -122,7 +122,7 @@ def get_videos():
         open(path.join(
             Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8')))
   else:
-    shows = load(open('data/video_summary.json', 'r', encoding='utf-8'))
+    shows = load(open('data/videos.json', 'r', encoding='utf-8'))
 
   showCount = 0
   movieCount = 0
