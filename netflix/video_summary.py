@@ -1,11 +1,12 @@
 
 from requests import post
 from json import dump, load
+from pathlib import Path
+from os import path
+
 from threads import threads
 from netflix import url, headers
 from video_ids import get_ids
-from pathlib import Path
-from os import path
 
 
 def fetch_video(id, shows_with_summary):
@@ -27,6 +28,8 @@ def fetch_video(id, shows_with_summary):
     print('error ' + str(id))
 
 # Summaries are the only way known to identify proper titles, ids need to be individually fetched
+
+
 def get_summary():
   shows_with_summary = load(
       open(path.join(

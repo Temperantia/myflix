@@ -1,10 +1,11 @@
 from requests import post
 from json import dump, dumps, load
-from threads import threads
-from netflix import url, headers
 from pathlib import Path
 from os import path
 from jsonmerge import merge
+
+from threads import threads
+from netflix import url, headers
 
 error = 0
 

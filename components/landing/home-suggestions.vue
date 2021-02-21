@@ -14,7 +14,7 @@ div
         v-row
           v-col(cols='4', lg='2')
             nuxt-link(:to='suggestion.title.route')
-              img(:src='suggestion.title.tallBoxArt')
+              img(:src='suggestion.title.Poster')
           v-col(cols='8', lg='4') If you liked
             nuxt-link(:to='suggestion.title.route')
               .red-netflix--text {{ suggestion.title.title }}

@@ -34,7 +34,7 @@ v-col(cols='12', lg='10')
             :key='element.title.id'
           )
             v-col(cols='12', lg='2')
-              img(:src='element.title.tallBoxArt')
+              img(:src='element.title.Poster')
             v-col(cols='12', lg='6')
               h2 {{ element.title.title }}
               .white-font--text {{ element.title.releaseYear }} {{ element.title.maturity }} {{ element.title.seasonCount }} Season
@@ -82,7 +82,7 @@ v-col(cols='12', lg='10')
             :key='element.title.id'
           )
             v-col(cols='12', lg='2')
-              img(:src='element.title.tallBoxArt')
+              img(:src='element.title.Poster')
             v-col(cols='12', lg='6')
               h2 {{ element.title.title }}
               .white-font--text {{ element.title.releaseYear }} {{ element.title.maturity }}

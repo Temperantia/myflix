@@ -1,10 +1,11 @@
-from firebase import get_collection, video_collection, data_collection
 from json import dumps, loads
-from threads import threads
 from random import uniform
 from statistics import mean
 from datetime import datetime, timedelta
 from calendar import monthrange
+
+from threads import threads
+from firebase import get_collection, video_collection, data_collection
 
 scores = {}
 followers = {}

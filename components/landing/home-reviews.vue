@@ -6,7 +6,7 @@ v-col(cols='12', lg='5')
       v-col.mh-Review(cols='12', md='2')
         nuxt-link(:to='review.title.route')
           img(
-            :src='review.title.tallBoxArt ? review.title.tallBoxArt : review.title.boxArt'
+            :src='review.title.Poster'
           )
       v-col.py-0.reviewText(cols='12', md='10')
         v-row.ma-0

@@ -2,7 +2,7 @@
 v-container.section-border(fluid, :id='"suggestion-" + suggestion.id')
   v-row(align='center')
     v-col(cols='12', lg='2')
-      img(:src='suggestion.similar.tallBoxArt')
+      img(:src='suggestion.similar.Poster')
     v-col(cols='12', lg='10')
       v-container(fluid)
         v-row

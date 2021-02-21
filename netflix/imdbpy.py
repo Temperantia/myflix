@@ -1,5 +1,4 @@
 import imdb
-from time import sleep
 
 db = imdb.IMDb(accessSystem='https', reraiseExceptions=True)
 

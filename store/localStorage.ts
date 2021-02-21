@@ -361,7 +361,7 @@ export default class localStorageStore extends VuexModule {
         id: title.id,
         title: title.t,
         summary: { type: title.u ? "show" : "movie" },
-        tallBoxArt: title.b ?? "",
+        Poster: title.i ?? "",
         releaseYear: title.y,
         maturity: title.v,
         episodeCount: title.e ?? null
@@ -393,7 +393,7 @@ export default class localStorageStore extends VuexModule {
     const type = title.summary.type === "show" ? "shows" : "films";
     const favorite = {
       [title.id]: {
-        image: title.tallBoxArt ? title.tallBoxArt : title.boxArt,
+        image: title.Poster,
         title: title.title,
         year: title.releaseYear,
         maturity: title.maturity ? title.maturity : null,

@@ -150,7 +150,7 @@ export default class TitleStore extends VuexModule {
         id: this.title.id,
         title: this.title.title,
         summary: this.title.summary,
-        tallBoxArt: this.title.tallBoxArt ?? "",
+        Poster: this.title.Poster,
         releaseYear: this.title.releaseYear,
         maturity: this.title.maturity,
         episodeCount: this.title.episodeCount

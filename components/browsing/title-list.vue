@@ -21,7 +21,7 @@ v-container(fluid)
             img.icon(src='/trending.png')
             div(style='position: absolute; top: 0; left: 0; font-size: 14px') {{ "Trending #" + title.j }}
         div(
-          :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + title.b + ");"'
+          :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + title.i + ");"'
         )
         .gradient
           .hover-title

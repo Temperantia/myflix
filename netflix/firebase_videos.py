@@ -116,7 +116,7 @@ def search_videos(video, id, index):
   type = video['summary']['type']
   route = create_route(video['title'], type, 0)
   route = duplicate(route, type, video['title'])
-  searches[index_search][id] = {'r': route, 't': video['title'], 'i': video['tallBoxArt'] if 'tallBoxArt' in video else video['boxArt'], 'b': video['storyArt'], 'x': video['boxArt'], 'c': find_categories(
+  searches[index_search][id] = {'r': route, 't': video['title'], 'i': video['Poster'], 'b': video['storyArt'], 'x': video['boxArt'], 'c': find_categories(
       video['genres']), 'g': remove_ids(video['genres']), 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score']}
 
   if video['summary']['isOriginal']:

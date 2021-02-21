@@ -1,0 +1,6 @@
+firebase_admin
+imdbpy
+python-slugify
+jsonmerge
+progress
+unicode
