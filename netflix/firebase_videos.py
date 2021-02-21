@@ -36,17 +36,6 @@ z : score
 
 """
 
-
-def filter_dict(d, f):
-  newDict = dict()
-  for key, value in d.items():
-    print(value)
-    if f(key, value):
-      newDict[key] = value
-
-  return newDict
-
-
 searches = []
 types = {}
 title_ids = {}

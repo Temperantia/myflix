@@ -1,15 +1,17 @@
 
 from requests import post
 from json import dump, dumps, load
-from time import sleep
-from threads import threads
-from netflix import url, headers
 from jsonmerge import merge
 from pathlib import Path
 from os import path
 
+from threads import threads
+from netflix import url, headers
 from video_summary import get_summary
-from media import get_media
+from imdbpy import get_imdb_data
+from media import request_media
+
+REFRESH_IDS = False
 
 
 def list_until_empty(data, k=None):
@@ -34,8 +36,15 @@ def find_genre_name(genre_id, genre_dict):
   return ''
 
 
+def fetch_extra(id, title, shows):
+  media = request_media(id)
+  shows[id].update(media)
+  imdb = get_imdb_data(title)
+  shows[id].update(imdb)
+
+
 def fetch_video(id, shows, genre_dict):
-  # print('Collecting ' + id[0] + ' to ' + id[-1])
+  #print('Collecting ' + id[0] + ' to ' + id[-1])
   data = {
       "path": """["videos", """ + dumps(id) + """, ["title", "synopsis", "seasonCount", "episodeCount", "releaseYear", "maturity", "availability", "genres", "moodTags", "creators", "directors", "writers", "cast"],{"from":0,"to":3},["name"] ]"""}
   try:
@@ -97,21 +106,24 @@ def fetch_video(id, shows, genre_dict):
           'moodTags': moodTags,
           'creators': creators,
           'directors': directors,
-          'writers': writers,
-          # 'actors': cast
+          'writers': writers
       })
-  except:
-    print('error ' + str(id))
+
+  except Exception as e:
+    print(e, 'error ' + str(id[0]))
 
 
 def get_videos():
   genre_dict = load(open(path.join(
       Path(__file__).parent.absolute(), 'data/genres.json'), 'r', encoding='utf-8'))
 
-  shows = merge(get_summary(), load(
-      open(path.join(
-          Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8')))
-  #shows = merge({}, load(open('data/video_summary.json', 'r', encoding='utf-8')))
+  if REFRESH_IDS:
+    shows = merge(get_summary(), load(
+        open(path.join(
+            Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8')))
+  else:
+    shows = load(open('data/video_summary.json', 'r', encoding='utf-8'))
+
   showCount = 0
   movieCount = 0
   count = 0
@@ -129,13 +141,24 @@ def get_videos():
   ids = []
   for id in id_list:
     ids.append([id, shows, genre_dict])
-  threads(fetch_video, ids, 0.02)
-  shows = get_media(shows)
+  threads(fetch_video, ids, 0.02, 'Fetching titles')
+
+  s = {}
+  for id in shows:
+    if 'title' in shows[id]:
+      s[id] = shows[id]
+
+  args = []
+  for id in s:
+    args.append([id, s[id]['title'], s])
+  threads(fetch_extra, args, 0.3, 'Fetching media center and imdb')
+
   print('Collected ' + str(showCount) +
         ' shows and ' + str(movieCount) + ' movies')
-  dump(shows, open(path.join(
+
+  dump(s, open(path.join(
       Path(__file__).parent.absolute(), 'data/videos.json'), 'w', encoding='utf-8'),
-       ensure_ascii=False, indent=2, sort_keys=True)
+      ensure_ascii=False, indent=2, sort_keys=True)
 
 
 get_videos()

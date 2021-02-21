@@ -1,88 +1,51 @@
-import time
-import json
 import imdb
-from threads import threads
-
-credits = {}
-search = []
-
-with open('data/videos.json', 'r', encoding="UTF-8") as file:
-  data = json.load(file)
-  for element in data:
-    if (data[element]['releaseYear']) == 0:
-      pass
-    else:
-      search.append([data[element]['title'] +
-                     ' ('+str(data[element]['releaseYear'])+')', credits])
+from time import sleep
 
 db = imdb.IMDb(accessSystem='https', reraiseExceptions=True)
 
 
-def get_credits(search, credits):
-
-  production_name = []
-  distributor_name = []
-  special_effects_name = []
-  other_companies_name = []
-  poster_url = []
-  synopsis = []
+def get_imdb_data(title):
+  obj = {}
 
   try:
-    movies = db.search_movie(search)
-    time.sleep(0.5)
-
+    movies = db.search_movie(f'{title}')
     if len(movies) > 0:
       movie = movies[0]
+      keys = movie.keys()
       db.update(movie)
+      obj = {
+          'OriginalTitle': movie['original title'] if 'original title' in keys else None,
+          'LongIMDbTitle': movie['long imdb title'] if 'long imdb title' in keys else None,
+          'IMDbID': movie['imdbID'] if 'imdbID' in keys else None,
+          'Poster': movie['full-size cover url'] if 'full-size cover url' in keys else None,
+          'Production companies': movie['production companies'] if 'production companies' in keys else None,
+          'Distributor companies': movie['distributors'] if 'distributors' in keys else None,
+          'SpecialEffects': movie['special effects'] if 'special effects' in keys else None,
+          'OtherCompanies': movie['other companies'] if 'other companies' in keys else None,
+          'Rating': movie['rating'] if 'rating' in keys else None,
+          'Countries': movie['countries'] if 'countries' in keys else None,
+          'Languages': movie['languages'] if 'languages' in keys else None,
+      }
 
-      if 'production companies' in movie.keys():
-        production = movie['production companies']
-        for element in production:
-          production_name.append(element['name'])
-      else:
-        production_name.append(None)
+      if 'plot outline' in keys:
+        obj['PlotOutline'] = movie['plot outline']
 
-      if 'distributors' in movie.keys():
-        distributor = movie['distributors']
-        for element in distributor:
-          distributor_name.append(element['name'])
-      else:
-        distributor_name.append(None)
+      if 'plot' in keys:
+        temp = str(movie['plot']).split('::')
+        obj['Plot'] = temp[0].replace("['", "")
 
-      if 'special effects' in movie.keys():
-        special_effects = movie['special effects']
-        for element in special_effects:
-          special_effects_name.append(element['name'])
-      else:
-        special_effects_name.append(None)
+      if 'cast' in keys:
+        actor_name = []
+        actor_role = []
+        for actor in movie['cast']:
+          actor_name.append(actor['name'])
+          actor_role.append(actor.currentRole['name'])
+        obj['Actors'] = {
+            'Name': actor_name,
+            'Role': actor_role
+        }
+    return obj
 
-      if 'other companies' in movie.keys():
-        other_companies = movie['other companies']
-        for element in other_companies:
-          other_companies_name.append(element['name'])
-      else:
-        other_companies_name.append(None)
-
-      if 'full-size cover url' in movie.keys():
-        poster_url.append('full-size cover url')
-      else:
-        poster_url.append(None)
-
-      if 'plot' in movie.keys():
-        synopsis.append(movie['plot'][0])
-      else:
-        synopsis.append(None)
-
-    credits[search] = {
-        'Production companies': production_name,
-        'Distributor companies': distributor_name,
-        'Special effects': special_effects_name,
-        'Other companies':  other_companies_name,
-        'Poster url': poster_url,
-        'Synopsis': synopsis
-    }
-  except :
-    print('e')
-
-
-threads(get_credits, search, 0.5)
+  except Exception as e:
+    print(e)
+    return {}

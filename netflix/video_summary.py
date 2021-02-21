@@ -1,7 +1,6 @@
 
 from requests import post
-from json import dump, dumps, load
-from time import sleep
+from json import dump, load
 from threads import threads
 from netflix import url, headers
 from video_ids import get_ids
@@ -27,7 +26,7 @@ def fetch_video(id, shows_with_summary):
   except:
     print('error ' + str(id))
 
-
+# Summaries are the only way known to identify proper titles, ids need to be individually fetched
 def get_summary():
   shows_with_summary = load(
       open(path.join(
@@ -35,7 +34,7 @@ def get_summary():
   ids = []
   for id in get_ids():
     ids.append((id, shows_with_summary))
-  threads(fetch_video, ids, 0.02)
+  threads(fetch_video, ids, 0.02, 'Fetching summaries')
   print('Collected ' + str(len(shows_with_summary)) + ' shows and movies')
   dump(shows_with_summary, open(path.join(
       Path(__file__).parent.absolute(), 'data/video_summary.json'),

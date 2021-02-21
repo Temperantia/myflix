@@ -1,6 +1,5 @@
 from requests import post
 from json import dump, dumps, load
-from time import sleep
 from threads import threads
 from netflix import url, headers
 from pathlib import Path
@@ -33,6 +32,7 @@ def rangeCollect(index, rng, videos):
     print('error ' + str(index))
 
 
+# Ensures the ids are their own parent meaning they are proper titles or episodes
 def get_titles(index, videos_cleaned, videos):
   data = {
       "path": '["videos", ' + dumps(index) + ', "parent"]'}
@@ -68,7 +68,7 @@ def get_ids():
   for i in range(3040):  # 80_986_788 - 81 290 762 = 303,974
     index = 80_986_788 + i * 100
     ids.append((index, 100, videos))
-  threads(rangeCollect, ids, 0.02)
+  threads(rangeCollect, ids, 0.02, 'Scanning ids')
   print(error)
   print('Collected ' + str(len(videos)) + ' ids')
   # with open('data/video_ids.json', 'w', encoding='utf-8') as outfile:
@@ -87,7 +87,7 @@ def get_ids():
     id_list[-1].append(id)
     count += 1
   id_list[-1] = [id_list[-1], videos_cleaned, videos]
-  threads(get_titles, id_list, 0.02)
+  threads(get_titles, id_list, 0.02, 'Purging ids')
   print('Collected ' + str(len(videos_cleaned)) + ' titles and trailers')
   with open(path.join(
           Path(__file__).parent.absolute(), 'data/video_cleaned.json'), 'w', encoding='utf-8') as outfile:
