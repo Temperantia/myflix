@@ -2,8 +2,8 @@
 div
   div(style='position: absolute; top: 0; left: 0; z-index: 1')
     img(src='/title bg.png')
-    div(style='position: absolute; top: 0; left: 0; padding-left: 10px')
-      h2.font-weight-bold.pt-1 {{ isNewReleases ? "TRENDING NEW RELEASES" : "WHAT'S TRENDING THIS WEEK?" }}
+    div(style='position: absolute; top: 0; left: 0; padding-left: 1vw')
+      h2.font-weight-bold {{ isNewReleases ? "TRENDING NEW RELEASES" : "WHAT'S TRENDING THIS WEEK?" }}
       h4.font-weight-light {{ getWeek() }}
   swiper(:options='swiperOption', style='height: 600px; z-index: 0')
     swiper-slide(
@@ -20,7 +20,7 @@ div
       )
       client-only
         div(
-          style='width: 100%; position: absolute; bottom: 0; left: 0; padding: 30px'
+          style='width: 100%; position: absolute; bottom: 0; left: 0; padding: 1.5vw'
         )
           h1.mb-1 {{ title.t }}
           h2(v-if='title.e', style='padding-top: 10px') Episodes: {{ title.e }}

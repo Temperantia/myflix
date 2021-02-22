@@ -14,7 +14,7 @@ h1.title-border.font-weight-bold SUGGESTED GENRES
         div(
           style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))'
         )
-        div(style='position: absolute; bottom: 30%; left: 0; padding: 30px')
+        div(style='position: absolute; bottom: 30%; left: 7%;')
           h1 {{ category.category }}
           div {{ category.value }} Titles
 </template>

@@ -118,12 +118,11 @@ export default class BrowseStore extends VuexModule {
       tx = db.transaction("categories", "readwrite");
       promises = Object.values(categories)
         .sort((a: any, b: any) => b.value - a.value)
-        .slice(0, 3)
         .map((category: any) => tx.store.put(category));
       promises.push(tx.done);
       await Promise.all(promises);
     }
     this.setTitles(titles);
-    this.setCategories(categories);
+    this.setCategories(categories.slice(0, 3));
   }
 }

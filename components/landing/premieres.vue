@@ -15,7 +15,7 @@ v-container.px-10(fluid)
           div(
             style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))'
           )
-          div(style='position: absolute; bottom: 0; left: 0; padding: 30px')
+          div(style='position: absolute; bottom: 0; left: 0; padding: 1vw')
             h2 {{ title.t }}
             .my-5.white-font--text {{ title.g.join(", ") }}
             .my-5(
@@ -34,7 +34,7 @@ export default class Premieres extends Vue {
   swiperOption = {
     freeMode: true,
     loop: true,
-    slidesPerView: 3,
+    slidesPerView: this.$vuetify.breakpoint.mdAndUp ? 3 : 1,
     spaceBetween: 30,
   };
 }
