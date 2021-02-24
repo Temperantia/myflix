@@ -33,6 +33,7 @@ v-container.section-border(fluid, :id='"suggestion-" + suggestion.id')
             nuxt-link(:to='"/profile/" + suggestion.author.username')
               span.red-netflix--text.ml-1 {{ suggestion.author.username }}
   report(
+    v-if='!self',
     :display='overlay',
     type='suggestion',
     :username='suggestion.author.username',

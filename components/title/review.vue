@@ -59,6 +59,7 @@ v-container(fluid, :id='"review-" + review.id')
             span.white-font--text {{ " | " }}
             span.white-font--text.click(@click='overlay = true') report
   report(
+    v-if='!self'
     :display='overlay',
     type='review',
     :username='profile.username',
