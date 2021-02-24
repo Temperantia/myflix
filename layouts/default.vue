@@ -4,7 +4,7 @@ v-app(app)
     v-row.pa-0.blackHeader(align='center')
       v-col.pr-0(cols='2', lg='1')
         nuxt-link(to='/')
-          img(src='/myflix-logo.png' alt='myflix logo')
+          img(src='/myflix-logo.png', alt='myflix logo')
       v-col(cols='9', offset-lg='3', lg='4')
         search(nav)
       template(v-if='$vuetify.breakpoint.mdAndUp')
@@ -103,6 +103,7 @@ const localStorageModule = namespace('localStorage');
 const browseModule = namespace('browse');
 const reviewsModule = namespace('reviews');
 const suggestionsModule = namespace('suggestions');
+const profileModule = namespace('profile');
 
 @Component
 export default class Default extends Vue {
@@ -114,6 +115,8 @@ export default class Default extends Vue {
 
   @localStorageModule.State('user') user!: any;
   @localStorageModule.State('connected') connected!: boolean;
+  @profileModule.Mutation('setEdition') setEdition!: any;
+  @profileModule.Mutation('setEditionTab') setEditionTab!: any;
   @localStorageModule.Action('signOut') signOut!: any;
   @browseModule.Action('init') initBrowse!: Function;
   @reviewsModule.Action('getLatest') initReviews!: Function;
@@ -188,9 +191,11 @@ export default class Default extends Vue {
       {
         name: 'ACCOUNT SETTINGS',
         hook: () => {
+          this.setEdition(true);
+          this.setEditionTab('ACCOUNT SETTINGS');
           this.$router.push({
             name: 'profile-username',
-            params: { username: this.user.username, tab: 'ACCOUNT SETTINGS' },
+            params: { username: this.user.username },
           });
         },
       },

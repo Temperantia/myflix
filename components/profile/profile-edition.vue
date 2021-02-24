@@ -5,17 +5,17 @@ v-container(fluid)
       h3.click.d-inline.mr-10(
         v-for='tab in tabs',
         :key='tab.name',
-        @click='currentTab = tab.name',
+        @click='setEditionTab(tab.name)',
         :class='{ "red-netflix--text": isCurrentTab(tab.name) }'
       ) {{ tab.name }}
     v-col(v-else, cols='12', v-for='tab in tabs', :key='tab.name')
       h3.click.d-inline.mr-10(
-        @click='currentTab = tab.name',
+        @click='setEditionTab(tab.name)',
         :class='{ "red-netflix--text": isCurrentTab(tab.name) }'
       ) {{ tab.name }}
     v-col.text-md-right
       a(@click='check') SAVE CHANGES
-  v-container(fluid, v-if='currentTab === "EDIT PROFILE"')
+  v-container(fluid, v-if='editionTab === "EDIT PROFILE"')
     v-row.subtitle-border
       v-col(cols='12', lg='3')
         v-container(fluid)
@@ -77,7 +77,7 @@ v-container(fluid)
               input.location(v-model='copy.location')
             v-col(cols='12', lg='3')
               .white-font--text Ex: Anaheim, CA
-  v-container(fluid, v-if='currentTab === "FAVORITES"')
+  v-container(fluid, v-if='editionTab === "FAVORITES"')
     v-row
       v-col(cols='12', lg='6')
         v-container(fluid)
@@ -103,7 +103,7 @@ v-container(fluid)
               a.click.white-font--text(
                 @click='removeFavorite(copy.favorites.films, id)'
               ) REMOVE
-  v-container(fluid, v-if='currentTab === "ACCOUNT SETTINGS"')
+  v-container(fluid, v-if='editionTab === "ACCOUNT SETTINGS"')
     v-form(ref='form')
       v-row.subtitle-border
         v-col Social Sign-in
@@ -283,12 +283,13 @@ const localStorageModule = namespace('localStorage');
 @Component
 export default class ProfileEdition extends Vue {
   @profileModule.State('profile') profile!: any;
+  @profileModule.State('editionTab') editionTab!: any;
+  @profileModule.Mutation('setEditionTab') setEditionTab!: any;
   @localStorageModule.Action('delete') deleteUser!: any;
   @localStorageModule.Action('update') update!: any;
 
   listTimeZones = listTimeZones;
   formatToTimeZone = formatToTimeZone;
-  currentTab = 'EDIT PROFILE';
   copy: any = {};
   passwordNew = '';
   passwordCurrent = '';
@@ -325,12 +326,6 @@ export default class ProfileEdition extends Vue {
     }
   }
 
-  mounted() {
-    if (this.$route.params.tab) {
-      this.currentTab = this.$route.params.tab;
-    }
-  }
-
   check() {
     if (this.$refs.form && !(this.$refs.form as any).validate()) {
       return;
@@ -349,7 +344,7 @@ export default class ProfileEdition extends Vue {
   }
 
   isCurrentTab(tab: string) {
-    return tab === this.currentTab;
+    return tab === this.editionTab;
   }
 
   load(event: any) {

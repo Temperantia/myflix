@@ -155,16 +155,9 @@ export default class Profile extends Vue {
   @profileModule.Getter('filmsChartData') filmsChartData!: any;
   @profileModule.Getter('filmsFavorites') filmsFavorites!: any;
   @profileModule.Getter('tvShowsWatching') tvShowsWatching!: any;
-  @profileModule.Mutation('setEdition') setEdition!: any;
 
   async asyncData({ route, store }: Context) {
     await store.dispatch('profile/loadUsername', route.params.username);
-  }
-
-  mounted() {
-    if (this.$route.params.tab) {
-      this.setEdition(true);
-    }
   }
 
   readonly optionsDoughnut = {

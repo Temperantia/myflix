@@ -10,6 +10,7 @@ import { $getUser } from "~/plugins/auth";
 export default class ProfileStore extends VuexModule {
   profile: any = null;
   edition: boolean = false;
+  editionTab: string = 'EDIT PROFILE';
 
   get self() {
     return () => {
@@ -248,6 +249,11 @@ export default class ProfileStore extends VuexModule {
   @VuexMutation
   setEdition(edition: boolean) {
     this.edition = edition;
+  }
+
+  @VuexMutation
+  setEditionTab(tab: string) {
+    this.editionTab = tab;
   }
 
   @VuexAction({ commit: "setProfile" })
