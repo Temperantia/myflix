@@ -5,8 +5,11 @@ import {
   Module
 } from "nuxt-property-decorator";
 import { docs } from "~/plugins/firebase";
-import { $fire } from "~/utils/modules";
+import { $fire, $fireModule } from "~/utils/modules";
 import { openDB } from "idb";
+import { deflate, inflate, inflateRaw } from "pako";
+import { Buffer } from "buffer";
+import { decode } from "base-64";
 
 @Module({ name: "browse", stateFactory: true, namespaced: true })
 export default class BrowseStore extends VuexModule {
@@ -76,11 +79,22 @@ export default class BrowseStore extends VuexModule {
       titles = await db.getAll("titles");
       categories = await db.getAll("categories");
     } else {
-      titles = (await docs($fire.firestore.collection("data")))
-        .reduce(
-          (data: any, current: any) => [...data, ...JSON.parse(current.search)],
-          []
-        )
+      titles = await docs($fire.firestore.collection("data"));
+      titles = (
+        await titles.reduce(async (data: any, current: any) => {
+          const base64 = (await new Response(current.search).text())
+            .split(":")[1]
+            .split(")")[0];
+          const byteArray = inflate(
+            $fireModule.firestore.Blob.fromBase64String(base64).toUint8Array()
+          );
+          var result = "";
+          for (var i = 0; i < byteArray.length; i++) {
+            result += String.fromCharCode(byteArray[i]);
+          }
+          return [...data, ...JSON.parse(result)];
+        }, [])
+      )
         .filter((title: any) => {
           if (title.y === 0 || title.y >= 2030) {
             return false;

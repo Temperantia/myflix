@@ -16,6 +16,8 @@
     },
     "types": [
       "@types/node",
+      "@types/pako",
+      "@types/base-64",
       "@nuxt/types",
       "@nuxtjs/toast",
       "@nuxtjs/firebase",

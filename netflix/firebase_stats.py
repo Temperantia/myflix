@@ -1,8 +1,8 @@
 from json import dumps, loads
-from random import uniform
 from statistics import mean
 from datetime import datetime, timedelta
 from calendar import monthrange
+from zlib import compress
 
 from threads import threads
 from firebase import get_collection, video_collection, data_collection
@@ -80,7 +80,7 @@ def get_video_stats():
 
 def update_search_tables():
   print('Updating search tables')
-  CUT = 900
+  CUT = 4000
   search = []
   for doc in data_collection.stream():
     search += loads(doc.to_dict()['search'])
@@ -106,8 +106,8 @@ def update_search_tables():
   print('Uploading search tables')
   searches = [search[x:x+CUT] for x in range(0, len(search), CUT)]
   for index, s in enumerate(searches):
-    json = dumps(s)
-    print(len(json.encode('utf-8')))  # must not exceed 1048487
+    json = compress(dumps(s, separators=(',', ':')).encode('utf-8'))
+    print(len(json))  # must not exceed 1048487
     data_collection.document('search' + str(index)).set({'search': json})
 
 

@@ -1,12 +1,12 @@
 from json import load, dumps, dump
-from random import uniform
-from firebase import video_collection, data_collection
 from slugify import slugify
-from threads import threads
-from random import randint
 from datetime import datetime
 from pathlib import Path
 from os import path
+from zlib import compress
+
+from firebase import video_collection, data_collection
+from threads import threads
 
 """
 a : availability
@@ -30,7 +30,6 @@ t : title
 u : type 1 = show 0 = movie
 v : video maturity
 w : current week
-x : box art
 y : release year
 z : score
 
@@ -39,7 +38,7 @@ z : score
 searches = []
 types = {}
 title_ids = {}
-CUT = 1000
+CUT = 4000
 now = datetime.now()
 file = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8'))
@@ -116,7 +115,7 @@ def search_videos(video, id, index):
   type = video['summary']['type']
   route = create_route(video['title'], type, 0)
   route = duplicate(route, type, video['title'])
-  searches[index_search][id] = {'r': route, 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'x': video['boxArt'], 'c': find_categories(
+  searches[index_search][id] = {'r': route, 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
       video['genres']), 'g': remove_ids(video['genres']), 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score']}
 
   if video['summary']['isOriginal']:
@@ -153,8 +152,8 @@ def upload_search():
     arr = []
     for key in search:
       arr.append({**{'id': key}, **search[key]})
-    json = dumps(arr)
-    print(len(json.encode('utf-8')))  # must not exceed 1048487
+    json = compress(dumps(arr, separators=(',', ':')).encode('utf-8'))
+    print(len(json))  # must not exceed 1048487
     data_collection.document('search' + str(index)).set({'search': json})
 
 
@@ -166,7 +165,7 @@ def launch():
         index,
         data
     ])
-  threads(upload, ids, 0)
+  threads(upload, ids, 0, 'Uploading titles')
   dump(data, open(path.join(
       Path(__file__).parent.absolute(), 'data/videos.json'),
       'w', encoding='utf-8'), ensure_ascii=False, indent=2)
