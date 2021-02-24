@@ -6,7 +6,7 @@ v-app.app(app)
         v-container.h-100.d-flex.flex-column.justify-space-between(fluid)
           v-row
             v-col(cols='4', md='2')
-              img(src='myflix-logo.png')
+              img(src='myflix-logo.png', alt='myflix logo')
           v-row(align='center', justify='center')
             v-col(cols='10', md='8')
               h1.font-weight-bold All your favorite Netflix series and movies

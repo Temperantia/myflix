@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   div(style='position: absolute; top: 0; left: 0; z-index: 1')
-    img(src='/title bg.png')
+    img(src='/title bg.png', alt='title background image')
     div(style='position: absolute; top: 0; left: 0; padding-left: 1vw')
       h2.font-weight-bold {{ isNewReleases ? "TRENDING NEW RELEASES" : "WHAT'S TRENDING THIS WEEK?" }}
       h4.font-weight-light {{ getWeek() }}

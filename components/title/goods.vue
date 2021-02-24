@@ -2,7 +2,7 @@
 v-container(fluid, v-if='title')
   v-row
     v-col(cols='12', md='2')
-      img(src='/giftcard.png')
+      img(src='/giftcard.png', alt='giftcard logo')
     v-col(cols='12', md='3')
       h2 Pay for your Netflix or gift it to a special person.
       p.mt-3.pl-3.red-netflix--border(style='border-left: 2px solid')

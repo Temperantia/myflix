@@ -14,14 +14,20 @@ div
         v-row
           v-col(cols='4', lg='2')
             nuxt-link(:to='suggestion.title.route')
-              img(:src='suggestion.title.Poster')
+              img(
+                :src='suggestion.title.Poster',
+                :alt='suggestion.title.title'
+              )
           v-col(cols='8', lg='4') If you liked
             nuxt-link(:to='suggestion.title.route')
               .red-netflix--text {{ suggestion.title.title }}
             flixlist-add(v-if='connected', :id='suggestion.title.id')
           v-col(cols='4', lg='2')
             nuxt-link(:to='suggestion.similar.route')
-            img(:src='suggestion.similar.image')
+            img(
+              :src='suggestion.similar.image',
+              :alt='suggestion.similar.title'
+            )
           v-col(cols='8', lg='4') Then you might like...
             nuxt-link(:to='suggestion.similar.route')
               .red-netflix--text {{ suggestion.similar.title }}

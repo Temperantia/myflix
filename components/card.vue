@@ -1,6 +1,6 @@
 <template lang="pug">
 .score.d-flex.align-center.justify-center
-  img(src='/Layer 25.png')
+  img(src='/Layer 25.png' alt='card image')
   .content.text-center
     h2(v-if='title') {{ title }}
     h1 {{ content }}

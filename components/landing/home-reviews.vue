@@ -5,9 +5,7 @@ v-col(cols='12', lg='5')
     v-row.my-2.userReviews(v-for='review of latestReviews', :key='review.id')
       v-col.mh-Review(cols='12', md='2')
         nuxt-link(:to='review.title.route')
-          img(
-            :src='review.title.Poster'
-          )
+          img(:src='review.title.Poster', :alt='review.title.title')
       v-col.py-0.reviewText(cols='12', md='10')
         v-row.ma-0
           v-col.pl-0(cols='12', lg='6')

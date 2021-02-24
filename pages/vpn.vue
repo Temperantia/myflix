@@ -16,7 +16,7 @@ v-container(fluid)
                   v-container(fluid)
                     v-row
                       v-col(cols='3')
-                        img(:src='vpn.logo')
+                        img(:src='vpn.logo', :alt='vpn.name')
                       v-col(cols='9')
                         h2
                           b {{ vpn.name }}

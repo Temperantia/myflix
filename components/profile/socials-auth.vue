@@ -5,15 +5,15 @@ client-only
       v-col(cols='6')
         .button-block.google(@click='signInWithGoogle(); clicked = true')
           button Google
-          img(src='/Google.png')
+          img(src='/Google.png', alt='google logo')
       v-col(cols='6')
         .button-block.facebook(@click='signInWithFacebook(); clicked = true')
           button Facebook
-          img(src='/Facebook auth.png')
+          img(src='/Facebook auth.png', alt='facebook logo')
       //-v-col(cols='4')
         .button-block.apple(@click='signInWithApple')
           button Apple
-          img(src='/Apple.png')
+          img(src='/Apple.png', alt='apple logo')
     v-form(v-if='clicked', ref='form', @submit.prevent='check')
       v-text-field(
         color='red',

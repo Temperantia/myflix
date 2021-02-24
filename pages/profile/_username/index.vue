@@ -34,7 +34,7 @@ v-col(cols='12', lg='10')
             :key='element.title.id'
           )
             v-col(cols='12', lg='2')
-              img(:src='element.title.Poster')
+              img(:src='element.title.Poster', :alt='element.title.title')
             v-col(cols='12', lg='6')
               h2 {{ element.title.title }}
               .white-font--text {{ element.title.releaseYear }} {{ element.title.maturity }} {{ element.title.seasonCount }} Season
@@ -82,7 +82,7 @@ v-col(cols='12', lg='10')
             :key='element.title.id'
           )
             v-col(cols='12', lg='2')
-              img(:src='element.title.Poster')
+              img(:src='element.title.Poster', :alt='element.title.title')
             v-col(cols='12', lg='6')
               h2 {{ element.title.title }}
               .white-font--text {{ element.title.releaseYear }} {{ element.title.maturity }}
@@ -108,7 +108,7 @@ v-col(cols='12', lg='10')
         v-container(v-if='tvShowsFavorites.length > 0', fluid)
           v-row(v-for='(show, id) in profile.favorites.shows', :key='id')
             v-col(cols='12', lg='3')
-              img(:src='show.image')
+              img(:src='show.image', :alt='show.title')
             v-col(cols='12', lg='9')
               h3 {{ show.title }}
               .white-font--text
@@ -124,7 +124,7 @@ v-col(cols='12', lg='10')
         v-container(v-if='filmsFavorites.length > 0', fluid)
           v-row(v-for='(film, id) in profile.favorites.films', :key='id')
             v-col(cols='12', lg='3')
-              img(:src='film.image')
+              img(:src='film.image', :alt='film.title')
             v-col(cols='12', lg='9')
               h3 {{ film.title }}
               .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}

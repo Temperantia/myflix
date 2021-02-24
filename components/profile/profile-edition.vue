@@ -26,7 +26,7 @@ v-container(fluid)
     v-row
       v-col.d-flex.justify-center(cols='12', lg='3')
         v-container(fluid)
-          img(:src='copy.image ? copy.image : "/pfp1.png"')
+          img(:src='copy.image ? copy.image : "/pfp1.png"', alt='user image')
       v-col(cols='12', lg='4')
         v-container(fluid)
           .mb-3 Must be jpg, gif or png format. No NSFW allowed. No copyrighted images. Maximum of 250 x 250 pixels (resized automatically).
@@ -111,22 +111,24 @@ v-container(fluid)
         v-col(cols='12', lg='2')
           v-container.d-flex.align-center(fluid)
             .button-block.google
-              img(src='/Google.png')
+              img(src='/Google.png', alt='google logo')
               button Google
               .disable(v-if='!copy.providers.google')
             img.pl-2.icon.click(
               src='/Layer 127.png',
-              @click='signInWithGoogle'
+              @click='signInWithGoogle',
+              alt='google background image'
             )
         v-col(cols='12', lg='2')
           v-container.d-flex.align-center(fluid)
             .button-block.facebook
-              img(src='/Facebook auth.png')
+              img(src='/Facebook auth.png', alt='facebook logo')
               button Facebook
               .disable(v-if='!copy.providers.facebook')
             img.pl-2.icon.click(
               src='/Layer 127.png',
-              @click='signInWithFacebook'
+              @click='signInWithFacebook',
+              alt='facebook background image'
             )
       v-row(:class='{ "subtitle-border": !isSocial }')
         v-col(cols='12', lg='4')

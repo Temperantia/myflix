@@ -2,7 +2,7 @@
 v-container(fluid, :id='"review-" + review.id')
   v-row.header-border
     v-col(lg='2')
-      img(:src='image')
+      img(:src='image', alt='user image')
     v-col(cols='10', lg='7')
       v-container(fluid)
         client-only

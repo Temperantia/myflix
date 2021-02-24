@@ -4,7 +4,7 @@ defaultLayout
     v-row
       v-col(cols='12', md='2')
         v-container(fluid)
-          img(:src='title.Poster')
+          img(:src='title.Poster', :alt='title.title')
           .mt-5(v-if='!isCurrentTab(tabs[0].route) && connected')
             v-row.title-border(align='center')
               v-col

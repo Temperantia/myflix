@@ -1,6 +1,6 @@
 <template lang="pug">
 v-col( cols='12', lg='2')
-  img(:src='image')
+  img(:src='image', alt='user image')
   v-row
     v-col.pt-1.pb-0
       b Gender:

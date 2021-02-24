@@ -18,7 +18,7 @@ v-container(fluid)
             :episodeCount='title.e'
           )
           div(v-if='title.j')
-            img.icon(src='/trending.png')
+            img.icon(src='/trending.png', alt='trending')
             div(style='position: absolute; top: 0; left: 0; font-size: 14px') {{ "Trending #" + title.j }}
         div(
           :title='title.t'
@@ -62,14 +62,14 @@ v-container(fluid)
             nuxt-link(:to='title.r')
               h2.mr-5 {{ title.t }}
           v-col.d-flex.align-center(v-if='title.o', cols='12')
-            img.icon.mr-3(src='/netflix.png')
+            img.icon.mr-3(src='/netflix.png', alt='netflix logo')
             span.white-font--text O R I G I N A L
         v-row(v-else, align='center')
           v-col
             nuxt-link(:to='title.r')
               h2.d-inline.mr-5 {{ title.t }}
             .d-inline-flex.align-center.justify-space-between(v-if='title.o')
-              img.icon.mr-3(src='/netflix.png')
+              img.icon.mr-3(src='/netflix.png', alt='netflix logo')
               span.white-font--text O R I G I N A L
           v-col.text-right
             flixlist-add(v-if='connected', :title='title')

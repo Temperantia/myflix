@@ -31,7 +31,8 @@ v-container(fluid)
     v-col(cols='6', lg='1')
       img(
         :class='[borderColor(element.status), "box-art"]',
-        :src='element.title.Poster'
+        :src='element.title.Poster',
+        :alt='element.title.title'
       )
     v-col(cols='6', lg='3') {{ element.title.title }}
     v-col.text-center(cols='3', lg='1') {{ element.title.releaseYear }}

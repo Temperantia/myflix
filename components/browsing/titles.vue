@@ -13,10 +13,11 @@ v-container(fluid)
       img.click.icon.mr-2(
         v-if='gallery',
         @click='gallery = false',
-        src='/list.png'
+        src='/list.png',
+        alt='list icon'
       )
-      img.click.icon.mr-2(v-else, @click='gallery = true', src='/gallery.png')
-      img.click.icon(@click='settings = !settings', src='/gear.png')
+      img.click.icon.mr-2(v-else, @click='gallery = true', src='/gallery.png', alt='gallery icon')
+      img.click.icon(@click='settings = !settings', src='/gear.png', alt='settings icon')
       .window.pa-2.border.white-font--border(v-if='settings')
         v-checkbox.my-1(
           label='Show completed',
