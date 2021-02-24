@@ -47,31 +47,37 @@ export default class TitleStore extends VuexModule {
     return this.title?.id;
   }
 
-  @VuexMutation setTitle(title: any) {
+  @VuexMutation
+  setTitle(title: any) {
     this.title = title;
   }
 
-  @VuexMutation setStatus(status: string) {
+  @VuexMutation
+  setStatus(status: string) {
     this.status = status;
     this.saved = false;
   }
 
-  @VuexMutation setEpisodes(episodes: number) {
+  @VuexMutation
+  setEpisodes(episodes: number) {
     this.episodes = episodes;
     this.saved = false;
   }
 
-  @VuexMutation setScore(score: string) {
+  @VuexMutation
+  setScore(score: string) {
     this.score = score;
     this.saved = false;
   }
 
-  @VuexMutation setBingeworthy(bingeworthy: boolean) {
+  @VuexMutation
+  setBingeworthy(bingeworthy: boolean) {
     this.bingeworthy = bingeworthy;
     this.saved = false;
   }
 
-  @VuexMutation setSaved(saved: boolean) {
+  @VuexMutation
+  setSaved(saved: boolean) {
     this.saved = saved;
   }
 
@@ -113,22 +119,13 @@ export default class TitleStore extends VuexModule {
       return;
     }
     await this.context.dispatch("browse/init", cookies, { root: true });
-    const parts: string[] = route.path.split("/");
-    const toFind: string = "/" + parts[1] + "/" + parts[2];
     const result: any = this.context.rootGetters["browse/titleFromRoute"](
-      toFind
+      route.path
     );
     if (!result) {
       return $redirect("/");
     }
     await this.context.dispatch("get", result.id);
-
-    if (
-      (parts.length === 3 && route.path[route.path.length - 1] !== "/") ||
-      (parts.length === 4 && route.path[route.path.length - 1] === "/")
-    ) {
-      return $redirect(route.path + "/overview");
-    }
   }
 
   @VuexAction({ rawError: true })

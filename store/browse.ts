@@ -30,15 +30,19 @@ export default class BrowseStore extends VuexModule {
   }
 
   get titleNames() {
-    return this.titles.map(item => item.t);
+    return this.titles.map(title => title.t);
   }
 
   get titleFromRoute() {
-    return (route: string) => this.titles.find((item: any) => item.r === route);
-  }
-
-  get titleFromTitle() {
-    return (title: string) => this.titles.find((item: any) => item.t === title);
+    return (route: string) =>
+      this.titles.find((title: any) => {
+        const titleRouteParts = title.r.split("/");
+        const routeParts = route.split("/");
+        return titleRouteParts[1] === routeParts[1] &&
+          titleRouteParts[2] === routeParts[2]
+          ? title
+          : null;
+      });
   }
 
   get topSeries() {
@@ -104,6 +108,7 @@ export default class BrowseStore extends VuexModule {
           if (title.u && !title.s) {
             title.s = 1;
           }
+          title.r += "/overview";
           return title;
         });
       for (const item of titles) {
