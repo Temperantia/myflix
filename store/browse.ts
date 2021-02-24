@@ -80,7 +80,6 @@ export default class BrowseStore extends VuexModule {
       categories = await db.getAll("categories");
     } else {
       titles = await docs($fire.firestore.collection("data"));
-      console.log(titles);
       titles = (
         await titles.reduce(async (data: any, current: any) => {
           const base64 = (await new Response(current.search).text())
@@ -138,7 +137,6 @@ export default class BrowseStore extends VuexModule {
       promises.push(tx.done);
       await Promise.all(promises);
     }
-    console.log(titles);
     this.setTitles(titles);
     this.setCategories(Object.values(categories).slice(0, 3));
   }
