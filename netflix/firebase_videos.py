@@ -38,7 +38,7 @@ z : score
 searches = []
 types = {}
 title_ids = {}
-CUT = 4000
+CUT = 3700
 now = datetime.now()
 file = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8'))

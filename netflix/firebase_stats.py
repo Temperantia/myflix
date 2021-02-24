@@ -7,6 +7,7 @@ from zlib import compress, decompress
 from threads import threads
 from firebase import get_collection, video_collection, data_collection
 
+CUT = 3700
 scores = {}
 followers = {}
 videos = {}
@@ -80,7 +81,6 @@ def get_video_stats():
 
 def update_search_tables():
   print('Updating search tables')
-  CUT = 4000
   search = []
   for doc in data_collection.stream():
     search += loads(decompress(doc.to_dict()['search']))
