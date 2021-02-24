@@ -21,6 +21,7 @@ v-container(fluid)
             img.icon(src='/trending.png')
             div(style='position: absolute; top: 0; left: 0; font-size: 14px') {{ "Trending #" + title.j }}
         div(
+          :title='title.t'
           :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + title.i + ");"'
         )
         .gradient
@@ -53,7 +54,7 @@ v-container(fluid)
       v-container(fluid)
         v-row
           v-col
-            img(:src='title.i')
+            img(:src='title.i' :alt='title.t')
     v-col(cols='12', lg='11')
       v-container(fluid)
         v-row(v-if='$vuetify.breakpoint.smAndDown')

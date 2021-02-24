@@ -10,7 +10,7 @@ h1.title-border.font-weight-bold SUGGESTED GENRES
         style='position: relative',
         @click='$router.push({ name: "search", params: { category: category.category } })'
       )
-        img(:src='category.image')
+        img(:src='category.image', :alt='category.category')
         div(
           style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))'
         )

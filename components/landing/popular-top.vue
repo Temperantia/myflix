@@ -8,7 +8,7 @@ v-col(cols='12', md='7')
         h1.font-weight-black {{ index + 1 }}
       v-col(cols='11', md='3')
         nuxt-link(:to='title.r')
-          img(:src='title.i')
+          img(:src='title.i' :alt='title.t')
       v-col(offset='1', cols='11', offset-md='0', :md='connected ? "5" : "8"')
         nuxt-link(:to='title.r')
           h2 {{ title.t }}

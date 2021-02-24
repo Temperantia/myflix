@@ -10,6 +10,7 @@ v-container.px-10(fluid)
       .swiper-slide(v-for='title in premieres', :key='title.id')
         nuxt-link(:to='title.r')
           div(
+            :title='title.t',
             :style='"height: 100%;  position: relative; background-size: cover; background-position: center; background-image: url(" + title.b + ");"'
           )
           div(
