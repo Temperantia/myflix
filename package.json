@@ -9,7 +9,6 @@
     "webpack": "nuxt webpack"
   },
   "dependencies": {
-    "base-64": "1.0.0",
     "core-js": "^3.8.3",
     "date-fns-timezone": "0.1.4",
     "fibers": "5.0.0",
@@ -21,8 +20,7 @@
     "slugify": "1.4.6",
     "timezone-support": "2.0.2",
     "vue-scrollto": "2.20.0",
-    "vue-social-sharing": "3.0.4",
-    "zlib": "1.0.5"
+    "vue-social-sharing": "3.0.4"
   },
   "devDependencies": {
     "@nuxt/types": "2.14.12",

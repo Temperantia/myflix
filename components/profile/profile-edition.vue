@@ -335,13 +335,13 @@ export default class ProfileEdition extends Vue {
     if (this.$refs.form && !(this.$refs.form as any).validate()) {
       return;
     }
-    this.update(
-      this.copy,
-      this.passwordNew,
-      this.passwordCurrent,
-      this.email,
-      this.username
-    );
+    this.update({
+      user: this.copy,
+      passwordNew: this.passwordNew,
+      passwordCurrent: this.passwordCurrent,
+      email: this.email,
+      username: this.username,
+    });
   }
 
   removeFavorite(titles: any, id: string) {

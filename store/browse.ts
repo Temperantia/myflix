@@ -7,9 +7,7 @@ import {
 import { docs } from "~/plugins/firebase";
 import { $fire, $fireModule } from "~/utils/modules";
 import { openDB } from "idb";
-import { deflate, inflate, inflateRaw } from "pako";
-import { Buffer } from "buffer";
-import { decode } from "base-64";
+import { inflate } from "pako";
 
 @Module({ name: "browse", stateFactory: true, namespaced: true })
 export default class BrowseStore extends VuexModule {

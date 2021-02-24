@@ -205,13 +205,7 @@ export default class localStorageStore extends VuexModule {
   }
 
   @VuexAction({ rawError: true })
-  async update(
-    user: any,
-    passwordNew: string,
-    passwordCurrent: string,
-    email: string,
-    username: string
-  ) {
+  async update({ user, passwordNew, passwordCurrent, email, username }: any) {
     let redirect;
     if (passwordNew || email) {
       const data: any = await doc(
@@ -248,7 +242,8 @@ export default class localStorageStore extends VuexModule {
 
       user.usernameCoolDown = new Date();
       user.username = username;
-      redirect = "/profile/" + username;
+      user.usernameLower = username.toLowerCase();
+      redirect = "/profile/" + user.usernameLower;
     }
     await $fire.firestore
       .collection("users")
@@ -288,12 +283,12 @@ export default class localStorageStore extends VuexModule {
         { merge: true }
       );
 
-    if (redirect) {
-      $router.push(redirect);
-    }
     $toast.success("Profile updated");
     this.context.commit("_update", user);
     this.context.commit("profile/setProfile", user, { root: true });
+    if (redirect) {
+      $router.push(redirect);
+    }
   }
 
   @VuexAction({ rawError: true, commit: "_signOut" })
