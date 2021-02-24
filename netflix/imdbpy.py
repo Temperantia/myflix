@@ -5,6 +5,7 @@ db = imdb.IMDb(accessSystem='https', reraiseExceptions=True)
 
 def get_imdb_data(title):
   obj = {}
+  role = None
 
   try:
     movies = db.search_movie(f'{title}')
@@ -25,7 +26,6 @@ def get_imdb_data(title):
       if 'production companies' in keys:
         obj['ProductionCompanies'] = []
         for company in movie['production companies']:
-          print(company)
           obj['ProductionCompanies'].append(company['name'])
 
       if 'distributors' in keys:
@@ -51,18 +51,12 @@ def get_imdb_data(title):
         obj['Plot'] = temp[0].replace("['", "")
 
       if 'cast' in keys:
-        actor_name = []
-        actor_role = []
+        obj['Actors'] = {}
         for actor in movie['cast']:
-          actor_name.append(actor['name'])
           role = actor.currentRole
-          actor_role.append(role['name'])
-        obj['Actors'] = {
-            'Name': actor_name,
-            'Role': actor_role
-        }
+          obj['Actors'][actor['name']] = role['name'] if 'name' in role else None
     return obj
 
   except Exception as e:
     print(e)
-    return {}
+    return obj
