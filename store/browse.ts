@@ -80,6 +80,7 @@ export default class BrowseStore extends VuexModule {
       categories = await db.getAll("categories");
     } else {
       titles = await docs($fire.firestore.collection("data"));
+      console.log(titles);
       titles = (
         await titles.reduce(async (data: any, current: any) => {
           const base64 = (await new Response(current.search).text())
@@ -88,11 +89,12 @@ export default class BrowseStore extends VuexModule {
           const byteArray = inflate(
             $fireModule.firestore.Blob.fromBase64String(base64).toUint8Array()
           );
-          var result = "";
-          for (var i = 0; i < byteArray.length; i++) {
+          let result = "";
+          for (let i = 0; i < byteArray.length; i++) {
             result += String.fromCharCode(byteArray[i]);
           }
-          return [...data, ...JSON.parse(result)];
+
+          return [...(await data), ...JSON.parse(result)];
         }, [])
       )
         .filter((title: any) => {
@@ -136,7 +138,8 @@ export default class BrowseStore extends VuexModule {
       promises.push(tx.done);
       await Promise.all(promises);
     }
+    console.log(titles);
     this.setTitles(titles);
-    this.setCategories(categories.slice(0, 3));
+    this.setCategories(Object.values(categories).slice(0, 3));
   }
 }

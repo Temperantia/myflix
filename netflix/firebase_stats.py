@@ -2,7 +2,7 @@ from json import dumps, loads
 from statistics import mean
 from datetime import datetime, timedelta
 from calendar import monthrange
-from zlib import compress
+from zlib import compress, decompress
 
 from threads import threads
 from firebase import get_collection, video_collection, data_collection
@@ -83,7 +83,7 @@ def update_search_tables():
   CUT = 4000
   search = []
   for doc in data_collection.stream():
-    search += loads(doc.to_dict()['search'])
+    search += loads(decompress(doc.to_dict()['search']))
     # doc.reference.delete()
 
   for video in search:
