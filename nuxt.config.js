@@ -136,7 +136,7 @@ export default {
     baseUrl:
       process.env.NODE_ENV === "dev"
         ? "http://localhost:3000"
-        : "https:/my-flix.net",
+        : "https://my-flix.net",
     enableAffiliates: false,
     reviewsPerPage: 20
   },

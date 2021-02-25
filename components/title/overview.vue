@@ -105,22 +105,24 @@ v-container(fluid, v-if='title')
       v-container(fluid)
         v-row
           template(v-if='title.Actors')
-            v-col(
-              v-for='(role, name) of title.Actors',
-              cols='6',
-              md='2',
-              :key='name'
-            )
+            v-col(v-for='[name, role] of cast', cols='6', md='2', :key='name')
               v-container(fluid)
                 v-row
                   //-v-col(cols='3')
                     img(:src='')
-                  v-col.pl-1.pt-1(cols='9')
+                  //-v-col.pl-1.pt-1(cols='9')
+                  v-col(cols='12')
                     div {{ name }}
                     template(v-if='role')
                       div as
                         span.red-netflix--text.pl-2 {{ role }}
                     //-div(v-if='title.summary.type === "show"') {{ actor.episodes }}
+            v-col(cols='12')
+              .red-netflix--text.click(
+                v-if='expandedActors',
+                @click='expandedActors = false'
+              ) show less
+              .red-netflix--text.click(v-else, @click='expandedActors = true') show more
           v-col(v-else)
             p Not Available
   v-row
@@ -137,13 +139,16 @@ v-container(fluid, v-if='title')
               md='4',
               :key='key'
             )
-              template(v-if="title[key]")
+              template(v-if='title[key]')
                 h4.mb-2 {{ value }}
                 template(v-if='Object.keys(title[key]).length > 5')
                   template(v-if='expanded[key]')
                     div(v-for='(credit, index) in title[key]', :key='index') {{ credit }}
                   template(v-else)
-                    div(v-for='(credit, index) in title[key].slice(0, 5)', :key='index') {{ credit }}
+                    div(
+                      v-for='(credit, index) in title[key].slice(0, 5)',
+                      :key='index'
+                    ) {{ credit }}
                   .red-netflix--text.click(
                     v-if='expanded[key]',
                     @click='expanded = Object.assign({}, expanded, { [key]: false })'
@@ -152,7 +157,11 @@ v-container(fluid, v-if='title')
                     v-else,
                     @click='expanded = Object.assign({}, expanded, { [key]: true })'
                   ) {{ " show more" }}
-                div(v-else, v-for='(credit, index) in title[key]', :key='index') {{ credit }}
+                div(
+                  v-else,
+                  v-for='(credit, index) in title[key]',
+                  :key='index'
+                ) {{ credit }}
           v-col(v-else)
             p Not Available
 </template>
@@ -192,9 +201,16 @@ export default class Overview extends Vue {
     SpecialEffects: 'Special Effects',
     OtherCompanies: 'Other Companies',
   };
+  expandedActors: boolean = false;
 
   get statuses() {
     return [...this.statusesTvShow, 'Remove from List'];
+  }
+
+  get cast() {
+    return Object.keys(this.title.Actors).length <= 12 || this.expandedActors
+      ? Object.entries(this.title.Actors)
+      : Object.entries(this.title.Actors).slice(0, 12);
   }
 }
 </script>
