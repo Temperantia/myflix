@@ -1,5 +1,6 @@
 export default {
   target: "server",
+  dev: true,
   build: {
     extend(config, { isServer }) {
       if (isServer) {
