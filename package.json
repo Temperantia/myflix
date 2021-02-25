@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
-    "start": "nuxt start",
-    "webpack": "nuxt webpack"
+    "start": "nuxt start"
   },
   "dependencies": {
     "core-js": "^3.8.3",
