@@ -93,15 +93,19 @@ export default class Reviews extends Vue {
     const id = this.$route.hash.substring(1);
     if (id) {
       const index = this.source.findIndex((review: any) => review.id === id);
-      if (index !== -1) {
-        this.page = Math.floor(index / this.$config.reviewsPerPage) + 1;
-        const checkExist = setInterval(() => {
-          if (document.getElementById(id)) {
-            this.$scrollTo('#review-' + id);
-            clearInterval(checkExist);
-          }
-        }, 100);
+      if (index === -1) {
+        return this.$nuxt.error({
+          statusCode: 410,
+          message: 'Review no longer exists',
+        });
       }
+      this.page = Math.floor(index / this.$config.reviewsPerPage) + 1;
+      const checkExist = setInterval(() => {
+        if (document.getElementById(id)) {
+          this.$scrollTo('#review-' + id);
+          clearInterval(checkExist);
+        }
+      }, 100);
     }
   }
 

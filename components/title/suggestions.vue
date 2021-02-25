@@ -90,15 +90,19 @@ export default class Suggestions extends Vue {
       const index = this.source.findIndex(
         (suggestion: any) => suggestion.id === id
       );
-      if (index !== -1) {
-        this.page = Math.floor(index / this.suggestionsPerPage) + 1;
-        const checkExist = setInterval(() => {
-          if (document.getElementById(id)) {
-            this.$scrollTo('#suggestion-' + id);
-            clearInterval(checkExist);
-          }
-        }, 100);
+      if (index === -1) {
+        return this.$nuxt.error({
+          statusCode: 410,
+          message: 'Suggestion no longer exists',
+        });
       }
+      this.page = Math.floor(index / this.suggestionsPerPage) + 1;
+      const checkExist = setInterval(() => {
+        if (document.getElementById(id)) {
+          this.$scrollTo('#suggestion-' + id);
+          clearInterval(checkExist);
+        }
+      }, 100);
     }
   }
 

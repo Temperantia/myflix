@@ -20,7 +20,7 @@ v-autocomplete(
     nuxt-link.w-100(:to='item.r')
       v-list-item.pa-0
         .searchImage
-          img(:src='item.i', :alt='item.t')
+          img(:src='item.b', :alt='item.t')
         .searchText {{ item.t }}
 v-autocomplete(
   v-else,
@@ -40,7 +40,7 @@ v-autocomplete(
   template(v-slot:item='{ item }')
     v-list-item(@click='click(item)')
       v-list-item-avatar.rounded-0(width='auto', height='100')
-        img(:src='item.i', :alt='item.t')
+        img(:src='item.b', :alt='item.t')
       v-list-item-content
         v-list-item-title(v-text='item.t')
 </template>
