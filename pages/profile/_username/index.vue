@@ -105,8 +105,8 @@ v-col(cols='12', lg='10')
     v-row
       v-col(cols='12', lg='6')
         h4.subtitle-border TV SHOWS
-        v-container(v-if='tvShowsFavorites.length > 0', fluid)
-          v-row(v-for='(show, id) in profile.favorites.shows', :key='id')
+        v-container(v-if='Object.keys(tvShowsFavorites).length > 0', fluid)
+          v-row(v-for='(show, id) in tvShowsFavorites', :key='id')
             v-col(cols='12', lg='3')
               img(:src='show.image', :alt='show.title')
             v-col(cols='12', lg='9')
@@ -121,13 +121,13 @@ v-col(cols='12', lg='10')
               p No favorites yet
       v-col(cols='12', lg='6')
         h4.subtitle-border FILMS
-        v-container(v-if='filmsFavorites.length > 0', fluid)
-          v-row(v-for='(film, id) in profile.favorites.films', :key='id')
+        v-container(v-if='Object.keys(filmsFavorites).length > 0', fluid)
+          v-row(v-for='(film, id) in filmsFavorites', :key='id')
             v-col(cols='12', lg='3')
               img(:src='film.image', :alt='film.title')
             v-col(cols='12', lg='9')
               h3 {{ film.title }}
-              .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
+              .white-font--text {{ film.year + " " + film.maturity }}
               .white-font--text {{ film.genres.join(", ") }}
         v-container(v-else, fluid)
           v-row

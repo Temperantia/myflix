@@ -356,7 +356,7 @@ export default class localStorageStore extends VuexModule {
         id: title.id,
         title: title.t,
         summary: { type: title.u ? "show" : "movie" },
-        Poster: title.i ?? "",
+        Poster: title.i ?? title.b,
         releaseYear: title.y,
         maturity: title.v,
         episodeCount: title.e ?? null
@@ -388,7 +388,7 @@ export default class localStorageStore extends VuexModule {
     const type = title.summary.type === "show" ? "shows" : "films";
     const favorite = {
       [title.id]: {
-        image: title.Poster,
+        image: title.Poster ?? title.boxArt,
         title: title.title,
         year: title.releaseYear,
         maturity: title.maturity ? title.maturity : null,
@@ -428,15 +428,12 @@ export default class localStorageStore extends VuexModule {
     $fire.firestore
       .collection("users")
       .doc(this.id)
-      .set(
-        {
-          ["favorites." +
-          type +
-          "." +
-          title.id]: $fireModule.firestore.FieldValue.delete()
-        },
-        { merge: true }
-      );
+      .update({
+        ["favorites." +
+        type +
+        "." +
+        title.id]: $fireModule.firestore.FieldValue.delete()
+      });
 
     $fire.firestore
       .collection("videos")

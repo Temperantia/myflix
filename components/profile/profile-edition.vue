@@ -97,7 +97,7 @@ v-container(fluid)
           v-row(v-for='(film, id) in copy.favorites.films', :key='id')
             v-col(cols='12', lg='9')
               h3 {{ film.title }}
-              .white-font--text {{ film.year + " " + film.maturity + " " + film.duration }}
+              .white-font--text {{ film.year + " " + film.maturity + " " }}
               .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
             v-col.text-right(cols='12', lg='3')
               a.click.white-font--text(

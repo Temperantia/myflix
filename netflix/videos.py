@@ -76,8 +76,7 @@ def fetch_video(id, shows, genre_dict):
       availability = video['availability']['value'] if 'availability' in video else None
       genres = list_until_empty(
           video['genres']) if 'genres' in video else []
-      genres = [{'id': genre[1], 'name': find_genre_name(
-          genre[1], genre_dict)} for genre in genres]
+      genres = [find_genre_name(genre[1], genre_dict) for genre in genres]
       moodTags = list_until_empty(
           video['moodTags'], 'name') if 'moodTags' in video else []
       creators = list_until_empty(

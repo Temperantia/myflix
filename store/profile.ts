@@ -10,7 +10,7 @@ import { $getUser } from "~/plugins/auth";
 export default class ProfileStore extends VuexModule {
   profile: any = null;
   edition: boolean = false;
-  editionTab: string = 'EDIT PROFILE';
+  editionTab: string = "EDIT PROFILE";
 
   get self() {
     return () => {
@@ -126,17 +126,14 @@ export default class ProfileStore extends VuexModule {
   }
 
   get tvShowsEpisodes() {
-    const flixlist: any = this.flixlist;
-    return Number(
-      this.tvShows.reduce(
-        (sum: number, tvShow: any) => sum + flixlist[tvShow.id]?.episodes ?? 0,
-        0
-      )
+    return this.tvShows.reduce(
+      (sum: number, tvShow: any) => sum + (tvShow.episodes ?? 0),
+      0
     );
   }
 
   get tvShowsFavorites() {
-    return this.profile?.favorites?.shows ?? [];
+    return this.profile?.favorites?.shows;
   }
 
   get films() {
@@ -237,7 +234,7 @@ export default class ProfileStore extends VuexModule {
   }
 
   get filmsFavorites() {
-    return this.profile?.favorites?.films ?? [];
+    return this.profile?.favorites?.films;
   }
 
   @VuexMutation
