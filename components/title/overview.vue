@@ -28,7 +28,14 @@ v-container(fluid, v-if='title')
         v-col
           ul(style='list-style-type: none')
             li.mr-3.d-md-inline
-              share(isButton, :url='$config.baseUrl + $route.path')
+              share(
+                isButton,
+                :url='$config.baseUrl + $route.path',
+                :titleTwitter='title.title',
+                :titleReddit='title.title',
+                :titleFacebook='title.title',
+                :descriptionFacebook='"Check out this " + title.type === "show" ? "show" : "film"'
+              )
             li.mr-3.d-md-inline
               nuxt-link(to='/vpn')
                 v-btn.px-10(color='blue-completed') GET IT IN YOUR COUNTRY

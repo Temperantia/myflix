@@ -15,7 +15,12 @@ v-container.section-border(fluid, :id='"suggestion-" + suggestion.id')
               ) permalink
               span.white-font--text {{ " | " }}
               share(
-                :url='$config.baseUrl + $route.path + "#suggestion-" + suggestion.id'
+                :url='$config.baseUrl + $route.path + "#suggestion-" + suggestion.id',
+                :titleTwitter='"If you liked " + suggestion.title.title + " I highly suggest the Netflix " + suggestion.similar.title + " ! I watched and enjoyed it so much! 🙏 Thanks @myflixnet"',
+                :titleReddit='"If you liked " + suggestion.title.title + " I highly suggest the Netflix " + suggestion.similar.title + " ! I watched and enjoyed it so much! 🙏 Thanks @myflixnet"',
+                :titleFacebook='"Helpful " + suggestion.title.title + " suggestion"',
+                :descriptionFacebook='"I highly recommend " + suggestion.similar.title + " ! I watched and enjoyed it so much! 🙏 Thanks myflixnet"',
+                :hashtags='"NETFLIX," + suggestion.similar.title.replace(" ", "").toUppercase() + "," + suggestion.title.title.replace(" ", "").toUppercase()'
               )
               template(
                 v-if='connected && !self && !suggestion.reports.includes(id)'

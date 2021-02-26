@@ -54,12 +54,19 @@ v-container(fluid, :id='"review-" + review.id')
             @click='$copyText($config.baseUrl + $route.path + "#review-" + review.id); $toast.success("Copied to clipboard")'
           ) permalink
           span.white-font--text {{ " | " }}
-          share(:url='$config.baseUrl + $route.path + "#review-" + review.id')
+          share(
+            :url='$config.baseUrl + $route.path + "#review-" + review.id',
+            :titleTwitter='"Really helpful " + review.title.title + " review"',
+            :titleReddit='"Really helpful " + review.title.title + " review"',
+            :titleFacebook='"Really helpful " + review.title.title + " review"',
+            :descriptionFacebook='"I highly recommend " + suggestion.similar.title + " ! I watched and enjoyed it so much! 🙏 Thanks myflixnet"',
+            :hashtags='"NETFLIX," + review.title.title.replace(" ", "").toUppercase()'
+          )
           template(v-if='connected && !self && !review.reports.includes(id)')
             span.white-font--text {{ " | " }}
             span.white-font--text.click(@click='overlay = true') report
   report(
-    v-if='!self'
+    v-if='!self',
     :display='overlay',
     type='review',
     :username='profile.username',
