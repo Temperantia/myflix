@@ -30,6 +30,8 @@ defaultLayout
                           v-if='item !== "Remove from List"',
                           :class='$titleStatusColor(item)'
                         ) {{ item }}
+                      template(v-slot:item='{ item }')
+                        div(:class='$titleStatusColor(item)') {{ item }}
                     span.d-flex.align-center(
                       v-if='title.summary.type === "show" && title.episodeCount > 0 && status && status !== "Save for Later"',
                       style='position: absolute; top: 0; bottom: 0; right: 35px'
