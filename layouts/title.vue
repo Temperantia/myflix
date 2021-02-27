@@ -184,10 +184,10 @@ export default class Title extends Vue {
         name: 'GOODS',
         route: routeTitle + 'goods',
       },
-      {
+     /*  {
         name: 'MEDIA',
         route: routeTitle + 'media',
-      },
+      }, */
     ];
   }
 

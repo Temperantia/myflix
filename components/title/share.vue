@@ -5,7 +5,7 @@ v-menu
       v-icon.mr-5 mdi-share-variant
       span Share this page
     span.white-font--text.click(v-else, v-bind='attrs', v-on='on') share
-  v-list
+  v-list(dense)
     v-list-item
       share-network(
         network='twitter',
@@ -49,5 +49,10 @@ export default class Share extends Vue {
 <style lang="scss" scoped>
 img {
   width: 30px;
+}
+.share-network-twitter,
+.share-network-reddit,
+.share-network-facebook {
+  width: 100%;
 }
 </style>

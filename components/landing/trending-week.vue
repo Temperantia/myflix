@@ -35,8 +35,7 @@ div
               a(
                 :href='"https://www.netflix.com/title/" + title.id',
                 style='color: inherit; text-decoration: none'
-              )
-                | TRAILER
+              ) SEE ON NETFLIX
             nuxt-link(:to='title.r')
               button.button MORE >
 </template>
