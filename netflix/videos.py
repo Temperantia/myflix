@@ -11,7 +11,7 @@ from video_summary import get_summary
 from imdbpy import get_imdb_data
 from media import request_media
 
-REFRESH_IDS = False
+REFRESH_IDS = True
 
 
 def list_until_empty(data, k=None):
