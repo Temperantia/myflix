@@ -96,7 +96,7 @@ v-container(fluid, v-if='title')
                 :class='bingeworthy ? "white--text" : "white-font--text"'
               ) Would you binge-watch this series?
             button.button.white--text(@click='update')
-              v-icon(color='green-watching', v-if='title.saved') mdi-check
+              v-icon(color='green-watching', v-if='saved') mdi-check
               span(v-else) UPDATE
   v-row
     v-col

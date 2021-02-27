@@ -71,7 +71,7 @@ defaultLayout
             v-row(align='center')
               v-col.d-flex.justify-center
                 button.update(@click='update')
-                  v-icon(color='green-watching', v-if='title.saved') mdi-check
+                  v-icon(color='green-watching', v-if='saved') mdi-check
                   span(v-else) UPDATE
         v-container(fluid)
           v-row.title-border(align='center')
