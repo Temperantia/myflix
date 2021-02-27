@@ -20,7 +20,7 @@ v-col(cols='12', lg='2')
   v-row
     v-col.text-center
       nuxt-link(:to='"/flixlist/" + profile.username')
-        button.button.flixlist FlixList
+        button.button.button-red.mr-5 FlixList
   h3.title-border INFORMATION
   v-container(fluid)
     v-row
