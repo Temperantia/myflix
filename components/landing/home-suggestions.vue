@@ -25,7 +25,7 @@ div
           v-col(cols='4', lg='2')
             nuxt-link(:to='suggestion.similar.route')
             img(
-              :src='suggestion.similar.image',
+              :src='suggestion.similar.Poster',
               :alt='suggestion.similar.title'
             )
           v-col(cols='8', lg='4') Then you might like...

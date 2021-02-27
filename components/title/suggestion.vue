@@ -20,7 +20,7 @@ v-container.section-border(fluid, :id='"suggestion-" + suggestion.id')
                 :titleReddit='"If you liked " + suggestion.title.title + " I highly suggest the Netflix " + suggestion.similar.title + " ! I watched and enjoyed it so much! 🙏 Thanks @myflixnet"',
                 :titleFacebook='"Helpful " + suggestion.title.title + " suggestion"',
                 :descriptionFacebook='"I highly recommend " + suggestion.similar.title + " ! I watched and enjoyed it so much! 🙏 Thanks myflixnet"',
-                :hashtags='"NETFLIX," + suggestion.similar.title.replace(" ", "").toUppercase() + "," + suggestion.title.title.replace(" ", "").toUppercase()'
+                :hashtags='"NETFLIX," + suggestion.similar.title.replace(" ", "").toUpperCase() + "," + suggestion.title.title.replace(" ", "").toUpperCase()'
               )
               template(
                 v-if='connected && !self && !suggestion.reports.includes(id)'

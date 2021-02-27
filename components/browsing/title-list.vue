@@ -29,7 +29,7 @@ v-container(fluid)
             .mb-2
               h2.d-inline.font-weight-regular {{ title.t }}
               b.ml-2(v-if='connected')
-                i.green-watching--text(v-if='status === "Watching"') {{ episodes(title.id) }}
+                i.green-watching--text(v-if='title.u && status === "Watching"') {{ episodes(title.id) }}
                   span {{ " / " + title.e }}
                 i(v-else, :class='$titleStatusColor(status)') {{ status }}
               flixlist-add(v-if='connected', :title='title')
@@ -78,11 +78,11 @@ v-container(fluid)
           span.white-font--text.mr-1.py-0.px-1.border.white-font--border {{ title.v }}
           span.white-font--text.mr-1(v-if='title.s') {{ title.s }} SEASONS
           b(v-if='connected')
-            i.green-watching--text(v-if='status === "Watching"') {{ episodes(title.id) }}
+            i.green-watching--text(v-if='title.u && status === "Watching"') {{ episodes(title.id) }}
               span {{ " / " + title.e }}
             i(
               v-else,
-              :class='$titleStatusColor(title.u ? "show" : "movie", status)'
+              :class='$titleStatusColor(status)'
             ) {{ status }}
         .my-1(v-html='title.d')
         div
