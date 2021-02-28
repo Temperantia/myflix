@@ -5,7 +5,7 @@ v-app(app)
       v-col.pr-0(cols='2', lg='1')
         nuxt-link(to='/')
           img(src='/myflix-logo.png', alt='myflix logo')
-      v-col(cols='9', offset-lg='3', lg='4')
+      v-col.pr-0(cols='8', offset-lg='3', lg='4')
         search(nav)
       template(v-if='$vuetify.breakpoint.mdAndUp')
         client-only
@@ -38,13 +38,13 @@ v-app(app)
               v-icon mdi-twitter
             a.mr-3(href='https://www.facebook.com/myflixnet/' target='_blank')
               v-icon mdi-facebook
-            a.mr-3(href='https://discord.gg/X96R4AKtWk' target='_blank')
+            a.mr-3(href='https://discord.me/my-flix' target='_blank')
               v-icon mdi-discord
-      v-col.pl-0(v-else, cols='1')
+      v-col.pl-0(v-else, cols='2')
         v-menu
           template(v-slot:activator='{ on, attrs }')
             v-btn(icon, v-bind='attrs', v-on='on')
-              v-icon mdi-dots-vertical
+              v-icon mdi-menu
           v-list
             v-list-item(
               v-for='item of itemsMobile',

@@ -47,7 +47,7 @@ v-container(fluid)
         outlined,
         dense
       )
-    v-col(cols='12', lg='2') Rating
+    //-v-col(cols='12', lg='2') Rating
       v-select(
         :items='["All", ...Object.values(maturities)]',
         v-model='maturity',
