@@ -34,11 +34,11 @@ v-app(app)
               @click='tab.hook'
             ) {{ tab.name }}
           .text-right
-            a.mr-3(href='https://twitter.com/myflixnet')
+            a.mr-3(href='https://twitter.com/myflixnet' target='_blank')
               v-icon mdi-twitter
-            a.mr-3(href='https://www.facebook.com/myflixnet/')
+            a.mr-3(href='https://www.facebook.com/myflixnet/' target='_blank')
               v-icon mdi-facebook
-            a.mr-3(href='https://discord.gg/X96R4AKtWk')
+            a.mr-3(href='https://discord.gg/X96R4AKtWk' target='_blank')
               v-icon mdi-discord
       v-col.pl-0(v-else, cols='1')
         v-menu
