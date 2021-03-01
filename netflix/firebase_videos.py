@@ -48,7 +48,8 @@ for id, video in file.items():
     items[id] = video
 data = {k: v for k, v in sorted(items.items(), key=lambda item: (not item[1]['title'][0].isalpha(
 ), item[1]['title']))}
-dict_genres = load(open('data/genres_tagged.json', 'r', encoding='utf-8'))
+dict_genres = load(open(path.join(
+    Path(__file__).parent.absolute(), 'data/genres_tagged.json'), 'r', encoding='utf-8'))
 
 
 def extract_categories():
