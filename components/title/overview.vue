@@ -143,34 +143,30 @@ v-container(fluid, v-if='title')
             v-if='title.ProductionCompanies || title.DistributorCompanies || title.SpecialEffects || title.OtherCompanies'
           )
             v-col(
+              v-if='title[key]',
               v-for='(value, key) of categories',
               cols='12',
               md='4',
               :key='key'
             )
-              template(v-if='title[key]')
-                h4.mb-2 {{ value }}
-                template(v-if='Object.keys(title[key]).length > 5')
-                  template(v-if='expanded[key]')
-                    div(v-for='(credit, index) in title[key]', :key='index') {{ credit }}
-                  template(v-else)
-                    div(
-                      v-for='(credit, index) in title[key].slice(0, 5)',
-                      :key='index'
-                    ) {{ credit }}
-                  .red-netflix--text.click(
-                    v-if='expanded[key]',
-                    @click='expanded = Object.assign({}, expanded, { [key]: false })'
-                  ) {{ " show less" }}
-                  .red-netflix--text.click(
-                    v-else,
-                    @click='expanded = Object.assign({}, expanded, { [key]: true })'
-                  ) {{ " show more" }}
-                div(
+              h4.mb-2 {{ value }}
+              template(v-if='Object.keys(title[key]).length > 5')
+                template(v-if='expanded[key]')
+                  div(v-for='(credit, index) in title[key]', :key='index') {{ credit }}
+                template(v-else)
+                  div(
+                    v-for='(credit, index) in title[key].slice(0, 5)',
+                    :key='index'
+                  ) {{ credit }}
+                .red-netflix--text.click(
+                  v-if='expanded[key]',
+                  @click='expanded = Object.assign({}, expanded, { [key]: false })'
+                ) {{ " show less" }}
+                .red-netflix--text.click(
                   v-else,
-                  v-for='(credit, index) in title[key]',
-                  :key='index'
-                ) {{ credit }}
+                  @click='expanded = Object.assign({}, expanded, { [key]: true })'
+                ) {{ " show more" }}
+              div(v-else, v-for='(credit, index) in title[key]', :key='index') {{ credit }}
           v-col(v-else)
             p Not Available
 </template>
