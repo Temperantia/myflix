@@ -1,6 +1,9 @@
+from json import load
 from statistics import mean
 from datetime import datetime, timedelta
 from calendar import monthrange
+from pathlib import Path
+from os import path
 import meilisearch
 
 from threads import threads
@@ -12,7 +15,11 @@ videos = {}
 rank = {}
 popularity = {}
 bingeworthiness = {}
+categories = {}
+
 client = meilisearch.Client('http://127.0.0.1:7700')
+dict_genres = load(open(path.join(
+    Path(__file__).parent.absolute(), 'data/genres_tagged.json'), 'r', encoding='utf-8'))
 
 dt = datetime.now()
 start = (dt - timedelta(days=dt.weekday())).replace(hour=0,
@@ -65,6 +72,12 @@ def get_video_stats():
     scores[id] = video['score'] if video['score'] else 0
     bingeworthiness[id] = len(video['bingeworthiness']) / \
         2 if 'bingeworthiness' in video and video['bingeworthiness'] else 0
+    for category in video['categories']:
+      if category in categories:
+        categories[category]['value'] += 1
+      else:
+        categories[category] = {'category': category,
+                                'value': 1, 'image': video['boxArt']}
 
   ordered = sorted(scores.items(), key=lambda elem: elem[1], reverse=True)
   for index, id in enumerate(ordered):
@@ -73,6 +86,9 @@ def get_video_stats():
   ordered = sorted(followers.items(), key=lambda elem: elem[1], reverse=True)
   for index, id in enumerate(ordered):
     popularity[id[0]] = index + 1
+
+  categories = sorted(categories.items(), key=lambda elem: elem[1]['value', reverse=True]).slice(3)
+  client.index('categories').add_documents(categories)
 
   ids = [[id] for id in videos]
   threads(upload_ranks, ids, 0, 'Uploading ranks')
