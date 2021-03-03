@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from os import path
 from zlib import compress
+import meilisearch
 
 from firebase import video_collection, data_collection
 from threads import threads
@@ -35,7 +36,7 @@ z : score
 
 """
 
-searches = []
+searches = {}
 types = {}
 title_ids = {}
 CUT = 3700
@@ -50,6 +51,7 @@ data = {k: v for k, v in sorted(items.items(), key=lambda item: (not item[1]['ti
 ), item[1]['title']))}
 dict_genres = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/genres_tagged.json'), 'r', encoding='utf-8'))
+client = meilisearch.Client('https://search.my-flix.net')
 
 
 def extract_categories():
@@ -67,11 +69,10 @@ def create_route(title, type, id):
 
 def find_key_by_route(route):
   global searches
-  for index, search in enumerate(searches):
-    for key in list(search):
-      if search[key]['r'] == route:
-        return index, key
-  return None, None
+  for key in list(searches):
+    if searches[key]['r'] == route:
+      return key
+  return  None
 
 
 def find_categories(genres):
@@ -95,13 +96,13 @@ def remove_ids(genres):
 def duplicate(route, type, title):
   global searches
   if route in types and types[route] == type:
-    index, key = find_key_by_route(route)
+    key = find_key_by_route(route)
     if key:
       if not id in title_ids:
         title_ids[id] = 1
       else:
         title_ids[id] += 1
-      searches[index][key]['r'] = create_route(
+      searches[key]['r'] = create_route(
           title, type, title_ids[id])
       route = create_route(title, type, title_ids[id] + 1)
   return route
@@ -109,27 +110,29 @@ def duplicate(route, type, title):
 
 def search_videos(video, id, index):
   global searches
-  index_search = int(index / CUT)
-  if len(searches) == index_search:
-    searches.append({})
-    print(index_search)
-  type = video['summary']['type']
-  route = create_route(video['title'], type, 0)
-  route = duplicate(route, type, video['title'])
-  searches[index_search][id] = {'r': route, 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
+  #index_search = int(index / CUT)
+  #if len(searches) == index_search:
+  #  searches.append({})
+  #  print(index_search)
+
+  searches[id] = {'r': video['route'], 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
       video['genres']), 'g': remove_ids(video['genres']), 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score']}
 
   if video['summary']['isOriginal']:
-    searches[index_search][id]['o'] = 1
+    searches[id]['o'] = 1
   if video['seasonCount']:
-    searches[index_search][id]['s'] = video['seasonCount']
+    searches[id]['s'] = video['seasonCount']
   if video['episodeCount']:
-    searches[index_search][id]['e'] = video['episodeCount']
-  types[route] = type
+    searches[id]['e'] = video['episodeCount']
 
 
 def upload(id, index, data):
   video = data[id]
+
+  type = video['summary']['type']
+  video['route'] = create_route(video['title'], type, 0)
+  video['route'] = duplicate(video['route'], type, video['title'])
+  types[ video['route']] = type
   if not 'exists' in video:
     #random = round(uniform(7.5, 9.8), 1)
     video['scores'] = {}  # {'1': random}
@@ -142,20 +145,22 @@ def upload(id, index, data):
     video['exists'] = True
 
   search_videos(video, id, index)
-  video_collection.document(id).set(video, merge=True)
+  #video_collection.document(id).set(video, merge=True)
 
 
 def upload_search():
   global searches
   # for doc in data_collection.stream():
   #  doc.reference.delete()
-  for index, search in enumerate(searches):
-    arr = []
-    for key in search:
-      arr.append({**{'id': key}, **search[key]})
-    json = compress(dumps(arr, separators=(',', ':')).encode('utf-8'))
-    print(len(json))  # must not exceed 1048487
-    data_collection.document('search' + str(index)).set({'search': json})
+  #for index, search in enumerate(searches):
+  arr = []
+  for key in searches:
+    arr.append({**{'id': key}, **searches[key]})
+    #json = compress(dumps(arr, separators=(',', ':')).encode('utf-8'))
+    #print(len(json))  # must not exceed 1048487
+  client.index('videos').add_documents(arr)
+
+    #data_collection.document('search' + str(index)).set({'search': json})
 
 
 def launch():

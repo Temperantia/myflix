@@ -14,7 +14,6 @@ export default class localStorageStore extends VuexModule {
   user: any = null;
   connected: boolean = false;
   socialAuthUser: any = null;
-  titles: any = [];
 
   get id() {
     return this.user?.id;

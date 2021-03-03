@@ -3,6 +3,7 @@ from statistics import mean
 from datetime import datetime, timedelta
 from calendar import monthrange
 from zlib import compress, decompress
+import meilisearch
 
 from threads import threads
 from firebase import get_collection, video_collection, data_collection
@@ -14,6 +15,7 @@ videos = {}
 rank = {}
 popularity = {}
 bingeworthiness = {}
+client = meilisearch.Client('http://127.0.0.1:7700')
 
 dt = datetime.now()
 start = (dt - timedelta(days=dt.weekday())).replace(hour=0,
@@ -50,6 +52,7 @@ def upload_ranks(id):
 
 
 def get_video_stats():
+  print('Getting collection')
   collection = get_collection(video_collection, [])
   print('Starting calculation')
   for video in collection:
@@ -76,15 +79,13 @@ def get_video_stats():
 
   print('Uploading ranks')
   ids = [[id] for id in videos]
-  threads(upload_ranks, ids, 0)
+  #threads(upload_ranks, ids, 0)
 
 
 def update_search_tables():
   print('Updating search tables')
-  search = []
-  for doc in data_collection.stream():
-    search += loads(decompress(doc.to_dict()['search']))
-    # doc.reference.delete()
+  search = client.index('videos').get_documents()
+
 
   for video in search:
     video['f'] = followers[video['id']]
@@ -104,11 +105,12 @@ def update_search_tables():
       video['j'] = trending[video['t']]
 
   print('Uploading search tables')
-  searches = [search[x:x+CUT] for x in range(0, len(search), CUT)]
-  for index, s in enumerate(searches):
-    json = compress(dumps(s, separators=(',', ':')).encode('utf-8'))
-    print(len(json))  # must not exceed 1048487
-    data_collection.document('search' + str(index)).set({'search': json})
+  client.index('videos').add_documents(search)
+
+  #for s in search:
+    #json = compress(dumps(s, separators=(',', ':')).encode('utf-8'))
+    #print(len(json))  # must not exceed 1048487
+    #data_collection.document('search' + str(index)).set({'search': json})
 
 
 get_video_stats()

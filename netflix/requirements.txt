@@ -3,4 +3,4 @@ imdbpy
 python-slugify
 jsonmerge
 progress
-unicode
+meilisearch
