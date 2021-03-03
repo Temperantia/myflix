@@ -146,7 +146,7 @@ def upload_search():
   arr = []
   for key in searches:
     arr.append({**{'id': key}, **searches[key]})
-  client.index('videos').add_documents(arr)
+  client.index('videos').update_documents(arr)
 
 
 def launch():
