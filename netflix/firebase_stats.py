@@ -83,8 +83,7 @@ def get_video_stats():
     scores[id] = video['score'] if video['score'] else 0
     bingeworthiness[id] = len(video['bingeworthiness']) / \
         2 if 'bingeworthiness' in video and video['bingeworthiness'] else 0
-    categories = find_categories(video['genres'])
-    for category in categories:
+    for category in find_categories(video['genres']):
       if category in categories:
         categories[category]['value'] += 1
       else:
