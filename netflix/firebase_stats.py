@@ -87,29 +87,30 @@ def get_video_stats():
   for index, id in enumerate(ordered):
     popularity[id[0]] = index + 1
 
-  categories = sorted(categories.items(), key=lambda elem: elem[1]['value'], reverse=True]).slice(3)
+  categories = sorted(categories.items(),
+                      key=lambda elem: elem[1]['value'], reverse=True).slice(3)
   client.index('categories').add_documents(categories)
 
-  ids=[[id] for id in videos]
+  ids = [[id] for id in videos]
   threads(upload_ranks, ids, 0, 'Uploading ranks')
 
 
 def update_search_tables():
   print('Updating search tables')
-  search=client.index('videos').get_documents()
+  search = client.index('videos').get_documents()
 
   for video in search:
-    video['f']=followers[video['id']]
-    video['z']=scores[video['id']]
-    video['q']=rank[video['id']]
-    video['p']=popularity[video['id']]
-    video['h']=bingeworthiness[video['id']]
+    video['f'] = followers[video['id']]
+    video['z'] = scores[video['id']]
+    video['q'] = rank[video['id']]
+    video['p'] = popularity[video['id']]
+    video['h'] = bingeworthiness[video['id']]
 
-    availability=video['a'] / 1000 if video['a'] else None
-    video['w']=1 if availability and availability >= start and availability <= end else 0
-    video['n']=1 if availability and availability >= start_release and availability <= end else 0
-    video['m']=1 if availability and availability >= month_start and availability <= month_end else 0
-    video['j']=trending[video['t']] if video['t'] in trending else None
+    availability = video['a'] / 1000 if video['a'] else None
+    video['w'] = 1 if availability and availability >= start and availability <= end else 0
+    video['n'] = 1 if availability and availability >= start_release and availability <= end else 0
+    video['m'] = 1 if availability and availability >= month_start and availability <= month_end else 0
+    video['j'] = trending[video['t']] if video['t'] in trending else None
 
   print('Uploading search tables')
   client.index('videos').add_documents(search)
