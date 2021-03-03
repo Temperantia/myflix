@@ -6,14 +6,12 @@ v-autocomplete(
   dense,
   :hide-details='true',
   append-icon='mdi-magnify',
-  :search-input='input',
-  :filter='search',
+  :search-input.sync='value',
   background-color='#0f0f0f',
   placeholder='SEARCH FOR TITLES',
   cache-items,
   item-text='t',
   item-value='t',
-  :value='value',
   width='0'
 )
   template(v-slot:item='{ item }')
@@ -30,12 +28,11 @@ v-autocomplete(
   dense,
   :hide-details='true',
   cache-items,
-  :filter='search',
+  :search-input.sync='value',
   append-icon='mdi-magnify',
   background-color='#0f0f0f',
   item-text='t',
-  item-value='t',
-  :value='value'
+  item-value='t'
 )
   template(v-slot:item='{ item }')
     v-list-item(@click='click(item)')
@@ -45,52 +42,42 @@ v-autocomplete(
         v-list-item-title(v-text='item.t')
 </template>
 <script lang='ts'>
-import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
-
-const browseModule = namespace('browse');
+import { Vue, Component, Prop, Watch } from 'nuxt-property-decorator';
 
 @Component
 export default class Search extends Vue {
   @Prop({ type: Boolean }) nav!: boolean;
 
-  @browseModule.State('titles') titles!: Function;
-
   input: string = '';
   value: string = '';
-  items: any[] = [];
-  map: any = {
-    a: 'á|à|ã|â|À|Á|Ã|Â',
-    e: 'é|è|ê|É|È|Ê',
-    i: 'í|ì|î|Í|Ì|Î',
-    o: 'ó|ò|ô|õ|Ó|Ò|Ô|Õ',
-    u: 'ú|ù|û|ü|Ú|Ù|Û|Ü',
-    c: 'ç|Ç',
-    n: 'ñ|Ñ',
-  };
+  titles: any[] = [];
+  isLoading: boolean = false;
 
-  click(item: any) {
-    this.value = item.t;
+  click(title: any) {
+    this.value = title.t;
     this.$emit('click', {
-      id: item.id,
-      Poster: item.i,
-      title: item.t,
-      type: item.u ? 'show' : 'movie',
+      id: title.id,
+      Poster: title.i,
+      route: title.r,
+      title: title.t,
+      type: title.u ? 'show' : 'movie',
     });
   }
 
-  search(item: any, queryText: string, itemText: any) {
-    return (
-      this.slugify(item.t)
-        .toLocaleLowerCase()
-        .indexOf(this.slugify(queryText).toLocaleLowerCase()) > -1
-    );
-  }
-
-  slugify(str: string) {
-    for (const pattern in this.map) {
-      str = str.replace(new RegExp(this.map[pattern], 'g'), pattern);
+  @Watch('value')
+  async onSearchChanged(value: string) {
+    if (this.isLoading) {
+      return;
     }
-    return str;
+    this.isLoading = true;
+    this.titles = (
+      await (
+        await fetch(
+          'https://search.my-flix.net/indexes/videos/search?q=' + value
+        )
+      ).json()
+    ).hits;
+    this.isLoading = false;
   }
 }
 </script>

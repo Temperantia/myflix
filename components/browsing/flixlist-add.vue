@@ -21,11 +21,11 @@ export default class PopularTop extends Vue {
   @localStorageModule.Action('addToFlixlist') addToFlixlist!: Function;
   @localStorageModule.Action('removeFromFlixlist')
   removeFromFlixlist!: Function;
-  t: any;
+  t: any = {};
 
-  created() {
+  async created() {
     if (this.id) {
-      this.t = this.titles.find((title: any) => title.id === String(this.id));
+      this.t = await fetch('https://search.my-flix.net/indexes/videos/documents/' + this.id);
     } else {
       this.t = this.title;
     }

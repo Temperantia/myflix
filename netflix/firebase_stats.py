@@ -88,16 +88,12 @@ def update_search_tables():
     video['q'] = rank[video['id']]
     video['p'] = popularity[video['id']]
     video['h'] = bingeworthiness[video['id']]
-    if video['a']:
-      availability = video['a'] / 1000
-      if availability >= start and availability <= end:
-        video['w'] = 1
-      if availability >= start_release and availability <= end:
-        video['n'] = 1
-      if availability >= month_start and availability <= month_end:
-        video['m'] = 1
-    if video['t'] in trending:
-      video['j'] = trending[video['t']]
+
+    availability = video['a'] / 1000 if video['a'] else None
+    video['w'] = 1 if availability and availability >= start and availability <= end else 0
+    video['n'] = 1 if availability and availability >= start_release and availability <= end else 0
+    video['m'] = 1 if availability and availability >= month_start and availability <= month_end else 0
+    video['j'] = trending[video['t']] if video['t'] in trending else None
 
   print('Uploading search tables')
   client.index('videos').add_documents(search)

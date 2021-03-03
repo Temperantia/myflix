@@ -54,8 +54,6 @@ export default class ReviewsStore extends VuexModule {
     }
     const author = this.context.rootState.localStorage.user;
     const title = this.context.rootState.title.title;
-    const titles: any = this.context.rootState.browse.titles;
-    const t: any = titles.find((title: any) => title.id === String(title.id));
     const data = {
       author: {
         id: author.id,
@@ -65,7 +63,7 @@ export default class ReviewsStore extends VuexModule {
       title: {
         id: title.summary.id,
         type: title.summary.type,
-        route: t.r,
+        route: title.route,
         title: title.title,
         boxArt: title.boxArt,
         Poster: title.Poster

@@ -41,10 +41,6 @@ export default class SuggestionsStore extends VuexModule {
     }
     const author = this.context.rootState.localStorage.user;
     const title = this.context.rootState.title.title;
-    const titles: any = this.context.rootState.browse.titles;
-    const t: any = titles.find((title: any) => title.id === String(title.id));
-    const s: any = titles.find((title: any) => suggestion.similar.id === String(title.id));
-    suggestion.similar.route = s.r;
     const data = {
       author: {
         id: author.id,
@@ -55,7 +51,7 @@ export default class SuggestionsStore extends VuexModule {
         id: title.summary.id,
         type: title.summary.type,
         title: title.title,
-        route: t.r,
+        route: title.route,
         boxArt: title.boxArt,
         Poster: title.Poster
       },
