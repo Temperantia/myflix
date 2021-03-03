@@ -17,7 +17,7 @@ popularity = {}
 bingeworthiness = {}
 categories = {}
 
-client = meilisearch.Client('http://127.0.0.1:7700')
+client = meilisearch.Client('https://search.my-flix.net')
 dict_genres = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/genres_tagged.json'), 'r', encoding='utf-8'))
 
@@ -66,30 +66,35 @@ def find_categories(genres):
   return found
 
 
+def get_video_stat(video):
+  id = video.id
+  video = video.to_dict()
+  videos[id] = video
+  followers[id] = len(video['followers']) if video['followers'] else 0
+  try:
+    video['score'] = mean(list(video['scores'].values())
+                          ) if video['scores'] else None
+  except:
+    print(video)
+  scores[id] = video['score'] if video['score'] else 0
+  bingeworthiness[id] = len(video['bingeworthiness']) / \
+      2 if 'bingeworthiness' in video and video['bingeworthiness'] else 0
+  for category in find_categories(video['genres']):
+    if category in categories:
+      categories[category]['value'] += 1
+    else:
+      categories[category] = {'category': category,
+                              'value': 1, 'image': video['boxArt']}
+
+
 def get_video_stats():
   global categories
   print('Getting collection')
   collection = get_collection(video_collection, [])
-  print('Starting calculation')
+  videos = []
   for video in collection:
-    id = video.id
-    video = video.to_dict()
-    videos[id] = video
-    followers[id] = len(video['followers']) if video['followers'] else 0
-    try:
-      video['score'] = mean(list(video['scores'].values())
-                            ) if video['scores'] else None
-    except:
-      print(video)
-    scores[id] = video['score'] if video['score'] else 0
-    bingeworthiness[id] = len(video['bingeworthiness']) / \
-        2 if 'bingeworthiness' in video and video['bingeworthiness'] else 0
-    for category in find_categories(video['genres']):
-      if category in categories:
-        categories[category]['value'] += 1
-      else:
-        categories[category] = {'category': category,
-                                'value': 1, 'image': video['boxArt']}
+    videos.append([video])
+  threads(get_video_stat, videos, 0, 'Calculating stats')
 
   ordered = sorted(scores.items(), key=lambda elem: elem[1], reverse=True)
   for index, id in enumerate(ordered):
@@ -99,8 +104,11 @@ def get_video_stats():
   for index, id in enumerate(ordered):
     popularity[id[0]] = index + 1
 
+  print('Most popular categories')
   categories = sorted(categories.items(),
                       key=lambda elem: elem[1]['value'], reverse=True)[:3]
+  client.index('categories').delete_all_documents()
+  print(categories)
   client.index('categories').add_documents(categories)
 
   ids = [[id] for id in videos]
