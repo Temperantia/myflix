@@ -9,11 +9,7 @@ db = firestore.client()
 
 docs = db.collection('videos').get()
 
-count = 0
-
 for doc in docs:
-    count = count+1
     key = doc.id
     db.collection('videos').document(key).update({"Actors.Name": firestore.DELETE_FIELD, "Actors.Role": firestore.DELETE_FIELD})
-    print(f'{count}/{len(docs)}')
     
