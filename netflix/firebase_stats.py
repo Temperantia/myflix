@@ -67,6 +67,7 @@ def find_categories(genres):
 
 
 def get_video_stats():
+  global categories
   print('Getting collection')
   collection = get_collection(video_collection, [])
   print('Starting calculation')
