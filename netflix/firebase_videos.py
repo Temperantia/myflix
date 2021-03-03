@@ -1,12 +1,11 @@
-from json import load, dumps, dump
+from json import load,  dump
 from slugify import slugify
 from datetime import datetime
 from pathlib import Path
 from os import path
-from zlib import compress
 import meilisearch
 
-from firebase import video_collection, data_collection
+from firebase import video_collection
 from threads import threads
 
 """
@@ -39,7 +38,6 @@ z : score
 searches = {}
 types = {}
 title_ids = {}
-CUT = 3700
 now = datetime.now()
 file = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8'))
@@ -72,7 +70,7 @@ def find_key_by_route(route):
   for key in list(searches):
     if searches[key]['r'] == route:
       return key
-  return  None
+  return None
 
 
 def find_categories(genres):
@@ -108,13 +106,8 @@ def duplicate(route, type, title):
   return route
 
 
-def search_videos(video, id, index):
+def search_videos(video, id):
   global searches
-  #index_search = int(index / CUT)
-  #if len(searches) == index_search:
-  #  searches.append({})
-  #  print(index_search)
-
   searches[id] = {'r': video['route'], 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
       video['genres']), 'g': remove_ids(video['genres']), 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score']}
 
@@ -126,13 +119,13 @@ def search_videos(video, id, index):
     searches[id]['e'] = video['episodeCount']
 
 
-def upload(id, index, data):
+def upload(id,  data):
   video = data[id]
 
   type = video['summary']['type']
   video['route'] = create_route(video['title'], type, 0)
   video['route'] = duplicate(video['route'], type, video['title'])
-  types[ video['route']] = type
+  types[video['route']] = type
   if not 'exists' in video:
     #random = round(uniform(7.5, 9.8), 1)
     video['scores'] = {}  # {'1': random}
@@ -144,31 +137,23 @@ def upload(id, index, data):
     video['bingeworthiness'] = []
     video['exists'] = True
 
-  search_videos(video, id, index)
-  #video_collection.document(id).set(video, merge=True)
+  search_videos(video, id)
+  video_collection.document(id).set(video, merge=True)
 
 
 def upload_search():
   global searches
-  # for doc in data_collection.stream():
-  #  doc.reference.delete()
-  #for index, search in enumerate(searches):
   arr = []
   for key in searches:
     arr.append({**{'id': key}, **searches[key]})
-    #json = compress(dumps(arr, separators=(',', ':')).encode('utf-8'))
-    #print(len(json))  # must not exceed 1048487
   client.index('videos').add_documents(arr)
-
-    #data_collection.document('search' + str(index)).set({'search': json})
 
 
 def launch():
   ids = []
-  for index, id in enumerate(data):
+  for id in data:
     ids.append([
         id,
-        index,
         data
     ])
   threads(upload, ids, 0, 'Uploading titles')

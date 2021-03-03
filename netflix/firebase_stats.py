@@ -1,14 +1,11 @@
-from json import dumps, loads
 from statistics import mean
 from datetime import datetime, timedelta
 from calendar import monthrange
-from zlib import compress, decompress
 import meilisearch
 
 from threads import threads
-from firebase import get_collection, video_collection, data_collection
+from firebase import get_collection, video_collection
 
-CUT = 3700
 scores = {}
 followers = {}
 videos = {}
@@ -40,7 +37,7 @@ Each week :
 1. Netflix (40m)
 2. Media center : Description, Original box art (10m)
 3. Statistics : Rank, Popularity, Periodic (10m)
-4. IMDB : Cast, Tall box art (7h) (Azure)
+4. IMDB : Cast, Tall box art (2h)
 
 """
 
@@ -77,15 +74,13 @@ def get_video_stats():
   for index, id in enumerate(ordered):
     popularity[id[0]] = index + 1
 
-  print('Uploading ranks')
   ids = [[id] for id in videos]
-  #threads(upload_ranks, ids, 0)
+  threads(upload_ranks, ids, 0, 'Uploading ranks')
 
 
 def update_search_tables():
   print('Updating search tables')
   search = client.index('videos').get_documents()
-
 
   for video in search:
     video['f'] = followers[video['id']]
@@ -106,11 +101,6 @@ def update_search_tables():
 
   print('Uploading search tables')
   client.index('videos').add_documents(search)
-
-  #for s in search:
-    #json = compress(dumps(s, separators=(',', ':')).encode('utf-8'))
-    #print(len(json))  # must not exceed 1048487
-    #data_collection.document('search' + str(index)).set({'search': json})
 
 
 get_video_stats()
