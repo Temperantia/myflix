@@ -100,7 +100,7 @@ def get_video_stats():
     popularity[id[0]] = index + 1
 
   categories = sorted(categories.items(),
-                      key=lambda elem: elem[1]['value'], reverse=True).slice(3)
+                      key=lambda elem: elem[1]['value'], reverse=True)[:3]
   client.index('categories').add_documents(categories)
 
   ids = [[id] for id in videos]
