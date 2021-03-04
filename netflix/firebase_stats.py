@@ -7,7 +7,7 @@ from os import path
 import meilisearch
 
 from threads import threads
-from firebase import get_collection, video_collection
+from firebase import get_collection, video_collection, globals_collection
 
 scores = {}
 followers = {}
@@ -16,6 +16,8 @@ rank = {}
 popularity = {}
 bingeworthiness = {}
 categories = {}
+new_releases = {}
+months = {}
 
 client = meilisearch.Client('https://search.my-flix.net')
 dict_genres = load(open(path.join(
@@ -100,9 +102,21 @@ def get_video_stats():
   for index, id in enumerate(ordered):
     rank[id[0]] = index + 1
 
+  new_release_index = 1
+  month_index = 1
   ordered = sorted(followers.items(), key=lambda elem: elem[1], reverse=True)
   for index, id in enumerate(ordered):
+    availability = id[1]['a'] / 1000 if id[1]['a'] else None
     popularity[id[0]] = index + 1
+    if availability and availability >= start_release and availability <= end:
+      new_releases[id[0]] = new_release_index
+      new_release_index += 1
+    if availability and availability >= month_start and availability <= month_end:
+      months[id[0]] = month_index
+      month_index += 1
+
+  globals_collection.document('globals').update(
+      {'newReleaseCount': new_release_index})
 
   print('Most popular categories')
   categories = sorted(categories.values(),
@@ -124,11 +138,8 @@ def update_search_tables():
     video['q'] = rank[video['id']]
     video['p'] = popularity[video['id']]
     video['h'] = bingeworthiness[video['id']]
-
-    availability = video['a'] / 1000 if video['a'] else None
-    video['w'] = 1 if availability and availability >= start and availability <= end else 0
-    video['n'] = 1 if availability and availability >= start_release and availability <= end else 0
-    video['m'] = 1 if availability and availability >= month_start and availability <= month_end else 0
+    video['newReleasesRank'] = new_releases[video['id']]
+    video['monthRank'] = months[video['id']]
     video['j'] = trending[video['t']] if video['t'] in trending else None
 
   print('Uploading search tables')
