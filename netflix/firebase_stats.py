@@ -106,7 +106,7 @@ def get_video_stats():
 
   print('Most popular categories')
   categories = sorted(categories.values(),
-                      key=lambda elem: elem[1]['value'], reverse=True)[:3]
+                      key=lambda elem: elem['value'], reverse=True)[:3]
   client.index('categories').delete_all_documents()
   print(categories)
   client.index('categories').add_documents(categories)
