@@ -108,7 +108,6 @@ def get_video_stats():
   categories = sorted(categories.values(),
                       key=lambda elem: elem['value'], reverse=True)[:3]
   client.index('categories').delete_all_documents()
-  print(categories)
   client.index('categories').add_documents(categories)
 
   ids = [[id] for id in videos]
@@ -117,7 +116,7 @@ def get_video_stats():
 
 def update_search_tables():
   print('Updating search tables')
-  search = client.index('videos').get_documents()
+  search = client.index('videos').get_documents({'limit': 100000})
 
   for video in search:
     video['f'] = followers[video['id']]
@@ -133,7 +132,7 @@ def update_search_tables():
     video['j'] = trending[video['t']] if video['t'] in trending else None
 
   print('Uploading search tables')
-  client.index('videos').add_documents(search)
+  client.index('videos').update_documents(search)
 
 
 get_video_stats()
