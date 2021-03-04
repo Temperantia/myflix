@@ -129,7 +129,7 @@ export default class Default extends Vue {
   }
 
   async created() {
-    await this.initBrowse(this.$cookies);
+    await this.initBrowse();
     await this.initReviews(this.$cookies);
     await this.initSuggestions(this.$cookies);
     this.tabs = [

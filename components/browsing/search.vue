@@ -70,13 +70,7 @@ export default class Search extends Vue {
       return;
     }
     this.isLoading = true;
-    this.titles = (
-      await (
-        await fetch(
-          'https://search.my-flix.net/indexes/videos/search?q=' + value
-        )
-      ).json()
-    ).hits;
+    this.titles = (await this.$titles.search(value)).hits;
     this.isLoading = false;
   }
 }

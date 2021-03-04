@@ -10,13 +10,11 @@
 import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
 
 const localStorageModule = namespace('localStorage');
-const browseModule = namespace('browse');
 
 @Component
 export default class PopularTop extends Vue {
   @Prop({ type: Object }) title!: any;
   @Prop({ type: Number }) id!: number;
-  @browseModule.State('titles') titles!: any;
   @localStorageModule.Getter('flixlist') flixlist!: any;
   @localStorageModule.Action('addToFlixlist') addToFlixlist!: Function;
   @localStorageModule.Action('removeFromFlixlist')
@@ -25,7 +23,7 @@ export default class PopularTop extends Vue {
 
   async created() {
     if (this.id) {
-      this.t = await fetch('https://search.my-flix.net/indexes/videos/documents/' + this.id);
+      this.t = this.$titles.getDocument(this.id);
     } else {
       this.t = this.title;
     }

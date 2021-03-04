@@ -19,7 +19,8 @@ export default {
     "~/plugins/auth",
     "~/plugins/vue-scrollactive",
     "~/plugins/ad.client",
-    "~/plugins/modules-accessor"
+    "~/plugins/modules-accessor",
+    "~/plugins/search"
   ],
   components: true,
   buildModules: [

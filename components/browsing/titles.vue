@@ -3,7 +3,7 @@ v-container(fluid)
   v-row.subtitle-border
     v-col.pr-0(cols='12', lg='2')
       h1.pageSubHead.font-weight-black {{ show ? "TV SHOWS" : film ? "FILMS" : "SEARCH" }}
-      h2.pageSubHead_1 {{ parseFloat(source.length).toLocaleString("en") }} titles currently available on Netflix
+      h2.pageSubHead_1 {{ parseFloat(titles.length).toLocaleString("en") }} titles currently available on Netflix
     v-col.searchContainer(cols='8', offset-lg='2', lg='4')
       input#search.titlePageSearch(
         v-model='search',
@@ -16,8 +16,17 @@ v-container(fluid)
         src='/list.png',
         alt='list icon'
       )
-      img.click.icon.mr-2(v-else, @click='gallery = true', src='/gallery.png', alt='gallery icon')
-      img.click.icon(@click='settings = !settings', src='/gear.png', alt='settings icon')
+      img.click.icon.mr-2(
+        v-else,
+        @click='gallery = true',
+        src='/gallery.png',
+        alt='gallery icon'
+      )
+      img.click.icon(
+        @click='settings = !settings',
+        src='/gear.png',
+        alt='settings icon'
+      )
       .window.pa-2.border.white-font--border(v-if='settings')
         v-checkbox.my-1(
           label='Show completed',
@@ -61,25 +70,24 @@ v-container(fluid)
         outlined,
         dense
       )
-  title-list(:source='source', :gallery='gallery')
+  title-list(:source='titles', :gallery='gallery')
 </template>
 <script lang='ts'>
 import categories from '~/netflix/data/categories.json';
 import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
 
 const localStorageModule = namespace('localStorage');
-const browseModule = namespace('browse');
 const titleModule = namespace('title');
 
 @Component
 export default class Titles extends Vue {
   @Prop({ type: Boolean }) show!: boolean;
   @Prop({ type: Boolean }) film!: boolean;
-  @browseModule.State('titles') titles!: any;
   @titleModule.State('maturities') maturities!: any;
   @localStorageModule.State('connected') connected!: boolean;
   @localStorageModule.Getter('flixlist') flixlist!: any;
   @localStorageModule.Getter('titleStatus') titleStatus!: any;
+  titles: any[] = [];
   gallery = false;
   settings = false;
   category = 'All';
@@ -119,9 +127,11 @@ export default class Titles extends Vue {
     return str;
   }
 
-  get source() {
+  async fetch() {
     const search = this.slugify(this.search).toLocaleLowerCase();
-    return this.titles
+    this.titles = await (
+      await this.$titles.search(search, { limit: 1000000 })
+    ).hits
       .filter((title: any) => {
         const status = this.titleStatus(title.id);
         if (title.y === 0 || title.a > this.now || title.y > this.nowYear) {
@@ -131,8 +141,6 @@ export default class Titles extends Vue {
           ((!this.show && !this.film) || this.show ? title.u : !title.u) &&
           (this.category === 'All' || title.c.includes(this.category)) &&
           (this.maturity === 'All' || title.v === this.maturity) &&
-          (this.search === '' ||
-            this.slugify(title.t).toLocaleLowerCase().indexOf(search) > -1) &&
           (!this.original || title.o) &&
           (((!this.completed || status === 'Completed') &&
             (!this.watching || status === 'Watching')) ||
@@ -153,6 +161,7 @@ export default class Titles extends Vue {
         } else if (this.sort === 'Release date (Oldest first)') {
           return a.a && b.a ? (a.a < b.a ? -1 : 1) : a.y < b.y ? -1 : 1;
         }
+        return 0;
       });
   }
 }

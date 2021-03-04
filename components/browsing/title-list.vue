@@ -107,7 +107,7 @@ const localStorageModule = namespace('localStorage');
 
 @Component
 export default class TitleList extends Vue {
-  @Prop({ type: Array }) source!: any;
+  @Prop({ type: Array, default: [] }) source!: any;
   @Prop({ type: Boolean }) gallery!: boolean;
   @localStorageModule.State('connected') connected!: boolean;
   @localStorageModule.Getter('titleStatus') titleStatus!: any;

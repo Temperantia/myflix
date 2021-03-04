@@ -50,7 +50,7 @@ div
           outlined,
           hide-details
         )
-    title-list(:source='newReleases')
+    title-list(:source='newReleases', :page='page')
 </template>
 <script lang='ts'>
 import { Vue, Component, namespace } from 'nuxt-property-decorator';
@@ -66,10 +66,11 @@ export default class NewReleases extends Vue {
   genre: string = 'All';
   bingeworthiness: boolean = false;
   original: boolean = false;
+  newReleases: any[] = [];
   genres = genres;
+  page = 1;
 
   @titleModule.State('ratings') ratings!: any;
-  @browseModule.State('titles') titles!: any;
 
   getWeek() {
     const week =
@@ -79,8 +80,10 @@ export default class NewReleases extends Vue {
     return week;
   }
 
-  get newReleases() {
-    return this.titles.filter((title: any) => {
+  async fetch() {
+    this.newReleases = await (
+      await this.$titles.search(null, { limit: 1000000 })
+    ).hits.filter((title: any) => {
       if (!title.n) {
         return false;
       }
@@ -91,7 +94,8 @@ export default class NewReleases extends Vue {
         (this.score === 'All' ||
           Number(this.score.match(/(([^()]+))/)?.[1]) === parseInt(title.z)) &&
         (this.genre === 'All' || title.c.includes(this.genre)) &&
-        (!this.original || title.o) && (!this.bingeworthiness || title.h > 0.5)
+        (!this.original || title.o) &&
+        (!this.bingeworthiness || title.h > 0.5)
       );
     });
   }
