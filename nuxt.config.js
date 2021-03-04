@@ -18,6 +18,7 @@ export default {
     "~/plugins/firebase",
     "~/plugins/auth",
     "~/plugins/vue-scrollactive",
+    "~/plugins/vue-async-computed",
     "~/plugins/ad.client",
     "~/plugins/modules-accessor",
     "~/plugins/search"

@@ -18,6 +18,7 @@ video_collection = db.collection('videos')
 data_collection = db.collection('data')
 genre_collection = db.collection('genres')
 stats_collection = db.collection('stats')
+globals_collection = db.collection('globals')
 
 
 def get_collection(coll_ref, collection, cursor=None):

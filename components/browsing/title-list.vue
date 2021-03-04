@@ -21,7 +21,7 @@ v-container(fluid)
             img.icon(src='/trending.png', alt='trending')
             div(style='position: absolute; top: 0; left: 0; font-size: 14px') {{ "Trending #" + title.j }}
         div(
-          :title='title.t'
+          :title='title.t',
           :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + title.i + ");"'
         )
         .gradient
@@ -54,7 +54,7 @@ v-container(fluid)
       v-container(fluid)
         v-row
           v-col
-            img(:src='title.i' :alt='title.t')
+            img(:src='title.i', :alt='title.t')
     v-col(cols='12', lg='11')
       v-container(fluid)
         v-row(v-if='$vuetify.breakpoint.smAndDown')
@@ -80,10 +80,7 @@ v-container(fluid)
           b(v-if='connected')
             i.green-watching--text(v-if='title.u && status === "Watching"') {{ episodes(title.id) }}
               span {{ " / " + title.e }}
-            i(
-              v-else,
-              :class='$titleStatusColor(status)'
-            ) {{ status }}
+            i(v-else, :class='$titleStatusColor(status)') {{ status }}
         .my-1(v-html='title.d')
         div
           span Genres:
@@ -98,7 +95,12 @@ v-container(fluid)
   client-only(v-if='pages > 1')
     v-row.pagination(justify='center')
       v-col
-        v-pagination(:length='pages', v-model='page', :total-visible='7')
+        v-pagination(
+          :length='pages',
+          :value='page',
+          :total-visible='7',
+          @input='(page) => $emit("update", page)'
+        )
 </template>
 <script lang='ts'>
 import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
@@ -107,22 +109,13 @@ const localStorageModule = namespace('localStorage');
 
 @Component
 export default class TitleList extends Vue {
-  @Prop({ type: Array, default: [] }) source!: any;
+  @Prop({ type: Array }) titles!: any;
   @Prop({ type: Boolean }) gallery!: boolean;
+  @Prop({ type: Number }) page!: number;
+  @Prop({ type: Number }) pages!: number;
   @localStorageModule.State('connected') connected!: boolean;
   @localStorageModule.Getter('titleStatus') titleStatus!: any;
   @localStorageModule.Getter('episodes') episodes!: any;
-
-  page = 1;
-
-  get pages() {
-    return Math.ceil(this.source.length / 24);
-  }
-
-  get titles() {
-    const offset = (this.page - 1) * 24;
-    return this.source.slice(offset, offset + 24);
-  }
 }
 </script>
 <style lang="scss" scoped>

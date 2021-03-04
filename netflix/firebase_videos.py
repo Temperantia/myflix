@@ -5,7 +5,7 @@ from pathlib import Path
 from os import path
 import meilisearch
 
-from firebase import video_collection
+from firebase import video_collection, globals_collection
 from threads import threads
 
 """
@@ -147,6 +147,10 @@ def upload_search():
   for key in searches:
     arr.append({**{'id': key}, **searches[key]})
   client.index('videos').update_documents(arr)
+  show_count = sum(1 for title in arr if title['u'] == 1)
+  film_count = sum(1 for title in arr if title['u'] == 0)
+  globals_collection.document('globals').update(
+      {'showCount': show_count, 'filmCount': film_count})
 
 
 def launch():

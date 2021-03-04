@@ -4,19 +4,40 @@ function parse(doc: firebase.firestore.DocumentSnapshot) {
   return { id: doc.id, ...doc.data() };
 }
 
+declare module "vue/types/vue" {
+  interface Vue {
+    $globals: any;
+  }
+}
+
+declare module "@nuxt/types" {
+  interface NuxtAppOptions {
+    $globals: any;
+  }
+  interface Context {
+    $globals: any;
+  }
+}
+
+declare module "vuex/types/index" {
+  interface Store<S> {
+    $globals: any;
+  }
+}
+
 export async function docs(
   query: firebase.firestore.Query<firebase.firestore.DocumentData>,
   name?: string | undefined,
   cookies?: any
 ) {
- /*  const cache = await query.get({ source: "cache" });
+  /*  const cache = await query.get({ source: "cache" });
   if (!name || (name && cookies && !cookies.get(name))) { */
-    const data = await query.get({ source: "server" });
-    /* if (name) {
+  const data = await query.get({ source: "server" });
+  /* if (name) {
       cookies.set(name, true, { maxAge: 60 * 60 * 24 });
     } */
-    return data.docs.map((doc: any) => parse(doc));
- /*  }
+  return data.docs.map((doc: any) => parse(doc));
+  /*  }
   return cache.docs.map((doc: any) => parse(doc)); */
 }
 

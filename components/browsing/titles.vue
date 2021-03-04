@@ -1,13 +1,14 @@
 <template lang="pug">
-v-container(fluid)
+v-container(fluid, v-if='titles')
   v-row.subtitle-border
     v-col.pr-0(cols='12', lg='2')
       h1.pageSubHead.font-weight-black {{ show ? "TV SHOWS" : film ? "FILMS" : "SEARCH" }}
-      h2.pageSubHead_1 {{ parseFloat(titles.length).toLocaleString("en") }} titles currently available on Netflix
+      h2.pageSubHead_1 {{ (show ? $globals.showCount : film ? $globals.filmCount : $globals.showCount + $globals.filmCount).toLocaleString("en") }} titles currently available on Netflix
     v-col.searchContainer(cols='8', offset-lg='2', lg='4')
       input#search.titlePageSearch(
         v-model='search',
-        :placeholder='"SEARCH " + (show ? "TV SHOWS" : film ? "FILMS" : "TITLES")'
+        :placeholder='"SEARCH " + (show ? "TV SHOWS" : film ? "FILMS" : "TITLES")',
+        @input='() => (page = 1)'
       )
     v-col#titleSettingIcons.d-flex.align-center.justify-end(cols='3', lg='4')
       img.click.icon.mr-2(
@@ -40,7 +41,7 @@ v-container(fluid)
           v-model='watching',
           dense,
           hide-details,
-          v-if='(show || !film) && connected'
+          v-if='connected'
         )
         v-checkbox.my-1(
           label='Netflix Original only',
@@ -63,18 +64,31 @@ v-container(fluid)
         outlined,
         dense
       )
-    v-col(cols='12', lg='2') Sort
+    //-v-col(cols='12', lg='2') Sort
       v-select(
         :items='["Most Popular", "Netflix Original", "Bingeworthy", "Release date (Newest first)", "Release date (Oldest first)", "Alphabetical (A - Z)"]',
         v-model='sort',
         outlined,
         dense
       )
-  title-list(:source='titles', :gallery='gallery')
+  title-list(
+    :titles='titles',
+    :gallery='gallery',
+    :page='page',
+    :pages='pages',
+    @update='(p) => (page = p)'
+  )
 </template>
 <script lang='ts'>
 import categories from '~/netflix/data/categories.json';
-import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
+import {
+  Vue,
+  Component,
+  namespace,
+  Prop,
+  Watch,
+} from 'nuxt-property-decorator';
+import AsyncComputed from 'vue-async-computed-decorator/dist';
 
 const localStorageModule = namespace('localStorage');
 const titleModule = namespace('title');
@@ -87,7 +101,6 @@ export default class Titles extends Vue {
   @localStorageModule.State('connected') connected!: boolean;
   @localStorageModule.Getter('flixlist') flixlist!: any;
   @localStorageModule.Getter('titleStatus') titleStatus!: any;
-  titles: any[] = [];
   gallery = false;
   settings = false;
   category = 'All';
@@ -109,6 +122,7 @@ export default class Titles extends Vue {
     c: 'ç|Ç',
     n: 'ñ|Ñ',
   };
+  page = 1;
 
   mounted() {
     if (this.$route.params.category) {
@@ -120,6 +134,16 @@ export default class Titles extends Vue {
     }
   }
 
+  get pages() {
+    return Math.ceil(
+      (this.show
+        ? this.$globals.showCount
+        : this.film
+        ? this.$globals.filmCount
+        : this.$globals.showCount + this.$globals.filmCount) / 24
+    );
+  }
+
   slugify(str: string): string {
     for (const pattern in this.map) {
       str = str.replace(new RegExp(this.map[pattern], 'g'), pattern);
@@ -127,29 +151,46 @@ export default class Titles extends Vue {
     return str;
   }
 
-  async fetch() {
-    const search = this.slugify(this.search).toLocaleLowerCase();
-    this.titles = await (
-      await this.$titles.search(search, { limit: 1000000 })
-    ).hits
-      .filter((title: any) => {
-        const status = this.titleStatus(title.id);
-        if (title.y === 0 || title.a > this.now || title.y > this.nowYear) {
-          return false;
-        }
-        return (
-          ((!this.show && !this.film) || this.show ? title.u : !title.u) &&
-          (this.category === 'All' || title.c.includes(this.category)) &&
-          (this.maturity === 'All' || title.v === this.maturity) &&
-          (!this.original || title.o) &&
-          (((!this.completed || status === 'Completed') &&
-            (!this.watching || status === 'Watching')) ||
-            (this.completed &&
-              this.watching &&
-              (status === 'Completed' || status === 'Watching')))
-        );
+  @Watch('original') originalChanged() {
+    console.log('ok');
+  }
+
+  @AsyncComputed()
+  async titles() {
+    let search = this.search;
+    if (this.category !== 'All') {
+      search += ' ' + this.category;
+    }
+    let filters = '';
+    if (this.show) {
+      filters += 'u=1';
+    } else if (this.film) {
+      filters += 'u=0';
+    }
+    const hits = (
+      await this.$titles.search(search, {
+        offset: 24 * (this.page - 1),
+        limit: 24,
+        filters,
       })
-      .sort((a: any, b: any) => {
+    ).hits;
+
+    return hits.filter((title: any) => {
+      const status = this.titleStatus(title.id);
+      if (title.y === 0 || title.a > this.now || title.y > this.nowYear) {
+        return false;
+      }
+      return (
+        ((!this.show && !this.film) || this.show ? title.u : !title.u) &&
+        (!this.original || title.o) &&
+        (((!this.completed || status === 'Completed') &&
+          (!this.watching || status === 'Watching')) ||
+          (this.completed &&
+            this.watching &&
+            (status === 'Completed' || status === 'Watching')))
+      );
+    });
+    /* .sort((a: any, b: any) => {
         if (this.sort === 'Most Popular') {
           return a.p - b.p;
         } else if (this.sort === 'Netflix Original') {
@@ -162,7 +203,7 @@ export default class Titles extends Vue {
           return a.a && b.a ? (a.a < b.a ? -1 : 1) : a.y < b.y ? -1 : 1;
         }
         return 0;
-      });
+      }); */
   }
 }
 </script>
