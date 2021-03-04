@@ -62,7 +62,7 @@ def extract_categories():
 
 
 def create_route(title, type, id):
-  return ('/tvshows/' if type == 'show' else '/films/') + slugify(title + ('-' + str(id) if id > 0 else ''))
+  return ('/tvshows/' if type == 'show' else '/films/') + slugify(title + ('-' + str(id) if id > 0 else '')) + '/overview'
 
 
 def find_key_by_route(route):
