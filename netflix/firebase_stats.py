@@ -93,10 +93,10 @@ def get_video_stats():
   global categories
   print('Getting collection')
   collection = get_collection(video_collection, [])
-  videos = []
+  args = []
   for video in collection:
-    videos.append([video])
-  threads(get_video_stat, videos, 0, 'Calculating stats')
+    args.append([video])
+  threads(get_video_stat, args, 0, 'Calculating stats')
 
   ordered = sorted(scores.items(), key=lambda elem: elem[1], reverse=True)
   for index, id in enumerate(ordered):
@@ -105,14 +105,16 @@ def get_video_stats():
   new_release_index = 1
   month_index = 1
   ordered = sorted(followers.items(), key=lambda elem: elem[1], reverse=True)
-  for index, id in enumerate(ordered):
-    availability = (id[1]['a']) / 1000 if id[1]['a'] else None
-    popularity[id[0]] = index + 1
+  for index, item in enumerate(ordered):
+    id = item[0]
+    availability = videos[id]['availability']['availabilityStartTime'] / \
+        1000 if videos[id]['availability']['availabilityStartTime'] else None
+    popularity[id] = index + 1
     if availability and availability >= start_release and availability <= end:
-      new_releases[id[0]] = new_release_index
+      new_releases[id] = new_release_index
       new_release_index += 1
     if availability and availability >= month_start and availability <= month_end:
-      months[id[0]] = month_index
+      months[id] = month_index
       month_index += 1
 
   globals_collection.document('globals').update(
