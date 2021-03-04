@@ -117,11 +117,13 @@ export default class TitleStore extends VuexModule {
   @VuexAction({ rawError: true })
   async redirect({ route }: any) {
     const routeParts = route.path.split("/");
-    const r = "'/" + routeParts[1] + "/" + routeParts[2] + "'";
+    const r =
+      "'/" + routeParts[1] + "/" + routeParts[2] + "/" + routeParts[3] + "'";
     const hits = (await $titles.search(null, { filters: "r=" + r })).hits;
     if (!hits) {
       return $redirect("/");
     }
+    await this.get(hits[0].id);
   }
 
   @VuexAction({ rawError: true })

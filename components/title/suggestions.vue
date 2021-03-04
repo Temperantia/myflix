@@ -87,6 +87,7 @@ export default class Suggestions extends Vue {
   private _mounted() {
     const id = this.$route.hash.substring(1);
     if (id) {
+      console.log(this.source);
       const index = this.source.findIndex(
         (suggestion: any) => suggestion.id === id
       );

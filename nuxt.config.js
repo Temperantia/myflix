@@ -34,7 +34,6 @@ export default {
     "@nuxtjs/pwa"
   ],
   modules: [
-    "nuxt-lazy-load",
     "cookie-universal-nuxt",
     "vue-scrollto/nuxt",
     "nuxt-clipboard2",
