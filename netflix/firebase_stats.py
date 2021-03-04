@@ -135,13 +135,14 @@ def update_search_tables():
   search = client.index('videos').get_documents({'limit': 100000})
 
   for video in search:
-    video['f'] = followers[video['id']]
-    video['z'] = scores[video['id']]
-    video['q'] = rank[video['id']]
-    video['p'] = popularity[video['id']]
-    video['h'] = bingeworthiness[video['id']]
-    video['newReleasesRank'] = new_releases[video['id']]
-    video['monthRank'] = months[video['id']]
+    id = video['id']
+    video['f'] = followers[id]
+    video['z'] = scores[id]
+    video['q'] = rank[id]
+    video['p'] = popularity[id]
+    video['h'] = bingeworthiness[id]
+    video['newReleasesRank'] = new_releases[id] if id in new_releases else None
+    video['monthRank'] = months[id] if id in months else None
     video['j'] = trending[video['t']] if video['t'] in trending else None
 
   print('Uploading search tables')
