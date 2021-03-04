@@ -50,13 +50,18 @@ div
           outlined,
           hide-details
         )
-    title-list(:source='newReleases', :page='page')
+    title-list(
+      :titles='titles',
+      :page='page',
+      :pages='$globals.newReleaseCount',
+      @update='(p) => (page = p)'
+    )
 </template>
 <script lang='ts'>
 import { Vue, Component, namespace } from 'nuxt-property-decorator';
 import genres from '~/netflix/data/categories.json';
+import AsyncComputed from 'vue-async-computed-decorator/dist';
 
-const browseModule = namespace('browse');
 const titleModule = namespace('title');
 
 @Component
@@ -66,7 +71,6 @@ export default class NewReleases extends Vue {
   genre: string = 'All';
   bingeworthiness: boolean = false;
   original: boolean = false;
-  newReleases: any[] = [];
   genres = genres;
   page = 1;
 
@@ -80,24 +84,38 @@ export default class NewReleases extends Vue {
     return week;
   }
 
-  async fetch() {
-    this.newReleases = await (
-      await this.$titles.search(null, { limit: 1000000 })
-    ).hits.filter((title: any) => {
-      if (!title.n) {
-        return false;
-      }
-      return (
-        (this.category === 'All' ||
-          (this.category === 'TV Shows' && title.u) ||
-          (this.category === 'Films' && !title.u)) &&
-        (this.score === 'All' ||
-          Number(this.score.match(/(([^()]+))/)?.[1]) === parseInt(title.z)) &&
-        (this.genre === 'All' || title.c.includes(this.genre)) &&
-        (!this.original || title.o) &&
-        (!this.bingeworthiness || title.h > 0.5)
-      );
-    });
+  @AsyncComputed()
+  async titles() {
+    let search = '';
+    if (this.genre !== 'All') {
+      search += ' ' + this.genre;
+    }
+
+    let filters = ['n=1'];
+    if (this.category === 'TV Shows') {
+      filters.push('u=1');
+    } else if (this.category === 'Films') {
+      filters.push('u=0');
+    }
+
+    if (this.original) {
+      filters.push('o=1');
+    }
+    if (this.bingeworthiness) {
+      filters.push('h>0.5');
+    }
+    if (this.score != 'All') {
+      const score = this.score.match(/(([^-]+))/)?.[1];
+      filters.push('z=' + score);
+    }
+
+    return (
+      await this.$titles.search(search, {
+        offset: 24 * (this.page - 1),
+        limit: 24,
+        filters: filters.join(' AND '),
+      })
+    ).hits;
   }
 }
 </script>

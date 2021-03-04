@@ -38,6 +38,12 @@ export default class HomeReviews extends Vue {
   slugify = slugify;
   @localStorageModule.State('connected') connected!: boolean;
   @reviewsModule.State('latest') latestReviews!: any;
+  @reviewsModule.Action('getLatest') initReviews!: Function;
+
+  created() {
+    this.initReviews(this.$cookies);
+    console.log(new Date().getSeconds(), new Date().getMilliseconds());
+  }
 
   content(content: string) {
     return content.length > 300 ? content.substring(0, 300) + ' ...' : content;

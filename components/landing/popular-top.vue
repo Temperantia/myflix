@@ -34,7 +34,7 @@ const localStorageModule = namespace('localStorage');
 @Component
 export default class PopularTop extends Vue {
   @localStorageModule.State('connected') connected!: boolean;
-  @browseModule.Getter('topSeries') topSeries!: any;
+  @browseModule.State('topSeries') topSeries!: any;
 }
 </script>
 <style lang="scss" scoped>

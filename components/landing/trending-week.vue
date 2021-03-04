@@ -7,7 +7,7 @@ div
       h4.font-weight-light {{ getWeek() }}
   swiper(:options='swiperOption', style='height: 600px; z-index: 0')
     swiper-slide(
-      v-for='title in trendingWeek(isNewReleases)',
+      v-for='title in trendingWeek',
       :key='title.id',
       style='position: relative; height: 100%'
     )
@@ -54,7 +54,7 @@ import 'swiper/swiper-bundle.css';
 export default class TrendingWeek extends Vue {
   @Prop({ type: Boolean }) isNewReleases!: boolean;
 
-  @browseModule.Getter('trendingWeek') trendingWeek!: any;
+  @browseModule.State('trendingWeek') trendingWeek!: any;
 
   swiperOption = {
     autoplay: {

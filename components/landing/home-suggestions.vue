@@ -55,6 +55,11 @@ export default class HomeSuggestions extends Vue {
   slugify = slugify;
   @localStorageModule.State('connected') connected!: boolean;
   @suggestionsModule.State('latest') latestSuggestions!: any;
+  @suggestionsModule.Action('getLatest') initSuggestions!: Function;
+
+  created() {
+    this.initSuggestions(this.$cookies);
+  }
 
   content(content: string) {
     return content.length > 300 ? content.substring(0, 300) + ' ...' : content;

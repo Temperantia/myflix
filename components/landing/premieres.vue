@@ -31,7 +31,7 @@ const browseModule = namespace('browse');
 
 @Component({ directives: { swiper: directive } })
 export default class Premieres extends Vue {
-  @browseModule.Getter('premieres') premieres!: any;
+  @browseModule.State('premieres') premieres!: any;
   swiperOption = {
     freeMode: true,
     loop: true,

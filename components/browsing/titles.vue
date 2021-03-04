@@ -86,7 +86,6 @@ import {
   Component,
   namespace,
   Prop,
-  Watch,
 } from 'nuxt-property-decorator';
 import AsyncComputed from 'vue-async-computed-decorator/dist';
 
@@ -151,27 +150,26 @@ export default class Titles extends Vue {
     return str;
   }
 
-  @Watch('original') originalChanged() {
-    console.log('ok');
-  }
-
   @AsyncComputed()
   async titles() {
     let search = this.search;
     if (this.category !== 'All') {
       search += ' ' + this.category;
     }
-    let filters = '';
+    let filters = [];
     if (this.show) {
-      filters += 'u=1';
+      filters.push('u=1');
     } else if (this.film) {
-      filters += 'u=0';
+      filters.push('u=0');
+    }
+    if (this.original) {
+      filters.push('o=1');
     }
     const hits = (
       await this.$titles.search(search, {
         offset: 24 * (this.page - 1),
         limit: 24,
-        filters,
+        filters: filters.join(' AND '),
       })
     ).hits;
 
@@ -181,13 +179,11 @@ export default class Titles extends Vue {
         return false;
       }
       return (
-        ((!this.show && !this.film) || this.show ? title.u : !title.u) &&
-        (!this.original || title.o) &&
-        (((!this.completed || status === 'Completed') &&
+        ((!this.completed || status === 'Completed') &&
           (!this.watching || status === 'Watching')) ||
-          (this.completed &&
-            this.watching &&
-            (status === 'Completed' || status === 'Watching')))
+        (this.completed &&
+          this.watching &&
+          (status === 'Completed' || status === 'Watching'))
       );
     });
     /* .sort((a: any, b: any) => {

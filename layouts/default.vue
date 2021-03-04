@@ -34,11 +34,11 @@ v-app(app)
               @click='tab.hook'
             ) {{ tab.name }}
           .text-right
-            a.mr-3(href='https://twitter.com/myflixnet' target='_blank')
+            a.mr-3(href='https://twitter.com/myflixnet', target='_blank')
               v-icon mdi-twitter
-            a.mr-3(href='https://www.facebook.com/myflixnet/' target='_blank')
+            a.mr-3(href='https://www.facebook.com/myflixnet/', target='_blank')
               v-icon mdi-facebook
-            a.mr-3(href='https://discord.me/my-flix' target='_blank')
+            a.mr-3(href='https://discord.me/my-flix', target='_blank')
               v-icon mdi-discord
       v-col.pl-0(v-else, cols='2')
         v-menu
@@ -101,8 +101,6 @@ import { Vue, Component, namespace, Watch } from 'nuxt-property-decorator';
 
 const localStorageModule = namespace('localStorage');
 const browseModule = namespace('browse');
-const reviewsModule = namespace('reviews');
-const suggestionsModule = namespace('suggestions');
 const profileModule = namespace('profile');
 
 @Component
@@ -119,8 +117,6 @@ export default class Default extends Vue {
   @profileModule.Mutation('setEditionTab') setEditionTab!: any;
   @localStorageModule.Action('signOut') signOut!: any;
   @browseModule.Action('init') initBrowse!: Function;
-  @reviewsModule.Action('getLatest') initReviews!: Function;
-  @suggestionsModule.Action('getLatest') initSuggestions!: Function;
 
   get itemsMobile() {
     return this.connected
@@ -128,10 +124,9 @@ export default class Default extends Vue {
       : this.itemsMobileDisconnected;
   }
 
-  async created() {
-    await this.initBrowse();
-    await this.initReviews(this.$cookies);
-    await this.initSuggestions(this.$cookies);
+  created() {
+    console.log(new Date().getSeconds(), new Date().getMilliseconds());
+    this.initBrowse();
     this.tabs = [
       {
         name: 'HOME',

@@ -12,6 +12,7 @@ import {
   $moment,
   $redirect
 } from "~/utils/modules";
+import { $titles } from "~/plugins/search";
 
 @Module({ name: "title", stateFactory: true, namespaced: true })
 export default class TitleStore extends VuexModule {
@@ -114,18 +115,13 @@ export default class TitleStore extends VuexModule {
   }
 
   @VuexAction({ rawError: true })
-  async redirect({ route, cookies }: any) {
-    if (process.server) {
-      return;
-    }
-    await this.context.dispatch("browse/init", cookies, { root: true });
-    const result: any = this.context.rootGetters["browse/titleFromRoute"](
-      route.path
-    );
-    if (!result) {
+  async redirect({ route }: any) {
+    const routeParts = route.path.split("/");
+    const r = "'/" + routeParts[1] + "/" + routeParts[2] + "'";
+    const hits = (await $titles.search(null, { filters: "r=" + r })).hits;
+    if (!hits) {
       return $redirect("/");
     }
-    await this.context.dispatch("get", result.id);
   }
 
   @VuexAction({ rawError: true })
@@ -170,7 +166,7 @@ export default class TitleStore extends VuexModule {
 
     const video: any = { ["followers." + idUser]: new Date() };
     if (this.score) {
-      video["scores." + idUser] = Number(this.score.split('-')[0]);
+      video["scores." + idUser] = Number(this.score.split("-")[0]);
     }
     video.bingeworthiness = this.bingeworthy
       ? $fireModule.firestore.FieldValue.arrayUnion(idUser)
