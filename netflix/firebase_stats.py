@@ -106,7 +106,7 @@ def get_video_stats():
   month_index = 1
   ordered = sorted(followers.items(), key=lambda elem: elem[1], reverse=True)
   for index, id in enumerate(ordered):
-    availability = id[1]['a'] / 1000 if id[1]['a'] else None
+    availability = (id[1]['a']) / 1000 if id[1]['a'] else None
     popularity[id[0]] = index + 1
     if availability and availability >= start_release and availability <= end:
       new_releases[id[0]] = new_release_index
