@@ -35,8 +35,8 @@ export default class SuggestionsStore extends VuexModule {
       $toast.error("You need to pick a similar title");
       return;
     }
-    if (suggestion.content.length < 200 || suggestion.content.length > 1000) {
-      $toast.error("Your suggestion needs between 200 and 1000 characters.");
+    if (suggestion.content.length < 100 || suggestion.content.length > 1000) {
+      $toast.error("Your suggestion needs between 100 and 1000 characters.");
       return;
     }
     const author = this.context.rootState.localStorage.user;

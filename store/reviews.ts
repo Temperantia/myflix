@@ -48,8 +48,8 @@ export default class ReviewsStore extends VuexModule {
 
   @VuexAction({ rawError: true })
   async create(review: any) {
-    if (review.content.length < 200 || review.content.length > 1000) {
-      $toast.error("Your review needs between 200 and 1000 characters.");
+    if (review.content.length < 100 || review.content.length > 1000) {
+      $toast.error("Your review needs between 100 and 1000 characters.");
       return;
     }
     const author = this.context.rootState.localStorage.user;
