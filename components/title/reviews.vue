@@ -54,6 +54,7 @@ export default class Reviews extends Vue {
   @reviewsModule.State('reviews') source!: any;
   @localStorageModule.State('connected') connected!: boolean;
   @reviewsModule.Action('create') createReview!: any;
+  @reviewsModule.Action('get') get!: any;
 
   page = 1;
   edition = false;
@@ -89,12 +90,13 @@ export default class Reviews extends Vue {
     this._mounted();
   }
 
-  private _mounted() {
-    const id = this.$route.hash.substring(1);
-    if (id) {
-      if (this.reviews.length === 0) {
-        return;
-      }
+  private async _mounted() {
+    if (!this.title) {
+      return;
+    }
+    await this.get(this.title.id);
+    if (this.$route.hash) {
+      const id = this.$route.hash.substring(1).split('-')[1];
       const index = this.source.findIndex((review: any) => review.id === id);
       if (index === -1) {
         return this.$nuxt.error({

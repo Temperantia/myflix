@@ -147,13 +147,13 @@ export default class Title extends Vue {
   @localStorageModule.Action('addFavorite') addFavorite!: any;
   @localStorageModule.Action('removeFavorite') removeFavorite!: any;
 
-  mounted() {
-    this.redirect({ route: this.$route, cookies: this.$cookies });
+  created() {
+    this.redirect({ route: this.$route });
   }
 
   @Watch('$route')
   onRouteChanged() {
-    this.redirect({ route: this.$route, cookies: this.$cookies });
+    this.redirect({ route: this.$route });
   }
 
   get statuses() {
@@ -184,7 +184,7 @@ export default class Title extends Vue {
         name: 'GOODS',
         route: routeTitle + 'goods',
       },
-     /*  {
+      /*  {
         name: 'MEDIA',
         route: routeTitle + 'media',
       }, */

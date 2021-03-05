@@ -67,7 +67,9 @@ export default class Suggestions extends Vue {
   @suggestionsModule.State('suggestions') source!: any;
   @localStorageModule.State('connected') connected!: boolean;
   @suggestionsModule.Action('create') createSuggestion!: any;
+  @suggestionsModule.Action('get') get!: any;
   suggestionsPerPage = 20;
+
   page = 1;
   edition = false;
   suggestion = {
@@ -84,12 +86,13 @@ export default class Suggestions extends Vue {
     this._mounted();
   }
 
-  private _mounted() {
-    const id = this.$route.hash.substring(1);
-    if (id) {
-      if (this.suggestions.length === 0) {
-        return;
-      }
+  private async _mounted() {
+    if (!this.title) {
+      return;
+    }
+    await this.get(this.title.id);
+    if (this.$route.hash) {
+      const id = this.$route.hash.substring(1).split('-')[1];
       const index = this.source.findIndex(
         (suggestion: any) => suggestion.id === id
       );
@@ -116,8 +119,6 @@ export default class Suggestions extends Vue {
 
   get suggestions() {
     const offset = (this.page - 1) * this.suggestionsPerPage;
-    console.log(this.source);
-    console.log(offset);
     return this.source.slice(offset, offset + this.suggestionsPerPage);
   }
 

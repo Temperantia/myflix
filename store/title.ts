@@ -44,10 +44,6 @@ export default class TitleStore extends VuexModule {
     "Completed"
   ];
 
-  get id() {
-    return this.title?.id;
-  }
-
   @VuexMutation
   setTitle(title: any) {
     this.title = title;
@@ -116,11 +112,12 @@ export default class TitleStore extends VuexModule {
 
   @VuexAction({ rawError: true })
   async redirect({ route }: any) {
+    this.setTitle(null);
     const routeParts = route.path.split("/");
     const r =
-      "'/" + routeParts[1] + "/" + routeParts[2] + "/" + routeParts[3] + "'";
+      "'/" + routeParts[1] + "/" + routeParts[2] + "/overview'";
     const hits = (await $titles.search(null, { filters: "r=" + r })).hits;
-    if (!hits) {
+    if (hits.length === 0) {
       return $redirect("/");
     }
     await this.get(hits[0].id);
@@ -233,9 +230,7 @@ export default class TitleStore extends VuexModule {
       information.Rating = this.maturities[title.maturity];
     }
 
-    this.context.dispatch("loadFlixlist", id);
-    this.context.dispatch("reviews/get", id, { root: true });
-    this.context.dispatch("suggestions/get", id, { root: true });
+    await this.context.dispatch("loadFlixlist", id);
     return {
       ...title,
       information,
