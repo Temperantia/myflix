@@ -66,7 +66,7 @@ export default class ReviewsStore extends VuexModule {
         route: title.route,
         title: title.title,
         boxArt: title.boxArt,
-        Poster: title.Poster
+        Poster: title.Poster ?? title.boxArt
       },
       ...review,
       reports: [],

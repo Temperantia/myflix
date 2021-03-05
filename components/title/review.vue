@@ -55,6 +55,7 @@ v-container(fluid, :id='"review-" + review.id')
           ) permalink
           span.white-font--text {{ " | " }}
           share(
+            v-if='!preview',
             :url='$config.baseUrl + $route.path + "#review-" + review.id',
             :titleTwitter='"Really helpful " + review.title.title + " review"',
             :titleReddit='"Really helpful " + review.title.title + " review"',

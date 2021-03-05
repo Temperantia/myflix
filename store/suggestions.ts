@@ -53,7 +53,7 @@ export default class SuggestionsStore extends VuexModule {
         title: title.title,
         route: title.route,
         boxArt: title.boxArt,
-        Poster: title.Poster
+        Poster: title.Poster ?? title.boxArt
       },
       ...suggestion,
       reports: [],
