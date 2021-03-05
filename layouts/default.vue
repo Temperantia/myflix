@@ -73,6 +73,7 @@ v-app(app)
         )
   v-container.px-0.pt-0(fluid)
     footer
+      cookie-law(theme='dark-lime')
       .top
         ul
           li.d-block.d-md-inline
@@ -98,12 +99,13 @@ v-app(app)
 </template>
 <script lang='ts'>
 import { Vue, Component, namespace, Watch } from 'nuxt-property-decorator';
+import CookieLaw from 'vue-cookie-law';
 
 const localStorageModule = namespace('localStorage');
 const browseModule = namespace('browse');
 const profileModule = namespace('profile');
 
-@Component
+@Component({ components: { CookieLaw } })
 export default class Default extends Vue {
   currentTab: string = 'index';
   tabs: any = [];
