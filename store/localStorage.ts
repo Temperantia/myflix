@@ -171,11 +171,15 @@ export default class localStorageStore extends VuexModule {
     }
 
     if (!provider) {
-      const cred = await $fire.auth.createUserWithEmailAndPassword(
-        email,
-        password
-      );
-      id = cred.user?.uid as string;
+      try {
+        const cred = await $fire.auth.createUserWithEmailAndPassword(
+          email,
+          password
+        );
+        id = cred.user?.uid as string;
+      } catch (error) {
+        $toast.error("Email already used");
+      }
     }
     const user: any = {
       email,
