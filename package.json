@@ -37,6 +37,7 @@
     "node-sass": "5.0.0",
     "nuxt": "2.14.12",
     "nuxt-clipboard2": "0.2.1",
+    "nuxt-cookie-control": "1.9.6",
     "nuxt-property-decorator": "2.9.1",
     "nuxt-vuex-localstorage": "1.2.7",
     "nuxt-webfontloader": "1.1.0",
@@ -49,7 +50,6 @@
     "vue-async-computed": "3.9.0",
     "vue-awesome-swiper": "4.1.1",
     "vue-chartjs": "3.5.1",
-    "vue-cookie-law": "1.13.3",
     "vue-scrollactive": "0.9.3",
     "vue-scrollto": "2.20.0",
     "vue-social-sharing": "3.0.4"

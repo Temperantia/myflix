@@ -34,6 +34,7 @@ export default {
     "@nuxtjs/pwa"
   ],
   modules: [
+    ["nuxt-cookie-control", { controlButton: false }],
     "cookie-universal-nuxt",
     "vue-scrollto/nuxt",
     "nuxt-clipboard2",
@@ -43,6 +44,13 @@ export default {
     ["@nuxtjs/toast", { duration: 5000, position: "bottom-center" }],
     "vue-social-sharing/nuxt"
   ],
+  cookies: {
+    necessary: [
+      {
+        name: "Default Cookies"
+      }
+    ]
+  },
   firebase: {
     /* config: {
       apiKey: "AIzaSyCUYPpn9MwXRg5bTohGcJEfeC5A9WMSEGc",
@@ -114,17 +122,20 @@ export default {
   },
   pwa: {
     meta: {
-      name: "MyFlix.net - Netflix Search and Community - Recommendations, Reviews,  Ratings and more!",
+      name:
+        "MyFlix.net - Netflix Search and Community - Recommendations, Reviews,  Ratings and more!",
       author: "Inc • Digital",
       ogSiteName: "my-flix.net",
-      ogTitle: "MyFlix.net - Netflix Search and Community - Recommendations, Reviews,  Ratings and more!",
+      ogTitle:
+        "MyFlix.net - Netflix Search and Community - Recommendations, Reviews,  Ratings and more!",
       ogDescription:
         "Welcome to MYFLIX, the world's  most promising active online  Netflix  community  en database. Find User recommendations, reviews, ratings, look at your personal statistics, Show/Movie ranking and more!",
       ogHost: "https://my-flix.net",
       ogImage: "/myflixFavicon2.png"
     },
     manifest: {
-      name: "MyFlix.net - Netflix Search and Community - Recommendations, Reviews,  Ratings and more!",
+      name:
+        "MyFlix.net - Netflix Search and Community - Recommendations, Reviews,  Ratings and more!",
       short_name: "MYFLIX",
       description:
         "Welcome to MYFLIX, the world's  most promising active online  Netflix  community  en database. Find User recommendations, reviews, ratings, look at your personal statistics, Show/Movie ranking and more!"

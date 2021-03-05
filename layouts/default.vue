@@ -10,9 +10,12 @@ v-app(app)
       template(v-if='$vuetify.breakpoint.mdAndUp')
         client-only
           v-col.d-flex.justify-end(md='4')
-            v-menu(v-if='connected')
+            v-menu(v-if='connected', offset-y)
               template(v-slot:activator='{ on, attrs }')
-                div(v-bind='attrs', v-on='on') {{ user.username }}
+                div(v-bind='attrs', v-on='on')
+                  span {{ user.username }}
+                  v-avatar
+                    img(:src='image')
               v-list
                 v-list-item(
                   v-for='item in items',
@@ -73,7 +76,7 @@ v-app(app)
         )
   v-container.px-0.pt-0(fluid)
     footer
-      cookie-law(theme='dark-lime')
+      cookie-control
       .top
         ul
           li.d-block.d-md-inline
@@ -99,13 +102,12 @@ v-app(app)
 </template>
 <script lang='ts'>
 import { Vue, Component, namespace, Watch } from 'nuxt-property-decorator';
-import CookieLaw from 'vue-cookie-law';
 
 const localStorageModule = namespace('localStorage');
 const browseModule = namespace('browse');
 const profileModule = namespace('profile');
 
-@Component({ components: { CookieLaw } })
+@Component
 export default class Default extends Vue {
   currentTab: string = 'index';
   tabs: any = [];
@@ -124,6 +126,10 @@ export default class Default extends Vue {
     return this.connected
       ? this.itemsMobileConnected
       : this.itemsMobileDisconnected;
+  }
+
+  get image() {
+    return this.user?.image ?? '/pfp1.png';
   }
 
   created() {
