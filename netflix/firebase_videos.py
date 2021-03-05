@@ -109,7 +109,7 @@ def duplicate(route, type, title):
 def search_videos(video, id):
   global searches
   searches[id] = {'r': video['route'], 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
-      video['genres']), 'g': remove_ids(video['genres']), 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score']}
+      video['genres']), 'g': remove_ids(video['genres']), 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score'], 'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else ''}
 
   if video['summary']['isOriginal']:
     searches[id]['o'] = 1
