@@ -92,6 +92,9 @@ export default class Reviews extends Vue {
   private _mounted() {
     const id = this.$route.hash.substring(1);
     if (id) {
+      if (this.reviews.length === 0) {
+        return;
+      }
       const index = this.source.findIndex((review: any) => review.id === id);
       if (index === -1) {
         return this.$nuxt.error({

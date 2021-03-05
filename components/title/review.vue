@@ -59,7 +59,7 @@ v-container(fluid, :id='"review-" + review.id')
             :titleTwitter='"Really helpful " + review.title.title + " review"',
             :titleReddit='"Really helpful " + review.title.title + " review"',
             :titleFacebook='"Really helpful " + review.title.title + " review"',
-            :descriptionFacebook='"I highly recommend " + suggestion.similar.title + " ! I watched and enjoyed it so much! 🙏 Thanks myflixnet"',
+            :descriptionFacebook='"I highly recommend " + review.title.title + " ! I watched and enjoyed it so much! 🙏 Thanks myflixnet"',
             :hashtags='"NETFLIX," + review.title.title.replace(" ", "").toUpperCase()'
           )
           template(v-if='connected && !self && !review.reports.includes(id)')

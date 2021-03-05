@@ -87,7 +87,9 @@ export default class Suggestions extends Vue {
   private _mounted() {
     const id = this.$route.hash.substring(1);
     if (id) {
-      console.log(this.source);
+      if (this.suggestions.length === 0) {
+        return;
+      }
       const index = this.source.findIndex(
         (suggestion: any) => suggestion.id === id
       );
@@ -114,6 +116,8 @@ export default class Suggestions extends Vue {
 
   get suggestions() {
     const offset = (this.page - 1) * this.suggestionsPerPage;
+    console.log(this.source);
+    console.log(offset);
     return this.source.slice(offset, offset + this.suggestionsPerPage);
   }
 

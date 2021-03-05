@@ -42,7 +42,6 @@ export default class HomeReviews extends Vue {
 
   created() {
     this.initReviews(this.$cookies);
-    console.log(new Date().getSeconds(), new Date().getMilliseconds());
   }
 
   content(content: string) {

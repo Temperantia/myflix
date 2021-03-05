@@ -125,7 +125,6 @@ export default class Default extends Vue {
   }
 
   created() {
-    console.log(new Date().getSeconds(), new Date().getMilliseconds());
     this.initBrowse();
     this.tabs = [
       {
