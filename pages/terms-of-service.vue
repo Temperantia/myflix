@@ -96,7 +96,7 @@ export default class TermsOfService extends Vue {
     {
       title: 'contacting us',
       content:
-        'If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please contact us at:<br>INC DIGITAL<br><a href="https://my-flix.net">my-flix.net</a><br>57 rue du dessous des berges, 75013 Paris, France<br><a href="mailto:contact@my-flix.net">contact@my-flix.net</a>',
+        'If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please contact us at:<br>INC DIGITAL<br><a href="https://my-flix.net">my-flix.net</a><br>57 rue du dessous des berges, 75013 Paris, France<br><a href="mailto:support@my-flix.net">support@my-flix.net</a>',
     },
   ];
 }

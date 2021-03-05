@@ -90,7 +90,7 @@ export default class PrivacyPolicy extends Vue {
     {
       title: 'contact us',
       content:
-        'If you have questions or comments about this Privacy Policy, please contact us at:<br><br>[Company Name]<br>[Street Address]<br>[City, State Zip]<br>[Phone Number]<br>[Fax Number]<br>[Email]',
+        'If you have questions or comments about this Privacy Policy, please contact us at:<br><br>INC DIGITAL<br>57 rue du dessous des berges<br>75013 Paris<br>support@my-flix.net',
     },
   ];
 }

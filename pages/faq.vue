@@ -32,6 +32,12 @@ v-container(fluid)
           span.red-netflix--text.text-decoration-underline {{ "support@my-flix.net" }}
       p
         span {{ "You can also contact us with this email for other inquiries or business related matters." }}
+  v-row
+    v-col(cols='12', lg='6')
+      .title-border.mb-5 REPORT A BUG
+      p
+        span {{ "Report a bug through this link " }}
+       
 </template>
 <script lang='ts'>
 import countries from 'i18n-iso-countries';
