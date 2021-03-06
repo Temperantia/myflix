@@ -127,9 +127,10 @@ def upload(id,  data):
   video['route'] = create_route(video['title'], type, 0)
   video['route'] = duplicate(video['route'], type, video['title'])
   types[video['route']] = type
+  rating = round(video['Rating'] - uniform(0.1, 0.4), 1) if 'Rating' in video and video['Rating'] else None
   #if not 'exists' in video:
-  video['scores'] = {}
-  video['score'] = round(video['Rating'] - uniform(0.1, 0.4), 1) if 'Rating' in video and video['Rating'] else None
+  video['scores'] = {index:rating for index in range(randint(200, 700))} if rating else {}
+  video['score'] = rating
   video['rank'] = None
   video['popularity'] = None
   video['followers'] = {}  # {str(i): now for i in range(randint(0, 5))}
