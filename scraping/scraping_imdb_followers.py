@@ -31,7 +31,7 @@ def imdb(id, video):
 def launch():
   print('Getting videos')
   threads(imdb, [[video.id, video.to_dict()]
-                 for video in get_collection(video_collection, [])], 0.02)
+                 for video in get_collection(video_collection, [])], 0.3)
 
 
 launch()
