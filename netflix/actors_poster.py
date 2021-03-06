@@ -18,7 +18,7 @@ for doc in video_database:
   if video['releaseYear'] ==0 or video['title'] =='' or video['releaseYear'] ==0 and video['title'] =='':
     pass
   else:
-    dico.append([doc.id, video['title']])
+    dico.append([video['title']])
 
 db = imdb.IMDb(accessSystem='https', reraiseExceptions=True)
 
