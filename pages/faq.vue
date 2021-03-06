@@ -36,8 +36,11 @@ v-container(fluid)
     v-col(cols='12', lg='6')
       .title-border.mb-5 REPORT A BUG
       p
-        span {{ "Report a bug through this link " }}
-       
+        span {{ "Report a bug through " }}
+        a(
+          href='https://airtable.com/embed/shrPDSbVeF4A9bUOK?backgroundColor=pink'
+        )
+          span.red-netflix--text.text-decoration-underline {{ "this link" }}
 </template>
 <script lang='ts'>
 import countries from 'i18n-iso-countries';
