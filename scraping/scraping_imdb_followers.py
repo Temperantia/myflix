@@ -12,10 +12,10 @@ base_url = 'https://www.imdb.com'
 def reviews_page(id, video):
   soup = BeautifulSoup(urlopen(base_url + '/title/tt' +
                                video['IMDbID']).read(), 'html.parser')
-  followers = soup.find(itemprop='ratingCount').text
+  followers = soup.find(itemprop='ratingCount')
   if followers:
     video_collection.document(id).update(
-        {'IMDbFollowers': int(followers.replace(',', ''))})
+        {'IMDbFollowers': int(followers.text.replace(',', ''))})
 
 
 def imdb(id, video):
