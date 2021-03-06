@@ -80,7 +80,10 @@ def imdb(index, id, video):
     return
   browser = browsers[index % BROWSER_NUM]
 
-  reviews_page(browser, id, video)
+  try:
+    reviews_page(browser, id, video)
+  except Exception as e:
+    print(id, e)
 
 
 def launch():
