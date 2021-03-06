@@ -129,7 +129,7 @@ def upload(id,  data):
   types[video['route']] = type
   #if not 'exists' in video:
   video['scores'] = {}
-  video['score'] = round(video['Score'] - uniform(0.1, 0.4), 1)
+  video['score'] = round(video['Rating'] - uniform(0.1, 0.4), 1) if 'Rating' in video else None
   video['rank'] = None
   video['popularity'] = None
   video['followers'] = {}  # {str(i): now for i in range(randint(0, 5))}
