@@ -3,7 +3,7 @@ import json
 import time
 from threads import threads
 import meilisearch
-from logs import db as database, get_collection
+from firebase import db as database, get_collection
 
 
 client = meilisearch.Client('https://search.my-flix.net')
