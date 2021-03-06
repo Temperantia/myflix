@@ -119,7 +119,7 @@ def get_video_stats():
     if availability and availability >= month_start and availability <= month_end:
       months[id] = month_index
       month_index += 1
-    if video[id]['summary']['type'] == 'show':
+    if videos[id]['summary']['type'] == 'show':
       top_series[id] = top_series_index
       top_series_index += 1
 
