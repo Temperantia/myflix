@@ -14,7 +14,7 @@ from random import randint
 DEBUG = True
 
 BROWSER = 'firefox'
-BROWSER_NUM = 5
+BROWSER_NUM = 1
 TIME_OUT = 5
 
 base_url = 'https://www.imdb.com'
@@ -34,8 +34,12 @@ def reviews_page(browser, id, video):
   reviews = browser.find_elements_by_class_name('imdb-user-review')
   review_count = 0
   for review in reviews:
-    rating = int(review.find_element_by_class_name(
+    rating = None
+    try:
+      rating = int(review.find_element_by_class_name(
         'rating-other-user-rating').find_element_by_tag_name('span').get_attribute('innerHTML'))
+    except:
+      continue
     content = review.find_element_by_class_name('text').get_attribute('innerHTML')
     if len(reviews) <= 2 or (rating >= 8 and len(content) <= 1000):
       author_index = randint(0, 999)
@@ -73,7 +77,7 @@ def reviews_page(browser, id, video):
 
 
 def imdb(index, id, video):
-  if 'IMDbID' not in video:
+  if 'IMDbID' not in video or not video['IMDbID']:
     return
   browser = browsers[index % BROWSER_NUM]
 
@@ -81,16 +85,19 @@ def imdb(index, id, video):
 
 
 def launch():
+  print('Starting browsers')
   for i in range(BROWSER_NUM):
     if BROWSER == 'firefox':
       browsers.append(webdriver.Firefox(options=options))
     else:
       browsers.append(webdriver.Chrome(options=options))
 
+  print('Getting videos')
   for video in get_collection(video_collection, []):
     videos[video.id] = video.to_dict()
 
-  threads(imdb, [[index, id, video] for index, (id, video) in enumerate(videos.items())], 0.02)
+  for index, (id, video) in enumerate(videos.items()):
+    imdb(index, id, video)
 
   for browser in browsers:
     browser.close()
