@@ -22,7 +22,6 @@ options = OptionsFirefox() if BROWSER == 'firefox' else OptionsChrome()
 options.add_argument('--headless')
 options.add_argument('log-level=2')
 browsers = []
-data = {}
 videos = {}
 names = open('john.txt', 'r').read().split('\n')
 

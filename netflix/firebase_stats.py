@@ -18,6 +18,7 @@ bingeworthiness = {}
 categories = {}
 new_releases = {}
 months = {}
+top_series = {}
 
 client = meilisearch.Client('https://search.my-flix.net')
 dict_genres = load(open(path.join(
@@ -104,6 +105,8 @@ def get_video_stats():
 
   new_release_index = 1
   month_index = 1
+  top_series_index = 1
+
   ordered = sorted(followers.items(), key=lambda elem: elem[1], reverse=True)
   for index, item in enumerate(ordered):
     id = item[0]
@@ -116,6 +119,9 @@ def get_video_stats():
     if availability and availability >= month_start and availability <= month_end:
       months[id] = month_index
       month_index += 1
+    if video[id]['summary']['type'] == 'show':
+      top_series[id] = top_series_index
+      top_series_index += 1
 
   globals_collection.document('globals').update(
       {'newReleaseCount': new_release_index})
@@ -143,6 +149,7 @@ def update_search_tables():
     video['h'] = bingeworthiness[id]
     video['newReleasesRank'] = new_releases[id] if id in new_releases else None
     video['monthRank'] = months[id] if id in months else None
+    video['topSeriesRank'] = top_series[id] if id in top_series else None
     video['j'] = trending[video['t']] if video['t'] in trending else None
 
   print('Uploading search tables')
