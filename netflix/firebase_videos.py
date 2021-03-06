@@ -3,6 +3,7 @@ from slugify import slugify
 from datetime import datetime
 from pathlib import Path
 from os import path
+from random import uniform
 import meilisearch
 
 from firebase import video_collection, globals_collection
@@ -126,16 +127,15 @@ def upload(id,  data):
   video['route'] = create_route(video['title'], type, 0)
   video['route'] = duplicate(video['route'], type, video['title'])
   types[video['route']] = type
-  if not 'exists' in video:
-    #random = round(uniform(7.5, 9.8), 1)
-    video['scores'] = {}  # {'1': random}
-    video['score'] = None  # random
-    video['rank'] = None
-    video['popularity'] = None
-    video['followers'] = {}  # {str(i): now for i in range(randint(0, 5))}
-    video['favorites'] = []
-    video['bingeworthiness'] = []
-    video['exists'] = True
+  #if not 'exists' in video:
+  video['scores'] = {}
+  video['score'] = round(video['Score'] - uniform(0.1, 0.4), 1)
+  video['rank'] = None
+  video['popularity'] = None
+  video['followers'] = {}  # {str(i): now for i in range(randint(0, 5))}
+  video['favorites'] = []
+  video['bingeworthiness'] = []
+  video['exists'] = True
 
   search_videos(video, id)
   video_collection.document(id).set(video, merge=True)

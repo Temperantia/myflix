@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from calendar import monthrange
 from pathlib import Path
 from os import path
+from random import uniform
 import meilisearch
 
 from threads import threads
@@ -143,7 +144,7 @@ def update_search_tables():
   for video in search:
     id = video['id']
     video['f'] = followers[id]
-    video['z'] = scores[id]
+    video['z'] = videos[id]['score']  # scores[id]
     video['q'] = rank[id]
     video['p'] = popularity[id]
     video['h'] = bingeworthiness[id]
