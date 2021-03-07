@@ -81,12 +81,7 @@ v-container(fluid, v-if='titles')
 </template>
 <script lang='ts'>
 import categories from '~/netflix/data/categories.json';
-import {
-  Vue,
-  Component,
-  namespace,
-  Prop,
-} from 'nuxt-property-decorator';
+import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
 import AsyncComputed from 'vue-async-computed-decorator/dist';
 
 const localStorageModule = namespace('localStorage');
@@ -165,13 +160,14 @@ export default class Titles extends Vue {
     if (this.original) {
       filters.push('o=1');
     }
-    const hits = (
-      await this.$titles.search(search, {
-        offset: 24 * (this.page - 1),
-        limit: 24,
-        filters: filters.join(' AND '),
-      })
-    ).hits;
+    const options: any = {
+      offset: 24 * (this.page - 1),
+      limit: 24,
+    };
+    if (filters.length > 0) {
+      options.filters = filters.join(' AND ');
+    }
+    const hits = (await this.$titles.search(search, options)).hits;
 
     return hits.filter((title: any) => {
       const status = this.titleStatus(title.id);
