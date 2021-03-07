@@ -4,12 +4,14 @@ v-autocomplete(
   :items='titles',
   outlined,
   dense,
+  :loading='isLoading',
   :hide-details='true',
+  cache-items,
+  no-filter,
   append-icon='mdi-magnify',
   :search-input.sync='value',
   background-color='#0f0f0f',
   placeholder='SEARCH FOR TITLES',
-  cache-items,
   item-text='t',
   item-value='t',
   width='0'
@@ -25,7 +27,9 @@ v-autocomplete(
   :items='titles',
   :menu-props='{ closeOnContentClick: true }',
   outlined,
+  :loading='isLoading',
   dense,
+  no-filter,
   :hide-details='true',
   cache-items,
   :search-input.sync='value',
@@ -66,9 +70,7 @@ export default class Search extends Vue {
 
   @Watch('value')
   async onSearchChanged(value: string) {
-    if (this.isLoading) {
-      return;
-    }
+    if (this.isLoading) return;
     this.isLoading = true;
     this.titles = (await this.$titles.search(value)).hits;
     this.isLoading = false;

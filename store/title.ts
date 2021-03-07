@@ -114,8 +114,7 @@ export default class TitleStore extends VuexModule {
   async redirect({ route }: any) {
     this.setTitle(null);
     const routeParts = route.path.split("/");
-    const r =
-      "'/" + routeParts[1] + "/" + routeParts[2] + "/overview'";
+    const r = "'/" + routeParts[1] + "/" + routeParts[2] + "/overview'";
     const hits = (await $titles.search(null, { filters: "r=" + r })).hits;
     if (hits.length === 0) {
       return $redirect("/");
@@ -174,6 +173,7 @@ export default class TitleStore extends VuexModule {
       .collection("videos")
       .doc(this.title.id)
       .update(video);
+
     this.setSaved(true);
     $toast.success("Flixlist updated");
   }

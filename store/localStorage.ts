@@ -371,6 +371,11 @@ export default class localStorageStore extends VuexModule {
       .collection("users")
       .doc(this.id)
       .update({ [`flixlist.${title.id}`]: data });
+    const video: any = { ["followers." + this.id]: new Date() };
+    $fire.firestore
+      .collection("videos")
+      .doc(title.id)
+      .update(video);
     return data;
   }
 
@@ -382,6 +387,13 @@ export default class localStorageStore extends VuexModule {
       .update({
         [`flixlist.${idTitle}`]: $fireModule.firestore.FieldValue.delete()
       });
+    const video: any = {
+      ["followers." + this.id]: $fireModule.firestore.FieldValue.delete()
+    };
+    $fire.firestore
+      .collection("videos")
+      .doc(idTitle)
+      .update(video);
     return idTitle;
   }
 

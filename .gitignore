@@ -90,3 +90,4 @@ sw.*
 *.swp
 
 __pycache__
+videos.json
