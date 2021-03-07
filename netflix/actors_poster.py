@@ -30,6 +30,7 @@ def get_poster(title):
 		if len(movies) > 0:
 			movie = movies[0]
 			db.update(movie)
+      time.sleep(0.3)
 			if 'cast' in movie.keys():
 				for actor in movie['cast']:
 					client.index('actors').add_documents([{
