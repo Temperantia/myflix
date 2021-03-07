@@ -29,7 +29,7 @@ def get_poster(title):
 		time.sleep(0.3)
 		if len(movies) > 0:
 			movie = movies[0]
-			db.update(movie)
+			db.update(movie, 'full credits')
       time.sleep(0.3)
 			if 'cast' in movie.keys():
 				for actor in movie['cast']:
