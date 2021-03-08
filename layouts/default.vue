@@ -46,7 +46,7 @@ v-app(app)
       v-col.pl-0(v-else, cols='2')
         v-menu
           template(v-slot:activator='{ on, attrs }')
-            v-btn(icon, v-bind='attrs', v-on='on')
+            v-btn(icon, aria-label='menu', v-bind='attrs', v-on='on')
               v-icon mdi-menu
           v-list
             v-list-item(
