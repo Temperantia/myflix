@@ -26,19 +26,26 @@ v-container(fluid)
     v-col(cols='12', lg='6')
       .title-border.mb-5 SUGGESTIONS, NEW FEATURES, OR OTHER INQUIRIES
       p MYFLIX team welcomes constructive ideas or improvements.
+       p
+        a(
+          href='https://pmfsurvey.com/g/3215', 
+          target="_blank"
+        )
+          span.red-netflix--text.text-decoration-underline {{ "MAKE A FEEDBACK ON MYFLIX HERE" }}
+  
       p
-        span {{ "To suggest and idea, contact us at " }}
+        span {{ "You can also contact us with the following email for other inquiries or business related matters." }}
+      p
         a(mailto='support@my-flix.net')
           span.red-netflix--text.text-decoration-underline {{ "support@my-flix.net" }}
-      p
-        span {{ "You can also contact us with this email for other inquiries or business related matters." }}
-  v-row
+    v-row
     v-col(cols='12', lg='6')
       .title-border.mb-5 REPORT A BUG
       p
         span {{ "Report a bug through " }}
         a(
-          href='https://airtable.com/embed/shrPDSbVeF4A9bUOK?backgroundColor=pink'
+          href='https://airtable.com/embed/shrPDSbVeF4A9bUOK?backgroundColor=pink',
+          target="_blank"
         )
           span.red-netflix--text.text-decoration-underline {{ "this link" }}
 </template>
