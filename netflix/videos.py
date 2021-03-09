@@ -43,7 +43,7 @@ def fetch_extra(id, title, shows):
   shows[id].update(imdb)
 
 
-def fetch_video(id, shows):
+def fetch_video(id, shows, genre_dict):
   #print('Collecting ' + id[0] + ' to ' + id[-1])
   data = {
       "path": """["videos", """ + dumps(id) + """, ["title", "synopsis", "seasonCount", "episodeCount", "releaseYear", "maturity", "availability", "genres", "moodTags", "creators", "directors", "writers", "cast"],{"from":0,"to":3},["name"] ]"""}
@@ -139,7 +139,7 @@ def get_videos():
 
   ids = []
   for id in id_list:
-    ids.append([id, shows, ])
+    ids.append([id, shows, genre_dict])
   threads(fetch_video, ids, 0.02, 'Fetching titles')
 
   s = {}
