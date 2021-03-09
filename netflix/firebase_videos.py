@@ -67,19 +67,22 @@ def find_key_by_route(route):
 def find_categories(genres):
   found = []
   for genre in genres:
+    if genre in found:
+      continue
+    is_found = False
     for category in dict_genres:
       for dict_genre in dict_genres[category]:
-        if not genre['name'] in found and genre['name'] == dict_genres[category][dict_genre]:
+        if genre == dict_genres[category][dict_genre]:
           found.append(category)
+          is_found = True
           break
+      if is_found:
+        break
   return found
 
 
 def remove_ids(genres):
-  names = []
-  for genre in genres:
-    names.append(genre['name'])
-  return names
+  return [genre['name'] for genre in genres]
 
 
 def duplicate(route, type, title):
@@ -100,7 +103,7 @@ def duplicate(route, type, title):
 def search_videos(video, id):
   global searches
   searches[id] = {'r': video['route'], 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
-      video['genres']), 'g': remove_ids(video['genres']), 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score'], 'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else ''}
+      video['genres']), 'g': video['genres'], 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score'], 'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else ''}
 
   if video['summary']['isOriginal']:
     searches[id]['o'] = 1
