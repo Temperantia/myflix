@@ -134,7 +134,8 @@ def upload(id,  data):
 
 
 def launch():
-  args = [[id, data] for id in data][::1]
+  args = [[id, data] for id in data]
+  args = [args[0]]
   threads(upload, args, 0, 'Uploading titles')
 
   dump(data, open(path.join(
