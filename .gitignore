@@ -91,3 +91,4 @@ sw.*
 
 __pycache__
 videos.json
+data/*

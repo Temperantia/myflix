@@ -52,7 +52,7 @@ export default {
     ]
   },
   firebase: {
-    /* config: {
+    config: {
       apiKey: "AIzaSyCUYPpn9MwXRg5bTohGcJEfeC5A9WMSEGc",
       authDomain: "myflix-prod.firebaseapp.com",
       databaseURL: "https://myflix-prod.firebaseio.com/",
@@ -61,16 +61,6 @@ export default {
       messagingSenderId: "512304943565",
       appId: "1:512304943565:web:2e0507e8a0dc807fc8f484",
       measurementId: "G-S0Y1CVJVWP"
-    }, */
-    config: {
-      apiKey: "AIzaSyAZ4mK0FX2Iaj656xIGONrv0iTISDreNY8",
-      authDomain: "my-flix-91e46.firebaseapp.com",
-      databaseURL: "https://my-flix-91e46.firebaseio.com/",
-      projectId: "my-flix-91e46",
-      storageBucket: "my-flix-91e46.appspot.com",
-      messagingSenderId: "586880609683",
-      appId: "1:586880609683:web:0cbcb01a1db9121152cc66",
-      measurementId: "G-QG7LKFWBJR"
     },
     services: {
       firestore: {
