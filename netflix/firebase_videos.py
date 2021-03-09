@@ -1,7 +1,5 @@
 from json import load,  dump
-from firebase_admin import firestore
 from slugify import slugify
-from datetime import datetime
 from pathlib import Path
 from os import path
 from random import uniform, randint
@@ -37,7 +35,6 @@ z : score
 
 """
 
-searches = {}
 types = {}
 title_ids = {}
 file = load(open(path.join(
@@ -51,6 +48,8 @@ data = {k: v for k, v in sorted(items.items(), key=lambda item: (not item[1]['ti
 dict_genres = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/genres_tagged.json'), 'r', encoding='utf-8'))
 client = meilisearch.Client('https://search.my-flix.net')
+show_count = 0
+film_count = 0
 
 
 def create_route(title, type, id):
@@ -82,12 +81,7 @@ def find_categories(genres):
   return found
 
 
-def remove_ids(genres):
-  return [genre['name'] for genre in genres]
-
-
 def duplicate(route, type, title):
-  global searches
   if route in types and types[route] == type:
     key = find_key_by_route(route)
     if key:
@@ -95,27 +89,31 @@ def duplicate(route, type, title):
         title_ids[id] = 1
       else:
         title_ids[id] += 1
-      searches[key]['r'] = create_route(
-          title, type, title_ids[id])
       route = create_route(title, type, title_ids[id] + 1)
   return route
 
 
 def search_videos(video, id):
-  global searches
-  searches[id] = {'r': video['route'], 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
+  search = {'r': video['route'], 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
       video['genres']), 'g': video['genres'], 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score'], 'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else ''}
 
   if video['summary']['isOriginal']:
-    searches[id]['o'] = 1
+    search['o'] = 1
   if video['seasonCount']:
-    searches[id]['s'] = video['seasonCount']
+    search['s'] = video['seasonCount']
   if video['episodeCount']:
-    searches[id]['e'] = video['episodeCount']
+    search['e'] = video['episodeCount']
+  client.index('videos').update_documents([{**{'id': id}, **search}])
 
 
 def upload(id,  data):
+  global show_count, film_count
   video = data[id]
+
+  if video['title']['u'] == 1:
+    show_count += 1
+  else:
+    film_count += 1
 
   type = video['summary']['type']
   video['route'] = create_route(video['title'], type, 0)
@@ -131,45 +129,19 @@ def upload(id,  data):
   video['favorites'] = []
   video['exists'] = True
 
+  video_collection.document(id).set(video, merge=True)
   search_videos(video, id)
-  #video_collection.document(id).set(video, merge=True)
-
-def upload_search():
-  global searches
-  arr = []
-  for key in searches:
-    arr.append({**{'id': key}, **searches[key]})
-  client.index('videos').update_documents(arr)
-  show_count = sum(1 for title in arr if title['u'] == 1)
-  film_count = sum(1 for title in arr if title['u'] == 0)
-  globals_collection.document('globals').update(
-      {'showCount': show_count, 'filmCount': film_count})
-
-
-@firestore.transactional
-def update_in_transaction(transaction, id):
-  transaction.set(video_collection.document(id), data[id], merge=True)
 
 
 def launch():
-  ids = []
-  for id in data:
-    ids.append([
-        id,
-        data
-    ])
-  threads(upload, ids, 0, 'Uploading titles')
-
-  transaction = db.transaction()
-  for index, id in enumerate(data):
-    update_in_transaction(transaction, city_ref)
-    if index % 500 == 0:
-      break
+  args = [[id, data] for id in data].slice(1)
+  threads(upload, args, 0, 'Uploading titles')
 
   dump(data, open(path.join(
       Path(__file__).parent.absolute(), 'data/videos.json'),
       'w', encoding='utf-8'), ensure_ascii=False, indent=2)
-  upload_search()
+  globals_collection.document('globals').update(
+      {'showCount': show_count, 'filmCount': film_count})
 
 
 launch()
