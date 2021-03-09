@@ -39,7 +39,6 @@ z : score
 searches = {}
 types = {}
 title_ids = {}
-now = datetime.now()
 file = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8'))
 items = {}
@@ -129,13 +128,11 @@ def upload(id,  data):
   types[video['route']] = type
   rating = round(video['Rating'] - uniform(0.1, 0.4),
                  1) if 'Rating' in video and video['Rating'] else None
-  followers = int(video['IMDbFollowers'] * 1000 /
-                  2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
+
   # if not 'exists' in video:
   video['scores'] = {str(index): rating for index in range(
       randint(200, 700))} if rating else {}
   video['score'] = rating
-  video['followers'] = {str(index): now for index in range(followers)}
   video['favorites'] = []
   video['exists'] = True
 

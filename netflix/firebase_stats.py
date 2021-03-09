@@ -22,6 +22,7 @@ months = {}
 top_series = {}
 
 client = meilisearch.Client('https://search.my-flix.net')
+now = datetime.now()
 dict_genres = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/genres_tagged.json'), 'r', encoding='utf-8'))
 
@@ -53,10 +54,13 @@ Each week :
 """
 
 
-def upload_ranks(id):
-  print(rank[id])
-  video_collection.document(id).set(
-      {'score': scores[id], 'rank': rank[id], 'popularity': popularity[id]}, merge=True)
+def upload_ranks(id, video):
+  doc = {'score': scores[id], 'rank': rank[id], 'popularity': popularity[id]}
+  # if not 'exists' in video:
+  followers = int(video['IMDbFollowers'] * 1000 /
+                  2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
+  doc['followers'] = {str(index): now for index in range(followers)}
+  video_collection.document(id).set(doc, merge=True)
 
 
 def find_categories(genres):
@@ -95,9 +99,7 @@ def get_video_stats():
   global categories
   print('Getting collection')
   collection = get_collection(video_collection, [])
-  args = []
-  for video in collection:
-    args.append([video])
+  args = [[video] for video in collection]
   threads(get_video_stat, args, 0, 'Calculating stats')
 
   ordered = sorted(scores.items(), key=lambda elem: elem[1], reverse=True)
@@ -133,11 +135,9 @@ def get_video_stats():
   client.index('categories').delete_all_documents()
   client.index('categories').add_documents(categories)
 
-  ids = [[id] for id in videos]
+  ids = [[id, videos[id]] for id in videos]
   threads(upload_ranks, ids, 0, 'Uploading ranks')
 
-
-def update_search_tables():
   print('Updating search tables')
   search = client.index('videos').get_documents({'limit': 100000})
 
@@ -158,4 +158,3 @@ def update_search_tables():
 
 
 get_video_stats()
-update_search_tables()

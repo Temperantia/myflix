@@ -13,7 +13,7 @@ v-col(cols='12', md='7')
         nuxt-link(:to='title.r')
           h2 {{ title.t }}
         i
-          span {{ title.s + " seasons" }}
+          span {{ (title.s ? title.s : "1") + " seasons" }}
           span(v-if='title.e') {{ ", " + title.e + " episodes" }}
         div
           span {{ "Score " }}
