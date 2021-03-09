@@ -37,6 +37,8 @@ z : score
 
 types = {}
 title_ids = {}
+routes = []
+
 file = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8'))
 items = {}
@@ -45,6 +47,7 @@ for id, video in file.items():
     items[id] = video
 data = {k: v for k, v in sorted(items.items(), key=lambda item: (not item[1]['title'][0].isalpha(
 ), item[1]['title']))}
+
 dict_genres = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/genres_tagged.json'), 'r', encoding='utf-8'))
 client = meilisearch.Client('https://search.my-flix.net')
@@ -53,15 +56,19 @@ film_count = 0
 
 
 def create_route(title, type, id):
-  return ('/tvshows/' if type == 'show' else '/films/') + slugify(title + ('-' + str(id) if id > 0 else '')) + '/overview'
+  global types, title_ids, routes
 
-
-def find_key_by_route(route):
-  global searches
-  for key in list(searches):
-    if searches[key]['r'] == route:
-      return key
-  return None
+  route = ('/tvshows/' if type == 'show' else '/films/') + \
+      slugify(title + ('-' + str(id) if id > 0 else '')) + '/overview'
+  if route in types and types[route] == type and route in routes:
+    if not id in title_ids:
+      title_ids[id] = 1
+    else:
+      title_ids[id] += 1
+    route = create_route(title, type, title_ids[id])
+  types[route] = type
+  routes.append(route)
+  return route
 
 
 def find_categories(genres):
@@ -79,18 +86,6 @@ def find_categories(genres):
       if is_found:
         break
   return found
-
-
-def duplicate(route, type, title):
-  if route in types and types[route] == type:
-    key = find_key_by_route(route)
-    if key:
-      if not id in title_ids:
-        title_ids[id] = 1
-      else:
-        title_ids[id] += 1
-      route = create_route(title, type, title_ids[id] + 1)
-  return route
 
 
 def search_videos(video, id):
@@ -115,10 +110,7 @@ def upload(id,  data):
   else:
     film_count += 1
 
-  type = video['summary']['type']
-  video['route'] = create_route(video['title'], type, 0)
-  video['route'] = duplicate(video['route'], type, video['title'])
-  types[video['route']] = type
+  video['route'] = create_route(video['title'], video['summary']['type'], 0)
   rating = round(video['Rating'] - uniform(0.1, 0.4),
                  1) if 'Rating' in video and video['Rating'] else None
 
