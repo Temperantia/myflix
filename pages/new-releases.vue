@@ -91,7 +91,7 @@ export default class NewReleases extends Vue {
       search += ' ' + this.genre;
     }
 
-    let filters = ['n=1'];
+    let filters = ['newReleasesRank>0'];
     if (this.category === 'TV Shows') {
       filters.push('u=1');
     } else if (this.category === 'Films') {
