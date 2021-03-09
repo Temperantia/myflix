@@ -153,7 +153,7 @@ def launch():
         id,
         data
     ])
-  threads(upload, ids, 0.05, 'Uploading titles')
+  threads(upload, ids, 0.2, 'Uploading titles')
   dump(data, open(path.join(
       Path(__file__).parent.absolute(), 'data/videos.json'),
       'w', encoding='utf-8'), ensure_ascii=False, indent=2)
