@@ -5,6 +5,7 @@ from calendar import monthrange
 from pathlib import Path
 from os import path
 from random import uniform
+from typing import Dict, List
 import meilisearch
 
 from threads import threads
@@ -64,13 +65,19 @@ def upload_ranks(id, video):
 
 
 def find_categories(genres):
-  found = []
+  found: List[str] = []
   for genre in genres:
+    if genre in found:
+      continue
+    is_found = False
     for category in dict_genres:
       for dict_genre in dict_genres[category]:
-        if not genre['name'] in found and genre['name'] == dict_genres[category][dict_genre]:
+        if genre == dict_genres[category][dict_genre]:
           found.append(category)
+          is_found = True
           break
+      if is_found:
+        break
   return found
 
 
