@@ -52,15 +52,6 @@ dict_genres = load(open(path.join(
 client = meilisearch.Client('https://search.my-flix.net')
 
 
-def extract_categories():
-  categories = []
-  for category in dict_genres:
-    categories.append(category)
-  dump(categories, open(path.join(
-      Path(__file__).parent.absolute(), 'data/categories.json'), 'w', encoding='utf-8'),
-      ensure_ascii=False, indent=2, sort_keys=True)
-
-
 def create_route(title, type, id):
   return ('/tvshows/' if type == 'show' else '/films/') + slugify(title + ('-' + str(id) if id > 0 else '')) + '/overview'
 
