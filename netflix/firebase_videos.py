@@ -1,4 +1,5 @@
 from json import load,  dump
+from firebase_admin import firestore
 from slugify import slugify
 from datetime import datetime
 from pathlib import Path
@@ -131,8 +132,7 @@ def upload(id,  data):
   video['exists'] = True
 
   search_videos(video, id)
-  video_collection.document(id).set(video, merge=True)
-
+  #video_collection.document(id).set(video, merge=True)
 
 def upload_search():
   global searches
@@ -146,6 +146,11 @@ def upload_search():
       {'showCount': show_count, 'filmCount': film_count})
 
 
+@firestore.transactional
+def update_in_transaction(transaction, id):
+  transaction.set(video_collection.document(id), data[id], merge=True)
+
+
 def launch():
   ids = []
   for id in data:
@@ -153,7 +158,14 @@ def launch():
         id,
         data
     ])
-  threads(upload, ids, 0.2, 'Uploading titles')
+  threads(upload, ids, 0, 'Uploading titles')
+
+  transaction = db.transaction()
+  for index, id in enumerate(data):
+    update_in_transaction(transaction, city_ref)
+    if index % 500 == 0:
+      break
+
   dump(data, open(path.join(
       Path(__file__).parent.absolute(), 'data/videos.json'),
       'w', encoding='utf-8'), ensure_ascii=False, indent=2)
