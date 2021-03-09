@@ -110,7 +110,7 @@ def upload(id,  data):
   global show_count, film_count
   video = data[id]
 
-  if video['title']['u'] == 1:
+  if video['summary']['type'] == 'show':
     show_count += 1
   else:
     film_count += 1
