@@ -11,7 +11,7 @@ from video_summary import get_summary
 from imdbpy import get_imdb_data
 from media import request_media
 
-REFRESH_IDS = True
+REFRESH_IDS = False
 
 
 def list_until_empty(data, k=None):
@@ -74,10 +74,9 @@ def fetch_video(id, shows):
       releaseYear = video['releaseYear']['value'] if 'releaseYear' in video else None
       maturity = video['maturity']['value']['rating']['value'] if 'maturity' in video and 'value' in video['maturity']['value']['rating'] else None
       availability = video['availability']['value'] if 'availability' in video else None
-      print(video['genres'])
       genres = list_until_empty(
           video['genres']) if 'genres' in video else []
-      #genres = [find_genre_name(genre[1], genre_dict) for genre in genres]
+      genres = [find_genre_name(genre[1], genre_dict) for genre in genres]
       moodTags = list_until_empty(
           video['moodTags'], 'name') if 'moodTags' in video else []
       creators = list_until_empty(
@@ -114,8 +113,8 @@ def fetch_video(id, shows):
 
 
 def get_videos():
-  #genre_dict = load(open(path.join(
-   #   Path(__file__).parent.absolute(), 'data/genres.json'), 'r', encoding='utf-8'))
+  genre_dict = load(open(path.join(
+      Path(__file__).parent.absolute(), 'data/genres.json'), 'r', encoding='utf-8'))
 
   if REFRESH_IDS:
     shows = merge(get_summary(), load(
@@ -141,7 +140,6 @@ def get_videos():
   ids = []
   for id in id_list:
     ids.append([id, shows, ])
-    break
   threads(fetch_video, ids, 0.02, 'Fetching titles')
 
   s = {}
