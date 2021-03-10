@@ -137,7 +137,7 @@ def fetch_video(video_id, shows, genre_dict):
     # if not 'exists' in video:
 
   except Exception as e:
-    print(e, 'error ' + video_id)
+    print(e, video_id)
 
 
 def get_videos(videos):

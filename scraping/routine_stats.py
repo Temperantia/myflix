@@ -4,7 +4,7 @@ from calendar import monthrange
 from typing import Any, Dict, List, Tuple
 import meilisearch
 
-from utils import firebase, threads
+from utils import firebase
 
 scores: Dict[str, float] = {}
 followers: Dict[str, int] = {}
@@ -34,20 +34,6 @@ month_end = (dt.replace(day=month_day_end, minute=0,
 trending: Dict[str, int] = {
     "The Queen's Gambit": 3
 }
-
-
-def upload_ranks(id: str, video: Dict[str, Any]):
-  followers = int(video['IMDbFollowers'] * 1000 /
-                  2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
-  video.update({
-      'score': scores[id],
-      'rank': rank[id],
-      'popularity': popularity[id],
-      # if not 'exists' in video:
-      'followers':  {str(index): dt for index in range(followers)}
-  })
-
-  # firebase.video_collection.document(id).set(doc, merge=True)
 
 
 def get_video_stat(id: str, video: Dict[str, Any]):
@@ -80,6 +66,8 @@ def get_video_stats(videos: Dict[str, Any]):
   new_release_index = 1
   month_index = 1
   top_series_index = 1
+  show_count = 0
+  film_count = 0
 
   ordered = sorted(followers.items(), key=lambda elem: elem[1], reverse=True)
   for index, (id, _) in enumerate(ordered):
@@ -96,9 +84,15 @@ def get_video_stats(videos: Dict[str, Any]):
     if video['summary']['type'] == 'show':
       top_series[id] = top_series_index
       top_series_index += 1
+      show_count += 1
+    else:
+      film_count += 1
 
-  firebase.globals_collection.document('globals').update(
-      {'newReleaseCount': new_release_index})
+  firebase.globals_collection.document('globals').update({
+      'newReleaseCount': new_release_index,
+      'filmCount': film_count,
+      'showCount': show_count
+  })
 
   print('Most popular categories')
   client.index('categories').delete_all_documents()
@@ -106,14 +100,11 @@ def get_video_stats(videos: Dict[str, Any]):
                                                   key=lambda elem: elem['value'], reverse=True)[:3])
 
   for video_id, video in videos.items():
-    follower_number = int(video['IMDbFollowers'] * 1000 /
-                          2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
+
     video.update({
         'score': scores[video_id],
         'rank': rank[video_id],
         'popularity': popularity[video_id],
-        # if not 'exists' in video:
-        'followers':  {str(index): dt for index in range(follower_number)}
     })
 
   print('Updating search tables')

@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from random import randint, uniform
+from datetime import datetime
 
 import query_netflix
 import media
@@ -18,6 +19,7 @@ CALCULATE_STATS = True
 UPDATE_FIRESTORE = True
 UPDATE_MEILISEARCH = True
 
+dt = datetime.now()
 
 def get_video(video_id: str, video: Dict[str, Any]):
   if QUERY_NETFLIX_MEDIA_CENTER:
@@ -32,10 +34,13 @@ def get_video(video_id: str, video: Dict[str, Any]):
     # if not 'exists' in video:
     rating: float = round(video['Rating'] - uniform(0.1, 0.4),
                           1) if 'Rating' in video and video['Rating'] else None
+    follower_number = int(video['IMDbFollowers'] * 1000 /
+                          2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
     video.update({
         'scores':  {str(index): rating for index in range(
             randint(200, 700))} if rating else {},
         'score': rating,
+        'followers':  {str(index): dt for index in range(follower_number)},
         'favorites': [],
         'exists': True
     })
@@ -44,7 +49,8 @@ def get_video(video_id: str, video: Dict[str, Any]):
   if UPDATE_FIRESTORE:
     firebase.video_collection.document(video_id).set(video, merge=True)
 
-videos: Dict[str, Any] = firebase.get_collection(firebase.video_collection)
+
+videos: Dict[str, Any] = {}#firebase.get_collection(firebase.video_collection)
 
 if QUERY_NETFLIX:
   query_netflix.get_videos(videos)
