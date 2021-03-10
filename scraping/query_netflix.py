@@ -163,6 +163,8 @@ def get_videos(videos):
       id_list.append([])
     id_list[-1].append(id)
     count += 1
+    if count == 10:
+      break
 
   args = [[id, videos, genre_dict] for id in id_list]
   threads.threads(fetch_video, args, 0.02, 'Fetching titles')

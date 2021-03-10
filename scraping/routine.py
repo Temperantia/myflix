@@ -8,7 +8,7 @@ import imdbpy
 import scrape_imdb
 import routine_stats
 
-from utils import firebase, threads
+from utils import firebase, threads, file
 
 QUERY_NETFLIX = True  # 40 minutes
 QUERY_NETFLIX_MEDIA_CENTER = False  # 10 minutes # TODO BUG
@@ -20,6 +20,7 @@ UPDATE_FIRESTORE = True
 UPDATE_MEILISEARCH = True
 
 dt = datetime.now()
+
 
 def get_video(video_id: str, video: Dict[str, Any]):
   if QUERY_NETFLIX_MEDIA_CENTER:
@@ -36,21 +37,23 @@ def get_video(video_id: str, video: Dict[str, Any]):
                           1) if 'Rating' in video and video['Rating'] else None
     follower_number = int(video['IMDbFollowers'] * 1000 /
                           2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
-    video.update({
-        'scores':  {str(index): rating for index in range(
-            randint(200, 700))} if rating else {},
-        'score': rating,
-        'followers':  {str(index): dt for index in range(follower_number)},
-        'favorites': [],
-        'exists': True
-    })
+    if False:
+      video.update({
+          'scores':  {str(index): rating for index in range(
+              randint(200, 700))} if rating else {},
+          'score': rating,
+          'followers':  {str(index): dt for index in range(follower_number)},
+          'favorites': [],
+          'exists': True
+      })
   if CALCULATE_STATS:
     routine_stats.get_video_stat(video_id, video)
   if UPDATE_FIRESTORE:
     firebase.video_collection.document(video_id).set(video, merge=True)
 
 
-videos: Dict[str, Any] = {}#firebase.get_collection(firebase.video_collection)
+# firebase.get_collection(firebase.video_collection)
+videos: Dict[str, Any] = {}
 
 if QUERY_NETFLIX:
   query_netflix.get_videos(videos)
@@ -61,9 +64,10 @@ if QUERY_NETFLIX:
       a[id] = video
   videos = a
 
-args = [[video_id, video]
-        for video_id, video in videos.items()]
+args = [[video_id, video] for video_id, video in videos.items()]
 threads.threads(get_video, args, 0.3, 'Getting videos')
+
+file.write_json('data/videos.json', videos)
+
 if CALCULATE_STATS:
   routine_stats.get_video_stats(videos)
-# print(videos)
