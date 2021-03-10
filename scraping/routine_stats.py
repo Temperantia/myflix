@@ -36,39 +36,29 @@ trending: Dict[str, int] = {
 }
 
 
-"""
-Each week :
-1. Netflix (40m)
-2. Media center : Description, Original box art (10m)
-3. Statistics : Rank, Popularity, Periodic (10m)
-4. IMDB : Cast, Tall box art (2h)
-
-"""
-
-
 def upload_ranks(id: str, video: Dict[str, Any]):
   followers = int(video['IMDbFollowers'] * 1000 /
                   2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
-  doc: Dict[str, Any] = {
+  video.update({
       'score': scores[id],
       'rank': rank[id],
       'popularity': popularity[id],
       # if not 'exists' in video:
       'followers':  {str(index): dt for index in range(followers)}
+  })
 
-  }
-
-  firebase.video_collection.document(id).set(doc, merge=True)
+  # firebase.video_collection.document(id).set(doc, merge=True)
 
 
 def get_video_stat(id: str, video: Dict[str, Any]):
-  followers[id] = len(video['followers']) if video['followers'] else 0
+  followers[id] = len(
+      video['followers']) if 'followers' in video and video['followers'] else 0
   try:
     video['score'] = mean(list(video['scores'].values())
                           ) if video['scores'] else None
   except:
-    print(video)
-  scores[id] = video['score'] if video['score'] else 0
+    print(id)
+  scores[id] = video['score'] if 'score' in video and video['score'] else 0
   bingeworthiness[id] = len(video['bingeworthiness']) / \
       2 if 'bingeworthiness' in video and video['bingeworthiness'] else 0
   for category in video['categories']:
@@ -79,13 +69,8 @@ def get_video_stat(id: str, video: Dict[str, Any]):
                               'value': 1, 'image': video['boxArt']}
 
 
-def get_video_stats():
+def get_video_stats(video: Dict[str, Any]):
   global categories
-  print('Getting collection')
-  collection: Dict[str, Any] = firebase.get_collection(
-      firebase.video_collection)
-  args = [[id, video] for id, video in collection]
-  threads.threads(get_video_stat, args, 0, 'Calculating stats')
 
   ordered: List[Tuple[str, float]] = sorted(
       scores.items(), key=lambda elem: elem[1], reverse=True)
@@ -112,7 +97,7 @@ def get_video_stats():
       top_series[id] = top_series_index
       top_series_index += 1
 
-  globals_collection.document('globals').update(
+  firebase.globals_collection.document('globals').update(
       {'newReleaseCount': new_release_index})
 
   print('Most popular categories')
@@ -120,30 +105,49 @@ def get_video_stats():
   client.index('categories').add_documents(sorted(categories.values(),
                                                   key=lambda elem: elem['value'], reverse=True)[:3])
 
-  args = [[id, videos[id]] for id in videos]
-  threads(upload_ranks, args, 0, 'Uploading ranks')
+  for video_id, video in videos:
+    follower_number = int(video['IMDbFollowers'] * 1000 /
+                          2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
+    video.update({
+        'score': scores[video_id],
+        'rank': rank[video_id],
+        'popularity': popularity[video_id],
+        # if not 'exists' in video:
+        'followers':  {str(index): dt for index in range(follower_number)}
+    })
 
   print('Updating search tables')
-  search: List[Any] = client.index(
-      'videos').get_documents({'limit': 100000})
+  search = [{
+      'id': video_id,
+      'r': video['route'],
+      't': video['title'],
+      'i': video['Poster'] if 'Poster' in video else video['boxArt'],
+      'b': video['storyArt'],
+      'c': video['categories'],
+      'g': video['genres'],
+      'y': video['releaseYear'],
+      'v': video['maturity'],
+      'd': video['synopsis'],
+      'a': video['availability']['availabilityStartTime'],
+      'u': 1 if video['summary']['type'] == 'show' else 0,
+      'z': video['score'],
+      'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else '',
+      'o': 1 if video['summary']['isOriginal'] else 0,
+      'f': followers[video_id],
+      'z': videos[video_id]['score'],  # scores[id]
+      'q': rank[video_id],
+      'p': popularity[video_id],
+      'h': bingeworthiness[video_id],
+      'newReleasesRank': new_releases[video_id] if video_id in new_releases else None,
+      'monthRank': months[video_id] if video_id in months else None,
+      'topSeriesRank': top_series[video_id] if video_id in top_series else None,
+      'j': trending[video['t']] if video['t'] in trending else None,
+      's': video['seasonCount'] if video['seasonCount'] else None,
+      'e': video['episodeCount'] if video['episodeCount'] else None,
+  } for video_id, video in videos]
 
-  for video in search:
-    id: str = video['id']
-    video: Dict[str, Any] = {
-        **video,
-        'f': followers[id],
-        'z': videos[id]['score'],  # scores[id]
-        'q': rank[id],
-        'p': popularity[id],
-        'h': bingeworthiness[id],
-        'newReleasesRank': new_releases[id] if id in new_releases else None,
-        'monthRank': months[id] if id in months else None,
-        'topSeriesRank': top_series[id] if id in top_series else None,
-        'j': trending[video['t']] if video['t'] in trending else None,
-    }
-
-  print('Uploading search tables')
   client.index('videos').update_documents(search)
 
 
-get_video_stats()
+if __name__ == '__main__':
+  get_video_stats()

@@ -118,17 +118,16 @@ def upload(id: str, data: Dict[str, Any]):
   else:
     film_count += 1
 
-  video: Dict[str, Any] = {
-      **video,
+  video.update({
       'route': create_route(video['title'], video['summary']['type'], 0),
       'categories': find_categories(video['genres']),
-  }
+  })
 
   # if not 'exists' in video:
 
-  rating: float = round(video['Rating'] - uniform(0.1, 0.4),
+  rating: float=round(video['Rating'] - uniform(0.1, 0.4),
                         1) if 'Rating' in video and video['Rating'] else None
-  video: Dict[str, Any] = {
+  video: Dict[str, Any]={
       **video,
       'scores':  {str(index): rating for index in range(
           randint(200, 700))} if rating else {},
@@ -137,13 +136,13 @@ def upload(id: str, data: Dict[str, Any]):
       'exists': True
   }
 
-  firebase.video_collection.document(id).set(video, merge=True)
+  #firebase.video_collection.document(id).set(video, merge=True)
   search_videos(video, id)
 
 
-def launch():
-  args = [[id, data] for id in data]
-  #args = [args[0]]
+if __name__ == '__main__':
+  args=[[id, data] for id in data]
+  # args = [args[0]]
   threads.threads(upload, args, 0, 'Uploading titles')
 
   client.index('videos').update_documents(search)
@@ -151,6 +150,3 @@ def launch():
   file.write_json('data/videos.json', data)
   firebase.globals_collection.document('globals').update(
       {'showCount': show_count, 'filmCount': film_count})
-
-
-launch()

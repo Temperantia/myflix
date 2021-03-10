@@ -3,12 +3,11 @@ import imdb
 db = imdb.IMDb(accessSystem='https', reraiseExceptions=True)
 
 
-def get_imdb_data(title):
+def get_imdb_data(video):
   obj = {}
-  role = None
 
   try:
-    movies = db.search_movie(f'{title}')
+    movies = db.search_movie(video['title'])
     if len(movies) > 0:
       movie = movies[0]
       db.update(movie)
@@ -59,10 +58,7 @@ def get_imdb_data(title):
         for actor in movie['cast']:
           role = actor.currentRole
           obj['Actors'][actor['name']] = role['name'] if 'name' in role else None
-    return obj
 
   except Exception as e:
     print(e)
-    return obj
-
-    #test
+  video.update(obj)

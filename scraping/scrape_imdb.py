@@ -10,13 +10,12 @@ base_url = 'https://www.imdb.com'
 names = open('constant/john.txt', 'r').read().split('\n')
 
 
-def main_page(id, video):
+def main_page(video: Dict[str, Any]):
   soup = BeautifulSoup(urlopen(base_url + '/title/tt' +
                                video['IMDbID']).read(), 'html.parser')
   followers = soup.find(itemprop='ratingCount')
   if followers:
-    firebase.video_collection.document(id).update(
-        {'IMDbFollowers': int(followers.text.replace(',', ''))})
+    video.update({'IMDbFollowers': int(followers.text.replace(',', ''))})
 
 
 def reviews_page(id: str, video: Dict[str, Any]):
@@ -31,7 +30,7 @@ def reviews_page(id: str, video: Dict[str, Any]):
           class_='rating-other-user-rating').find('span').text)
     except:
       continue
-    content = review.find(class_='text').text
+    content: str = review.find(class_='text').text
     if len(reviews) <= 2 or (rating >= 8 and len(content) <= 1000):
       author_index = randint(0, 999)
       firebase.reviews_collection.add({
@@ -67,7 +66,7 @@ def reviews_page(id: str, video: Dict[str, Any]):
       break
 
 
-def imdb(id, video):
+def imdb(id: str, video: Dict[str, Any]):
   if 'IMDbID' not in video or not video['IMDbID']:
     return
 
@@ -77,6 +76,8 @@ def imdb(id, video):
   except Exception as e:
     print(id, e)
 
-print('Getting videos')
-threads.threads(imdb, [[id, video]
-                        for id, video in firebase.get_collection(firebase.video_collection)], 0.3)
+
+if __name__ == '__main__':
+  print('Getting videos')
+  threads.threads(imdb, [[id, video]
+                         for id, video in firebase.get_collection(firebase.video_collection)], 0.3)
