@@ -1,3 +1,6 @@
 firebase_admin
+imdbpy
+python-slugify
+jsonmerge
 progress
-bs4
+meilisearch

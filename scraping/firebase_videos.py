@@ -1,12 +1,11 @@
 from typing import Any, Dict, List
-from utils.file import read_json, write_json
 from slugify import slugify
 from random import uniform, randint
 import meilisearch
 from datetime import datetime
 
-from firebase import video_collection, globals_collection
-from threads import threads
+
+from utils import file, firebase, threads
 
 """
 a : availability
@@ -39,16 +38,16 @@ types = {}
 title_ids: Dict[int, int] = {}
 search: List[Dict[str, Any]] = []
 
-file = read_json('netflix/data/videos.json')
+f = file.read_json('data/videos.json').items()
 items = {}
-for id, video in file.items():
+for id, video in f:
   if 'title' in video and video['title']:
     items[id] = video
 items = sorted(items.items(), key=lambda item: (not item[1]['title'][0].isalpha(
 ), item[1]['title']))
 data = {k: v for k, v in items}
 
-dict_genres = read_json('netflix/data/genres_tagged.json')
+dict_genres = file.read_json('data/genres_tagged.json')
 client = meilisearch.Client('https://search.my-flix.net')
 show_count = 0
 film_count = 0
@@ -146,19 +145,19 @@ def upload(id: str, data: Dict[str, Any]):
       'exists': True
   }
 
-  video_collection.document(id).set(video, merge=True)
+  firebase.video_collection.document(id).set(video, merge=True)
   search_videos(video, id)
 
 
 def launch():
   args = [[id, data] for id in data]
   #args = [args[0]]
-  threads(upload, args, 0, 'Uploading titles')
+  threads.threads(upload, args, 0, 'Uploading titles')
 
   client.index('videos').update_documents(search)
 
-  write_json('netflix/data/videos.json', data)
-  globals_collection.document('globals').update(
+  file.write_json('data/videos.json', data)
+  firebase.globals_collection.document('globals').update(
       {'showCount': show_count, 'filmCount': film_count})
 
 

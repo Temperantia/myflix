@@ -1,9 +1,6 @@
 from firebase_admin import credentials, firestore, initialize_app
-from os import path
-from pathlib import Path
 
-cred = credentials.Certificate(
-    path.join(Path(__file__).parent.absolute(), 'myflix-prod-firebase-adminsdk-un9jx-59d53b5c76.json'))
+cred = credentials.Certificate('key/myflix-prod-firebase-adminsdk-un9jx-59d53b5c76.json')
 initialize_app(cred)
 db = firestore.client()
 video_collection = db.collection('videos')
