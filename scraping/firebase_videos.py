@@ -78,15 +78,17 @@ def find_genre(genre: str, category: str, found: List[str]):
   return found
 
 
-def find_categories(genres: Dict[str, str]):
-  start = datetime.now()
+def find_categories(genres: Dict[str, str]) -> List[str]:
   found: List[str] = []
   for genre in genres:
+    results: Any = client.index('genres').search(
+        None, opt_params={'filters': 'genre=' + genre})
+    found.append(results['hits'][0]['category'])
+    continue
     for category in dict_genres:
       if category in found:
         continue
       found = find_genre(genre, category, found)
-  print('categories took ', str(datetime.now() - start))
   return found
 
 
