@@ -9,7 +9,7 @@ from firebase import db as database, get_collection
 client = meilisearch.Client('https://search.my-flix.net')
 # client.create_index('actors', {'primaryKey': 'actor_name'})
 
-video_database = get_collection(database.collection('videos'), [])
+video_database = get_collection(database.collection('videos'))
 
 dico = []
 

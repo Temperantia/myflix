@@ -1,6 +1,7 @@
 from firebase_admin import credentials, firestore, initialize_app
 
-cred = credentials.Certificate('key/myflix-prod-firebase-adminsdk-un9jx-59d53b5c76.json')
+cred = credentials.Certificate(
+    'key/myflix-prod-firebase-adminsdk-un9jx-59d53b5c76.json')
 initialize_app(cred)
 db = firestore.client()
 video_collection = db.collection('videos')
@@ -12,7 +13,27 @@ users_collection = db.collection('users')
 reviews_collection = db.collection('reviews')
 
 
-def get_collection(coll_ref, collection, cursor=None):
+limit = 1000  # Reduce this if it uses too much of your RAM
+
+
+def get_collection(collection, cursor=None):
+  data = {}
+  while True:
+    query = collection.limit(limit)
+    if cursor:
+      query = query.start_after(cursor)
+    docs = [snapshot for snapshot in query.stream()]
+    data.update({snapshot.id: snapshot.to_dict() for snapshot in docs})
+    if len(docs) == limit:
+      print('1000 docs fetched')
+
+      cursor = docs[limit-1]
+      continue
+    print('Finished fetching')
+    return data
+
+
+def get_collectione(coll_ref, collection, cursor=None):
   if cursor is not None:
     docs = [snapshot for snapshot
             in coll_ref.limit(1000).start_after(cursor).stream()]

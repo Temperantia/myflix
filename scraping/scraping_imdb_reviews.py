@@ -25,7 +25,7 @@ def reviews_page(id: str, video: Dict[str, Any]):
     content = review.find(class_='text').text
     if len(reviews) <= 2 or (rating >= 8 and len(content) <= 1000):
       author_index = randint(0, 999)
-      reviews_collection.add({
+      firebase.reviews_collection.add({
           'bot': True,
           'author': {
               'id': author_index,
@@ -69,7 +69,7 @@ def imdb(id: str, video: Dict[str, Any]):
 
 
 print('Getting videos')
-args = [[video.id, video.to_dict()]
-                                 for video in firebase.get_collection(firebase.video_collection, [])]
+args = [[id, video]
+        for id, video in firebase.get_collection(firebase.video_collection)]
 
 threads.threads(imdb, args, 0, 'Scraping IMDB')

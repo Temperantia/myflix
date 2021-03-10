@@ -46,7 +46,7 @@ Each week :
 """
 
 
-def upload_ranks(id, video):
+def upload_ranks(id: str, video):
   doc = {'score': scores[id], 'rank': rank[id], 'popularity': popularity[id]}
   # if not 'exists' in video:
   followers = int(video['IMDbFollowers'] * 1000 /
@@ -56,9 +56,6 @@ def upload_ranks(id, video):
 
 
 def get_video_stat(video):
-  id: str = video.id
-  video = video.to_dict()
-  videos[id] = video
   followers[id] = len(video['followers']) if video['followers'] else 0
   try:
     video['score'] = mean(list(video['scores'].values())
@@ -79,8 +76,8 @@ def get_video_stat(video):
 def get_video_stats():
   global categories
   print('Getting collection')
-  collection = firebase.get_collection(firebase.video_collection, [])
-  args = [[video] for video in collection]
+  collection = firebase.get_collection(firebase.video_collection)
+  args = [[id, video] for id, video in collection]
   threads.threads(get_video_stat, args, 0, 'Calculating stats')
 
   ordered = sorted(scores.items(), key=lambda elem: elem[1], reverse=True)
