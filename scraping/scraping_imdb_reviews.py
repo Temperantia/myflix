@@ -1,18 +1,16 @@
+from typing import Any, Dict
 from urllib.request import urlopen
-from threads import threads
-from firebase import get_collection, video_collection, reviews_collection, firestore
 from random import randint
 from bs4 import BeautifulSoup
 
-DEBUG = True
+from utils import firebase, threads
 
 
 base_url = 'https://www.imdb.com'
-videos = {}
-names = open('john.txt', 'r').read().split('\n')
+names = open('constant/john.txt', 'r').read().split('\n')
 
 
-def reviews_page(id, video):
+def reviews_page(id: str, video: Dict[str, Any]):
   soup = BeautifulSoup(urlopen(base_url + '/title/tt' +
                                video['IMDbID'] + '/reviews').read(), 'html.parser')
   reviews = soup.find_all(class_='imdb-user-review')
@@ -53,14 +51,14 @@ def reviews_page(id, video):
           },
           'reports': [],
           'likes': [],
-          'postedOn': firestore.SERVER_TIMESTAMP
+          'postedOn': firebase.firestore.SERVER_TIMESTAMP
       })
       review_count += 1
     if review_count >= randint(1, 2):
       break
 
 
-def imdb(id, video):
+def imdb(id: str, video: Dict[str, Any]):
   if 'IMDbID' not in video or not video['IMDbID']:
     return
 
@@ -70,14 +68,8 @@ def imdb(id, video):
     print(id, e)
 
 
-def launch():
-  print('Getting videos')
-  for video in get_collection(video_collection, []):
-    videos[video.id] = video.to_dict()
+print('Getting videos')
+args = [[video.id, video.to_dict()]
+                                 for video in firebase.get_collection(firebase.video_collection, [])]
 
-  for(id, video) in videos.items():
-    imdb(id, video)
-
-
-if DEBUG:
-  launch()
+threads.threads(imdb, args, 0, 'Scraping IMDB')

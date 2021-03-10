@@ -55,6 +55,7 @@ film_count = 0
 
 def create_route(title: str, type: str, id: int) -> str:
   global types, title_ids
+  start = datetime.now()
 
   route = ('/tvshows/' if type == 'show' else '/films/') + \
       slugify(title + ('-' + str(id) if id > 0 else '')) + '/overview'
@@ -65,6 +66,7 @@ def create_route(title: str, type: str, id: int) -> str:
       title_ids[id] += 1
     route = create_route(title, type, title_ids[id])
   types[route] = type
+  print('route took ', str(datetime.now() - start))
   return route
 
 
@@ -76,13 +78,9 @@ def find_genre(genre: str, category: str, found: List[str]):
   return found
 
 
-def find_categories(genres: Dict[str, str]) -> List[str]:
+def find_categories(genres: Dict[str, str]):
   found: List[str] = []
   for genre in genres:
-    results: Any = client.index('genres').search(
-        None, opt_params={'filters': 'genre="' + genre + '"'})
-    found.append(results['hits'][0]['category'])
-    continue
     for category in dict_genres:
       if category in found:
         continue
