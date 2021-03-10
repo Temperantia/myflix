@@ -44,9 +44,7 @@ def get_video(video_id: str, video: Dict[str, Any]):
   if UPDATE_FIRESTORE:
     firebase.video_collection.document(video_id).set(video, merge=True)
 
-
-# firebase.get_collection(firebase.video_collection)
-videos: Dict[str, Any] = {}
+videos: Dict[str, Any] = firebase.get_collection(firebase.video_collection)
 
 if QUERY_NETFLIX:
   query_netflix.get_videos(videos)
