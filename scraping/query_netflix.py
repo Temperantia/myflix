@@ -87,8 +87,7 @@ def fetch_video(video_id, shows, genre_dict):
     storyArts = response['jsonGraph']['videos']
 
     for video_id, video in objects.items():
-      if not 'value' in video['title']:
-        del shows[video_id]
+      if not 'title' in video or not video['title'] or not 'value' in video['title'] or not video['title']['value']:
         continue
       title = video['title']['value']
       boxArt = boxArts[video_id]['boxarts']['_1920x1080']['png']['value']['url']
@@ -148,11 +147,14 @@ def get_videos(videos):
   if REFRESH_IDS:
     videos = videos.update(get_summary())
 
+
   show_count = 0
   movie_count = 0
   count = 0
   id_list = []
   for id in videos:
+    if not 'summary' in videos[id]:
+      continue
     if videos[id]['summary']['type'] == 'movie':
       movie_count += 1
     if videos[id]['summary']['type'] == 'show':
@@ -163,10 +165,7 @@ def get_videos(videos):
     count += 1
 
   args = [[id, videos, genre_dict] for id in id_list]
-  args = [args[0]]
   threads.threads(fetch_video, args, 0.02, 'Fetching titles')
-
-
 
   print('Collected ' + str(show_count) +
         ' shows and ' + str(movie_count) + ' movies')

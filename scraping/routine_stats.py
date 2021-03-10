@@ -69,7 +69,7 @@ def get_video_stat(id: str, video: Dict[str, Any]):
                               'value': 1, 'image': video['boxArt']}
 
 
-def get_video_stats(video: Dict[str, Any]):
+def get_video_stats(videos: Dict[str, Any]):
   global categories
 
   ordered: List[Tuple[str, float]] = sorted(
@@ -82,10 +82,10 @@ def get_video_stats(video: Dict[str, Any]):
   top_series_index = 1
 
   ordered = sorted(followers.items(), key=lambda elem: elem[1], reverse=True)
-  for index, item in enumerate(ordered):
-    id = item[0]
-    availability = videos[id]['availability']['availabilityStartTime'] / \
-        1000 if videos[id]['availability']['availabilityStartTime'] else None
+  for index, (id, _) in enumerate(ordered):
+    video = videos[id]
+    availability = video['availability']['availabilityStartTime'] / \
+        1000 if 'availability' in video and video['availability']['availabilityStartTime'] else None
     popularity[id] = index + 1
     if availability and availability >= start_release and availability <= end:
       new_releases[id] = new_release_index
@@ -93,7 +93,7 @@ def get_video_stats(video: Dict[str, Any]):
     if availability and availability >= month_start and availability <= month_end:
       months[id] = month_index
       month_index += 1
-    if videos[id]['summary']['type'] == 'show':
+    if video['summary']['type'] == 'show':
       top_series[id] = top_series_index
       top_series_index += 1
 
@@ -105,7 +105,7 @@ def get_video_stats(video: Dict[str, Any]):
   client.index('categories').add_documents(sorted(categories.values(),
                                                   key=lambda elem: elem['value'], reverse=True)[:3])
 
-  for video_id, video in videos:
+  for video_id, video in videos.items():
     follower_number = int(video['IMDbFollowers'] * 1000 /
                           2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
     video.update({

@@ -28,8 +28,6 @@ def get_video(video_id: str, video: Dict[str, Any]):
     pass
   if SCRAPE_IMDB and 'IMDbID' in video:
     scrape_imdb.main_page(video)
-  if CALCULATE_STATS:
-    routine_stats.get_video_stat(video_id, video)
   if UPDATE_FIRESTORE:
     # if not 'exists' in video:
     rating: float = round(video['Rating'] - uniform(0.1, 0.4),
@@ -41,16 +39,27 @@ def get_video(video_id: str, video: Dict[str, Any]):
         'favorites': [],
         'exists': True
     })
+  if CALCULATE_STATS:
+    routine_stats.get_video_stat(video_id, video)
+  if UPDATE_FIRESTORE:
     firebase.video_collection.document(video_id).set(video, merge=True)
 
 
-videos: Dict[str, Any] = firebase.get_collection(firebase.video_collection)
+# firebase.get_collection(firebase.video_collection)
+videos: Dict[str, Any] = {}
 
 if QUERY_NETFLIX:
   query_netflix.get_videos(videos)
+  a = {}
+  for id in videos:
+    video = videos[id]
+    if 'title' in video:
+      a[id] = video
+  videos = a
 
-threads.threads(get_video, [[video_id, video]
-                            for video_id, video in videos.items()], 0.3, 'Getting videos')
+args = [[video_id, video]
+        for video_id, video in videos.items()]
+threads.threads(get_video, args, 0.3, 'Getting videos')
 if CALCULATE_STATS:
   routine_stats.get_video_stats(videos)
-#print(videos)
+# print(videos)
