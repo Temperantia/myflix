@@ -37,7 +37,6 @@ z : score
 
 types = {}
 title_ids = {}
-routes = []
 
 file = load(open(path.join(
     Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8'))
@@ -56,41 +55,41 @@ film_count = 0
 
 
 def create_route(title, type, id):
-  global types, title_ids, routes
+  global types, title_ids
 
   route = ('/tvshows/' if type == 'show' else '/films/') + \
       slugify(title + ('-' + str(id) if id > 0 else '')) + '/overview'
-  if route in types and types[route] == type and route in routes:
+  if route in types and types[route] == type:
     if not id in title_ids:
       title_ids[id] = 1
     else:
       title_ids[id] += 1
     route = create_route(title, type, title_ids[id])
   types[route] = type
-  routes.append(route)
   return route
+
+
+def find_genre(genre, category, found):
+  for dict_genre in dict_genres[category]:
+    if genre == dict_genres[category][dict_genre]:
+      found.append(category)
+      return found
+  return found
 
 
 def find_categories(genres):
   found = []
   for genre in genres:
-    if genre in found:
-      continue
-    is_found = False
     for category in dict_genres:
-      for dict_genre in dict_genres[category]:
-        if genre == dict_genres[category][dict_genre]:
-          found.append(category)
-          is_found = True
-          break
-      if is_found:
-        break
+      if category in found:
+        continue
+      found = find_genre(genre, category, found)
   return found
 
 
 def search_videos(video, id):
-  search = {'r': video['route'], 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': find_categories(
-      video['genres']), 'g': video['genres'], 'y': video['releaseYear'], 'v': video['maturity'], 'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score'], 'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else ''}
+  search = {'r': video['route'], 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': video['categories'], 'g': video['genres'], 'y': video['releaseYear'], 'v': video['maturity'],
+            'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score'], 'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else ''}
 
   if video['summary']['isOriginal']:
     search['o'] = 1
@@ -113,6 +112,7 @@ def upload(id,  data):
   video['route'] = create_route(video['title'], video['summary']['type'], 0)
   rating = round(video['Rating'] - uniform(0.1, 0.4),
                  1) if 'Rating' in video and video['Rating'] else None
+  video['categories'] = find_categories(video['genres'])
 
   # if not 'exists' in video:
   video['scores'] = {str(index): rating for index in range(

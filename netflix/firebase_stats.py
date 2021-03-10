@@ -64,22 +64,6 @@ def upload_ranks(id, video):
   video_collection.document(id).set(doc, merge=True)
 
 
-def find_categories(genres):
-  found: List[str] = []
-  for genre in genres:
-    if genre in found:
-      continue
-    is_found = False
-    for category in dict_genres:
-      for dict_genre in dict_genres[category]:
-        if genre == dict_genres[category][dict_genre]:
-          found.append(category)
-          is_found = True
-          break
-      if is_found:
-        break
-  return found
-
 
 def get_video_stat(video):
   id = video.id
@@ -94,7 +78,7 @@ def get_video_stat(video):
   scores[id] = video['score'] if video['score'] else 0
   bingeworthiness[id] = len(video['bingeworthiness']) / \
       2 if 'bingeworthiness' in video and video['bingeworthiness'] else 0
-  for category in find_categories(video['genres']):
+  for category in video['categories']:
     if category in categories:
       categories[category]['value'] += 1
     else:
