@@ -5,7 +5,7 @@ from calendar import monthrange
 from pathlib import Path
 from os import path
 from random import uniform
-from typing import Dict, List
+from typing import Any, Dict, List
 import meilisearch
 
 from threads import threads
@@ -64,9 +64,8 @@ def upload_ranks(id, video):
   video_collection.document(id).set(doc, merge=True)
 
 
-
 def get_video_stat(video):
-  id = video.id
+  id: str = video.id
   video = video.to_dict()
   videos[id] = video
   followers[id] = len(video['followers']) if video['followers'] else 0
@@ -126,8 +125,8 @@ def get_video_stats():
   client.index('categories').delete_all_documents()
   client.index('categories').add_documents(categories)
 
-  ids = [[id, videos[id]] for id in videos]
-  threads(upload_ranks, ids, 0, 'Uploading ranks')
+  args = [[id, videos[id]] for id in videos]
+  threads(upload_ranks, args, 0, 'Uploading ranks')
 
   print('Updating search tables')
   search = client.index('videos').get_documents({'limit': 100000})

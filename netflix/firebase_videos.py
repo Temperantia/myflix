@@ -1,9 +1,9 @@
-from json import load,  dump
+from typing import Any, Dict, List
+from utils.file import read_json, write_json
 from slugify import slugify
-from pathlib import Path
-from os import path
 from random import uniform, randint
 import meilisearch
+from datetime import datetime
 
 from firebase import video_collection, globals_collection
 from threads import threads
@@ -36,26 +36,27 @@ z : score
 """
 
 types = {}
-title_ids = {}
+title_ids: Dict[int, int] = {}
+search: List[Dict[str, Any]] = []
 
-file = load(open(path.join(
-    Path(__file__).parent.absolute(), 'data/videos.json'), 'r', encoding='utf-8'))
+file = read_json('netflix/data/videos.json')
 items = {}
 for id, video in file.items():
   if 'title' in video and video['title']:
     items[id] = video
-data = {k: v for k, v in sorted(items.items(), key=lambda item: (not item[1]['title'][0].isalpha(
-), item[1]['title']))}
+items = sorted(items.items(), key=lambda item: (not item[1]['title'][0].isalpha(
+), item[1]['title']))
+data = {k: v for k, v in items}
 
-dict_genres = load(open(path.join(
-    Path(__file__).parent.absolute(), 'data/genres_tagged.json'), 'r', encoding='utf-8'))
+dict_genres = read_json('netflix/data/genres_tagged.json')
 client = meilisearch.Client('https://search.my-flix.net')
 show_count = 0
 film_count = 0
 
 
-def create_route(title, type, id):
+def create_route(title: str, type: str, id: int) -> str:
   global types, title_ids
+  start = datetime.now()
 
   route = ('/tvshows/' if type == 'show' else '/films/') + \
       slugify(title + ('-' + str(id) if id > 0 else '')) + '/overview'
@@ -66,10 +67,11 @@ def create_route(title, type, id):
       title_ids[id] += 1
     route = create_route(title, type, title_ids[id])
   types[route] = type
+  print('route took ', str(datetime.now() - start))
   return route
 
 
-def find_genre(genre, category, found):
+def find_genre(genre: str, category: str, found: List[str]):
   for dict_genre in dict_genres[category]:
     if genre == dict_genres[category][dict_genre]:
       found.append(category)
@@ -77,30 +79,46 @@ def find_genre(genre, category, found):
   return found
 
 
-def find_categories(genres):
-  found = []
+def find_categories(genres: Dict[str, str]):
+  start = datetime.now()
+  found: List[str] = []
   for genre in genres:
     for category in dict_genres:
       if category in found:
         continue
       found = find_genre(genre, category, found)
+  print('categories took ', str(datetime.now() - start))
   return found
 
 
-def search_videos(video, id):
-  search = {'r': video['route'], 't': video['title'], 'i': video['Poster'] if 'Poster' in video else video['boxArt'], 'b': video['storyArt'], 'c': video['categories'], 'g': video['genres'], 'y': video['releaseYear'], 'v': video['maturity'],
-            'd': video['synopsis'], 'a': video['availability']['availabilityStartTime'], 'u': 1 if video['summary']['type'] == 'show' else 0, 'z': video['score'], 'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else ''}
+def search_videos(video: Dict[str, Any], id: str):
+  global search
+  doc = {
+      'id': id,
+      'r': video['route'],
+      't': video['title'],
+      'i': video['Poster'] if 'Poster' in video else video['boxArt'],
+      'b': video['storyArt'],
+      'c': video['categories'],
+      'g': video['genres'],
+      'y': video['releaseYear'],
+      'v': video['maturity'],
+      'd': video['synopsis'],
+      'a': video['availability']['availabilityStartTime'],
+      'u': 1 if video['summary']['type'] == 'show' else 0,
+      'z': video['score'],
+      'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else '',
+      'o': 1 if video['summary']['isOriginal'] else 0
+  }
 
-  if video['summary']['isOriginal']:
-    search['o'] = 1
   if video['seasonCount']:
-    search['s'] = video['seasonCount']
+    doc['s'] = video['seasonCount']
   if video['episodeCount']:
-    search['e'] = video['episodeCount']
-  client.index('videos').update_documents([{**{'id': id}, **search}])
+    doc['e'] = video['episodeCount']
+  search.append(doc)
 
 
-def upload(id,  data):
+def upload(id: str, data: Dict[str, Any]):
   global show_count, film_count
   video = data[id]
 
@@ -109,17 +127,24 @@ def upload(id,  data):
   else:
     film_count += 1
 
-  video['route'] = create_route(video['title'], video['summary']['type'], 0)
-  rating = round(video['Rating'] - uniform(0.1, 0.4),
-                 1) if 'Rating' in video and video['Rating'] else None
-  video['categories'] = find_categories(video['genres'])
+  video: Dict[str, Any] = {
+      **video,
+      'route': create_route(video['title'], video['summary']['type'], 0),
+      'categories': find_categories(video['genres']),
+  }
 
   # if not 'exists' in video:
-  video['scores'] = {str(index): rating for index in range(
-      randint(200, 700))} if rating else {}
-  video['score'] = rating
-  video['favorites'] = []
-  video['exists'] = True
+
+  rating: float = round(video['Rating'] - uniform(0.1, 0.4),
+                        1) if 'Rating' in video and video['Rating'] else None
+  video: Dict[str, Any] = {
+      **video,
+      'scores':  {str(index): rating for index in range(
+          randint(200, 700))} if rating else {},
+      'score': rating,
+      'favorites': [],
+      'exists': True
+  }
 
   video_collection.document(id).set(video, merge=True)
   search_videos(video, id)
@@ -130,9 +155,9 @@ def launch():
   #args = [args[0]]
   threads(upload, args, 0, 'Uploading titles')
 
-  dump(data, open(path.join(
-      Path(__file__).parent.absolute(), 'data/videos.json'),
-      'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+  client.index('videos').update_documents(search)
+
+  write_json('netflix/data/videos.json', data)
   globals_collection.document('globals').update(
       {'showCount': show_count, 'filmCount': film_count})
 
