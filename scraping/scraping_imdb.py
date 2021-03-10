@@ -3,11 +3,20 @@ from urllib.request import urlopen
 from random import randint
 from bs4 import BeautifulSoup
 
-from utils import firebase, threads
+from utils import threads, firebase
 
 
 base_url = 'https://www.imdb.com'
 names = open('constant/john.txt', 'r').read().split('\n')
+
+
+def main_page(id, video):
+  soup = BeautifulSoup(urlopen(base_url + '/title/tt' +
+                               video['IMDbID']).read(), 'html.parser')
+  followers = soup.find(itemprop='ratingCount')
+  if followers:
+    firebase.video_collection.document(id).update(
+        {'IMDbFollowers': int(followers.text.replace(',', ''))})
 
 
 def reviews_page(id: str, video: Dict[str, Any]):
@@ -58,18 +67,16 @@ def reviews_page(id: str, video: Dict[str, Any]):
       break
 
 
-def imdb(id: str, video: Dict[str, Any]):
+def imdb(id, video):
   if 'IMDbID' not in video or not video['IMDbID']:
     return
 
   try:
+    main_page(id, video)
     reviews_page(id, video)
   except Exception as e:
     print(id, e)
 
-
 print('Getting videos')
-args = [[id, video]
-        for id, video in firebase.get_collection(firebase.video_collection)]
-
-threads.threads(imdb, args, 0, 'Scraping IMDB')
+threads.threads(imdb, [[id, video]
+                        for id, video in firebase.get_collection(firebase.video_collection)], 0.3)

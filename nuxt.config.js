@@ -11,9 +11,6 @@ export default {
       }
     }
   },
-  router: {
-    middleware: "authorized"
-  },
   plugins: [
     "~/plugins/firebase",
     "~/plugins/auth",

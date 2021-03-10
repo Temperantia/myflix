@@ -46,10 +46,10 @@ v-container(fluid)
             template(v-slot:label)
               | I have read and agree to the
               nuxt-link(to='/terms-of-service')
-              b.px-1 Terms of Service
+                b.px-1 Terms of Service
               | and
               nuxt-link(to='/privacy-policy')
-              b.px-1 Privacy Policy
+                b.px-1 Privacy Policy
         button.button-red.px-8.py-3.rounded-lg(type='submit') Create Account
 </template>
 <script lang='ts'>

@@ -38,16 +38,21 @@ types = {}
 title_ids: Dict[int, int] = {}
 search: List[Dict[str, Any]] = []
 
-f = file.read_json('data/videos.json').items()
-items = {}
-for id, video in f:
-  if 'title' in video and video['title']:
-    items[id] = video
+f: Dict[str, Any] = file.read_json('data/videos.json').items()
+items = {id: video for id, video in f if 'title' in video and video['title']}
 items = sorted(items.items(), key=lambda item: (not item[1]['title'][0].isalpha(
 ), item[1]['title']))
 data = {k: v for k, v in items}
 
-dict_genres = file.read_json('data/genres_tagged.json')
+f: Dict[str, Dict[str, str]] = file.read_json('data/genres_tagged.json')
+genre_dict: Dict[str, List[str]] = {}
+for category in f:
+  for genre_id in f[category]:
+    genre = f[category][genre_id]
+    if not genre in category:
+      genre_dict[genre] = []
+    genre_dict[genre].append(category)
+
 client = meilisearch.Client('https://search.my-flix.net')
 show_count = 0
 film_count = 0
@@ -70,22 +75,11 @@ def create_route(title: str, type: str, id: int) -> str:
   return route
 
 
-def find_genre(genre: str, category: str, found: List[str]):
-  for dict_genre in dict_genres[category]:
-    if genre == dict_genres[category][dict_genre]:
-      found.append(category)
-      return found
-  return found
-
-
 def find_categories(genres: Dict[str, str]):
-  found: List[str] = []
+  categories: List[str] = []
   for genre in genres:
-    for category in dict_genres:
-      if category in found:
-        continue
-      found = find_genre(genre, category, found)
-  return found
+    categories += genre_dict[genre]
+  return categories
 
 
 def search_videos(video: Dict[str, Any], id: str):

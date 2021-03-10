@@ -1,3 +1,4 @@
+from typing import Any, Dict, List
 from firebase_admin import credentials, firestore, initialize_app
 
 cred = credentials.Certificate(
@@ -17,12 +18,12 @@ limit = 1000  # Reduce this if it uses too much of your RAM
 
 
 def get_collection(collection, cursor=None):
-  data = {}
+  data: Dict[str, Any] = {}
   while True:
     query = collection.limit(limit)
     if cursor:
       query = query.start_after(cursor)
-    docs = [snapshot for snapshot in query.stream()]
+    docs: List[Any] = [snapshot for snapshot in query.stream()]
     data.update({snapshot.id: snapshot.to_dict() for snapshot in docs})
     if len(docs) == limit:
       print('1000 docs fetched')
@@ -30,22 +31,4 @@ def get_collection(collection, cursor=None):
       cursor = docs[limit-1]
       continue
     print('Finished fetching')
-    return data
-
-
-def get_collectione(coll_ref, collection, cursor=None):
-  if cursor is not None:
-    docs = [snapshot for snapshot
-            in coll_ref.limit(1000).start_after(cursor).stream()]
-  else:
-    docs = [snapshot for snapshot
-            in coll_ref.limit(1000).stream()]
-
-  collection = collection + docs
-
-  if len(docs) == 1000:
-    print('1000 docs fetched')
-    return get_collection(coll_ref, collection, docs[999])
-  else:
-    print('Finished fetching')
-    return collection
+    return data.items()

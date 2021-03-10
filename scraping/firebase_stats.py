@@ -1,21 +1,21 @@
 from statistics import mean
 from datetime import datetime, timedelta
 from calendar import monthrange
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 import meilisearch
 
 from utils import firebase, threads
 
-scores = {}
-followers = {}
-videos = {}
-rank = {}
-popularity = {}
-bingeworthiness = {}
-categories = {}
-new_releases = {}
-months = {}
-top_series = {}
+scores: Dict[str, float] = {}
+followers: Dict[str, int] = {}
+videos: Dict[str, Any] = {}
+rank: Dict[str, int] = {}
+popularity: Dict[str, int] = {}
+bingeworthiness: Dict[str, float] = {}
+categories: Dict[str, Dict[str, Any]] = {}
+new_releases: Dict[str, int] = {}
+months: Dict[str, int] = {}
+top_series: Dict[str, int] = {}
 
 client = meilisearch.Client('https://search.my-flix.net')
 dt = datetime.now()
@@ -31,7 +31,7 @@ month_start = (dt.replace(day=1, minute=0,
 month_end = (dt.replace(day=month_day_end, minute=0,
                         second=0, microsecond=0)).timestamp()
 
-trending = {
+trending: Dict[str, int] = {
     "The Queen's Gambit": 3
 }
 
@@ -46,16 +46,22 @@ Each week :
 """
 
 
-def upload_ranks(id: str, video):
-  doc = {'score': scores[id], 'rank': rank[id], 'popularity': popularity[id]}
-  # if not 'exists' in video:
+def upload_ranks(id: str, video: Dict[str, Any]):
   followers = int(video['IMDbFollowers'] * 1000 /
                   2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
-  doc['followers'] = {str(index): dt for index in range(followers)}
+  doc: Dict[str, Any] = {
+      'score': scores[id],
+      'rank': rank[id],
+      'popularity': popularity[id],
+      # if not 'exists' in video:
+      'followers':  {str(index): dt for index in range(followers)}
+
+  }
+
   firebase.video_collection.document(id).set(doc, merge=True)
 
 
-def get_video_stat(video):
+def get_video_stat(id: str, video: Dict[str, Any]):
   followers[id] = len(video['followers']) if video['followers'] else 0
   try:
     video['score'] = mean(list(video['scores'].values())
@@ -76,13 +82,15 @@ def get_video_stat(video):
 def get_video_stats():
   global categories
   print('Getting collection')
-  collection = firebase.get_collection(firebase.video_collection)
+  collection: Dict[str, Any] = firebase.get_collection(
+      firebase.video_collection)
   args = [[id, video] for id, video in collection]
   threads.threads(get_video_stat, args, 0, 'Calculating stats')
 
-  ordered = sorted(scores.items(), key=lambda elem: elem[1], reverse=True)
-  for index, id in enumerate(ordered):
-    rank[id[0]] = index + 1
+  ordered: List[Tuple[str, float]] = sorted(
+      scores.items(), key=lambda elem: elem[1], reverse=True)
+  for index, (id, _) in enumerate(ordered):
+    rank[id] = index + 1
 
   new_release_index = 1
   month_index = 1
@@ -108,28 +116,31 @@ def get_video_stats():
       {'newReleaseCount': new_release_index})
 
   print('Most popular categories')
-  categories = sorted(categories.values(),
-                      key=lambda elem: elem['value'], reverse=True)[:3]
   client.index('categories').delete_all_documents()
-  client.index('categories').add_documents(categories)
+  client.index('categories').add_documents(sorted(categories.values(),
+                                                  key=lambda elem: elem['value'], reverse=True)[:3])
 
   args = [[id, videos[id]] for id in videos]
   threads(upload_ranks, args, 0, 'Uploading ranks')
 
   print('Updating search tables')
-  search = client.index('videos').get_documents({'limit': 100000})
+  search: List[Any] = client.index(
+      'videos').get_documents({'limit': 100000})
 
   for video in search:
-    id = video['id']
-    video['f'] = followers[id]
-    video['z'] = videos[id]['score']  # scores[id]
-    video['q'] = rank[id]
-    video['p'] = popularity[id]
-    video['h'] = bingeworthiness[id]
-    video['newReleasesRank'] = new_releases[id] if id in new_releases else None
-    video['monthRank'] = months[id] if id in months else None
-    video['topSeriesRank'] = top_series[id] if id in top_series else None
-    video['j'] = trending[video['t']] if video['t'] in trending else None
+    id: str = video['id']
+    video: Dict[str, Any] = {
+        **video,
+        'f': followers[id],
+        'z': videos[id]['score'],  # scores[id]
+        'q': rank[id],
+        'p': popularity[id],
+        'h': bingeworthiness[id],
+        'newReleasesRank': new_releases[id] if id in new_releases else None,
+        'monthRank': months[id] if id in months else None,
+        'topSeriesRank': top_series[id] if id in top_series else None,
+        'j': trending[video['t']] if video['t'] in trending else None,
+    }
 
   print('Uploading search tables')
   client.index('videos').update_documents(search)
