@@ -55,6 +55,7 @@ def get_video_stat(id: str, video: Dict[str, Any]):
 
 def upload(video_id, video):
   global scores, rank, popularity
+  print(scores[video_id])
   video.update({
       'score': scores[video_id],
       'rank': rank[video_id],
