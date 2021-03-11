@@ -108,7 +108,7 @@ def get_video_stats(videos: Dict[str, Any]):
   # to thread
 
   print('Upload')
-  threads.threads(upload, [[video] for video in video.items()], 0, 'Uploading')
+  threads.threads(upload, [[video] for video_id, video in videos.items()], 0, 'Uploading')
 
   print('Updating search tables')
   search = [{
