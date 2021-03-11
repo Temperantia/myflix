@@ -53,11 +53,9 @@ def get_video_stat(id: str, video: Dict[str, Any]):
                               'value': 1, 'image': video['boxArt']}
 
 
-def upload(video_id, video):
-  global scores, rank, popularity
-  print(scores[video_id])
+def upload(video_id: str, video):
+  global  rank, popularity
   video.update({
-      'score': scores[video_id],
       'rank': rank[video_id],
       'popularity': popularity[video_id],
   })
@@ -65,7 +63,9 @@ def upload(video_id, video):
 
 
 def get_video_stats(videos: Dict[str, Any]):
+  global rank, popularity
   print('Stats')
+  print(scores)
   ordered: List[Tuple[str, float]] = sorted(
       scores.items(), key=lambda elem: elem[1], reverse=True)
   for index, (id, _) in enumerate(ordered):
@@ -129,7 +129,7 @@ def get_video_stats(videos: Dict[str, Any]):
       'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else '',
       'o': 1 if video['summary']['isOriginal'] else 0,
       'f': followers[video_id],
-      'z': videos[video_id]['score'],  # scores[id]
+      'z': video['score'],  # scores[id]
       'q': rank[video_id],
       'p': popularity[video_id],
       'h': bingeworthiness[video_id],
