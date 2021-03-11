@@ -12,12 +12,11 @@ from utils import firebase, threads, file
 
 QUERY_NETFLIX = False  # 40 minutes
 QUERY_NETFLIX_MEDIA_CENTER = False  # 10 minutes # TODO BUG
-QUERY_IMDB = True
-QUERY_YOUTUBE = True
-SCRAPE_IMDB = True  # ?
+QUERY_IMDB = False
+QUERY_YOUTUBE = False
+SCRAPE_IMDB = False  # ?
 CALCULATE_STATS = True
 UPDATE_FIRESTORE = True
-UPDATE_MEILISEARCH = True
 SEED_FIRESTORE = False
 
 dt = datetime.now()
@@ -49,7 +48,7 @@ if QUERY_NETFLIX:
 
 videos = file.read_json('data/videos.json')
 args = [[video_id, video] for video_id, video in videos.items()]
-#threads.threads(get_video, args, 0.4, 'Getting videos')
+threads.threads(get_video, args, 0.4, 'Getting videos')
 file.write_json('data/videos.json', videos)
 
 if SEED_FIRESTORE:
