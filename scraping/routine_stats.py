@@ -2,6 +2,7 @@ from statistics import mean
 from datetime import datetime, timedelta
 from calendar import monthrange
 from typing import Any, Dict, List, Tuple
+from random import uniform
 import meilisearch
 
 from utils import firebase, threads
