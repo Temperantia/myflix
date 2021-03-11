@@ -39,11 +39,8 @@ trending: Dict[str, int] = {
 def get_video_stat(id: str, video: Dict[str, Any]):
   followers[id] = len(
       video['followers']) if 'followers' in video and video['followers'] else 0
-  try:
-    video['score'] = mean(list(video['scores'].values())
-                          ) if 'scores' in video and video['scores'] else None
-  except:
-    print(id)
+  video['score'] = mean(list(video['scores'].values())
+                        ) if 'scores' in video and video['scores'] else None
   scores[id] = video['score'] if 'score' in video and video['score'] else 0
   bingeworthiness[id] = len(video['bingeworthiness']) / \
       2 if 'bingeworthiness' in video and video['bingeworthiness'] else 0
@@ -100,7 +97,6 @@ def get_video_stats(videos: Dict[str, Any]):
                                                   key=lambda elem: elem['value'], reverse=True)[:3])
 
   for video_id, video in videos.items():
-
     video.update({
         'score': scores[video_id],
         'rank': rank[video_id],
@@ -138,7 +134,3 @@ def get_video_stats(videos: Dict[str, Any]):
   } for video_id, video in videos.items()]
 
   client.index('videos').update_documents(search)
-
-
-if __name__ == '__main__':
-  get_video_stats()

@@ -18,6 +18,7 @@ SCRAPE_IMDB = True  # ?
 CALCULATE_STATS = True
 UPDATE_FIRESTORE = True
 UPDATE_MEILISEARCH = True
+SEED_FIRESTORE = True
 
 dt = datetime.now()
 
@@ -50,12 +51,11 @@ if QUERY_NETFLIX:
   videos = a
 
 args = [[video_id, video] for video_id, video in videos.items()]
-threads.threads(get_video, args, 0.3, 'Getting videos')
+threads.threads(get_video, args, 0.4, 'Getting videos')
 file.write_json('data/videos.json', videos)
 
-if UPDATE_FIRESTORE:
+if SEED_FIRESTORE:
   for video_id, video in videos.items():
-    # if not 'exists' in video:
     rating: float = round(video['Rating'] - uniform(0.1, 0.4),
                           1) if 'Rating' in video and video['Rating'] else None
     follower_number = int(video['IMDbFollowers'] * 1000 /
