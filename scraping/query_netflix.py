@@ -64,7 +64,10 @@ def create_route(title: str, type: str, id: int) -> str:
 def find_categories(genres: Dict[str, str]):
   categories: List[str] = []
   for genre in genres:
-    categories += genre_dict[genre]
+    found = genre_dict[genre]
+    for category in found:
+      if not category in categories:
+        categories.append(category)
   return categories
 
 
@@ -134,7 +137,6 @@ def fetch_video(video_id, shows, genre_dict):
           'route': create_route(title, shows[video_id]['summary']['type'], 0),
           'categories': find_categories(genres),
       })
-    # if not 'exists' in video:
 
   except Exception as e:
     print(e, video_id)
@@ -146,7 +148,6 @@ def get_videos(videos):
   videos.update(file.read_json('data/video_summary.json'))
   if REFRESH_IDS:
     videos = videos.update(get_summary())
-
 
   show_count = 0
   movie_count = 0

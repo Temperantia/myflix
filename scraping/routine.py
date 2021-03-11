@@ -31,28 +31,13 @@ def get_video(video_id: str, video: Dict[str, Any]):
     pass
   if SCRAPE_IMDB and 'IMDbID' in video:
     scrape_imdb.main_page(video)
-  if UPDATE_FIRESTORE:
-    # if not 'exists' in video:
-    rating: float = round(video['Rating'] - uniform(0.1, 0.4),
-                          1) if 'Rating' in video and video['Rating'] else None
-    follower_number = int(video['IMDbFollowers'] * 1000 /
-                          2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
-    if False:
-      video.update({
-          'scores':  {str(index): rating for index in range(
-              randint(200, 700))} if rating else {},
-          'score': rating,
-          'followers':  {str(index): dt for index in range(follower_number)},
-          'favorites': [],
-          'exists': True
-      })
+
   if CALCULATE_STATS:
     routine_stats.get_video_stat(video_id, video)
   if UPDATE_FIRESTORE:
     firebase.video_collection.document(video_id).set(video, merge=True)
 
 
-# firebase.get_collection(firebase.video_collection)
 videos: Dict[str, Any] = {}
 
 if QUERY_NETFLIX:
@@ -66,8 +51,23 @@ if QUERY_NETFLIX:
 
 args = [[video_id, video] for video_id, video in videos.items()]
 threads.threads(get_video, args, 0.3, 'Getting videos')
-
 file.write_json('data/videos.json', videos)
+
+if UPDATE_FIRESTORE:
+  for video_id, video in videos.items():
+    # if not 'exists' in video:
+    rating: float = round(video['Rating'] - uniform(0.1, 0.4),
+                          1) if 'Rating' in video and video['Rating'] else None
+    follower_number = int(video['IMDbFollowers'] * 1000 /
+                          2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
+    firebase.video_collection.document(video_id).update({
+        'scores':  {str(index): rating for index in range(
+            randint(200, 700))} if rating else {},
+        'score': rating,
+        'followers':  {str(index): dt for index in range(follower_number)},
+        'favorites': [],
+        'exists': True
+    })
 
 if CALCULATE_STATS:
   routine_stats.get_video_stats(videos)

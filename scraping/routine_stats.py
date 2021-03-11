@@ -41,7 +41,7 @@ def get_video_stat(id: str, video: Dict[str, Any]):
       video['followers']) if 'followers' in video and video['followers'] else 0
   try:
     video['score'] = mean(list(video['scores'].values())
-                          ) if video['scores'] else None
+                          ) if 'scores' in video and video['scores'] else None
   except:
     print(id)
   scores[id] = video['score'] if 'score' in video and video['score'] else 0
@@ -132,10 +132,10 @@ def get_video_stats(videos: Dict[str, Any]):
       'newReleasesRank': new_releases[video_id] if video_id in new_releases else None,
       'monthRank': months[video_id] if video_id in months else None,
       'topSeriesRank': top_series[video_id] if video_id in top_series else None,
-      'j': trending[video['t']] if video['t'] in trending else None,
+      'j': trending[video['title']] if video['title'] in trending else None,
       's': video['seasonCount'] if video['seasonCount'] else None,
       'e': video['episodeCount'] if video['episodeCount'] else None,
-  } for video_id, video in videos]
+  } for video_id, video in videos.items()]
 
   client.index('videos').update_documents(search)
 

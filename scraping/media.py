@@ -17,7 +17,6 @@ def request_media(id, video):
     if response.status_code != 200:
       return
     response = response.json()
-    print(response)
     if response and 'data' in response and 'original' in response['data'] and 'description' in response['data']['original'] and response['data']['original']['description']:
       title['synopsis'] = response['data']['original']['description']
       title['originalBoxArt'] = response['data']['original']['image']['url']
