@@ -53,7 +53,7 @@ def get_video_stat(id: str, video: Dict[str, Any]):
                               'value': 1, 'image': video['boxArt']}
 
 
-def upload(video):
+def upload(video_id, video):
   global scores, rank, popularity
   video.update({
       'score': scores[video_id],
@@ -108,7 +108,7 @@ def get_video_stats(videos: Dict[str, Any]):
   # to thread
 
   print('Upload')
-  threads.threads(upload, [[video] for video_id, video in videos.items()], 0, 'Uploading')
+  threads.threads(upload, [[video_id, video] for video_id, video in videos.items()], 0, 'Uploading')
 
   print('Updating search tables')
   search = [{
