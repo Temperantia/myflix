@@ -180,10 +180,10 @@ export default class Title extends Vue {
         name: 'NEWS',
         route: routeTitle + 'news',
       }, */
-      {
+     /*  {
         name: 'GOODS',
         route: routeTitle + 'goods',
-      },
+      }, */
       /*  {
         name: 'MEDIA',
         route: routeTitle + 'media',
