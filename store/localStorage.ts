@@ -113,7 +113,7 @@ export default class localStorageStore extends VuexModule {
       const user = await $userExists(id, name);
       if (user) {
         $router.push("/");
-        this.context.commit("_signIn", user);
+        this._signIn(user);
       } else if (provider) {
         this.setSocialAuthUser({
           id,
@@ -146,7 +146,7 @@ export default class localStorageStore extends VuexModule {
     this.signIn({ name: "apple", provider });
   }
 
-  @VuexAction({ rawError: true, commit: "_signIn" })
+  @VuexAction({ rawError: true })
   async register({
     id,
     email,
@@ -204,7 +204,7 @@ export default class localStorageStore extends VuexModule {
       .doc(id)
       .set(user);
     $router.push("/");
-    return { id, ...user };
+    this.signIn({ id, ...user });
   }
 
   @VuexAction({ rawError: true })
