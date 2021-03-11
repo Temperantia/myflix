@@ -124,7 +124,7 @@ def get_video_stats(videos: Dict[str, Any]):
       'r': video['route'],
       't': video['title'],
       'i': video['Poster'] if 'Poster' in video else video['boxArt'],
-      'b': video['storyArt'],
+      'b': video['boxArt'],
       'c': video['categories'],
       'g': video['genres'],
       'y': video['releaseYear'],
