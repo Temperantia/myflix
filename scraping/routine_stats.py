@@ -36,14 +36,20 @@ trending: Dict[str, int] = {
 }
 
 
-def get_video_stat(id: str, video: Dict[str, Any]):
+def get_video_stat(video_id: str, video: Dict[str, Any]):
   global followers, scores, bingeworthiness
-  followers[id] = len(
-      video['followers']) if 'followers' in video and video['followers'] else 0
-  video['score'] = mean(list(video['scores'].values())
-                        ) if 'scores' in video and video['scores'] else None
-  scores[id] = video['score'] if 'score' in video and video['score'] else 0
-  bingeworthiness[id] = len(video['bingeworthiness']) / \
+  # hardcoded
+  video['score'] = round(video['Rating'] - uniform(0.1, 0.4),
+                         1) if 'Rating' in video and video['Rating'] else None
+  followers[video_id] = int(video['IMDbFollowers'] * 1000 /
+                            2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
+
+  # followers[video_id] = len(
+  #    video['followers']) if 'followers' in video and video['followers'] else 0
+  # video['score'] = mean(list(video['scores'].values())
+  #                      ) if 'scores' in video and video['scores'] else None
+  scores[video_id] = video['score'] if 'score' in video and video['score'] else 0
+  bingeworthiness[video_id] = len(video['bingeworthiness']) / \
       2 if 'bingeworthiness' in video and video['bingeworthiness'] else 0
   for category in video['categories']:
     if category in categories:
@@ -54,7 +60,7 @@ def get_video_stat(id: str, video: Dict[str, Any]):
 
 
 def upload(video_id: str, video):
-  global  rank, popularity
+  global rank, popularity
   video.update({
       'rank': rank[video_id],
       'popularity': popularity[video_id],
@@ -65,7 +71,6 @@ def upload(video_id: str, video):
 def get_video_stats(videos: Dict[str, Any]):
   global rank, popularity
   print('Stats')
-  print(scores)
   ordered: List[Tuple[str, float]] = sorted(
       scores.items(), key=lambda elem: elem[1], reverse=True)
   for index, (id, _) in enumerate(ordered):
@@ -109,7 +114,8 @@ def get_video_stats(videos: Dict[str, Any]):
   # to thread
 
   print('Upload')
-  threads.threads(upload, [[video_id, video] for video_id, video in videos.items()], 0, 'Uploading')
+  threads.threads(upload, [[video_id, video]
+                           for video_id, video in videos.items()], 0, 'Uploading')
 
   print('Updating search tables')
   search = [{
