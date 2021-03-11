@@ -1,5 +1,5 @@
 
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 from requests import post
 from json import dumps
 from slugify import slugify
@@ -11,7 +11,7 @@ from video_summary import get_summary
 
 REFRESH_IDS = False
 
-types = {}
+types: Dict[str, str] = {}
 title_ids: Dict[int, int] = {}
 
 f: Dict[str, Dict[str, str]] = file.read_json('data/genres_tagged.json')
@@ -24,8 +24,8 @@ for category in f:
     genre_dict[genre].append(category)
 
 
-def list_until_empty(data, k=None):
-  l = []
+def list_until_empty(data: Dict[str, Any], k: Optional[str] = None):
+  l: List[str] = []
   for key in data:
     obj = data[key]
     if k is not None:
@@ -39,7 +39,7 @@ def list_until_empty(data, k=None):
   return l
 
 
-def find_genre_name(genre_id, genre_dict):
+def find_genre_name(genre_id: str, genre_dict: Dict[str, str]):
   for genre in genre_dict:
     if genre == genre_id:
       return genre_dict[genre]
@@ -71,8 +71,7 @@ def find_categories(genres: Dict[str, str]):
   return categories
 
 
-def fetch_video(video_id, shows, genre_dict):
-  #print('Collecting ' + id[0] + ' to ' + id[-1])
+def fetch_video(video_id: str, shows: Dict[str, Any], genre_dict: Dict[str, str]):
   data = {
       "path": """["videos", """ + dumps(video_id) + """, ["title", "synopsis", "seasonCount", "episodeCount", "releaseYear", "maturity", "availability", "genres", "moodTags", "creators", "directors", "writers", "cast"],{"from":0,"to":3},["name"] ]"""}
   try:
@@ -102,7 +101,7 @@ def fetch_video(video_id, shows, genre_dict):
       releaseYear = video['releaseYear']['value'] if 'releaseYear' in video else None
       maturity = video['maturity']['value']['rating']['value'] if 'maturity' in video and 'value' in video['maturity']['value']['rating'] else None
       availability = video['availability']['value'] if 'availability' in video else None
-      genres = list_until_empty(
+      genres: List[str] = list_until_empty(
           video['genres']) if 'genres' in video else []
       genres = [find_genre_name(genre[1], genre_dict) for genre in genres]
       moodTags = list_until_empty(
