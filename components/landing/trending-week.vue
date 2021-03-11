@@ -13,7 +13,7 @@ div
     )
       div(
         :title='title.t',
-        :style='"height: 100%; background-size: cover; background-position: center; background-image: url(" + title.b + ");"'
+        :style='"height: 100%; background-size: cover; background-position: center; background-image: url(" + (title.b ? title.b : "/storyPlaceholder.png") + ");"'
       )
 
       div(

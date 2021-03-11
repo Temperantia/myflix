@@ -12,7 +12,7 @@ v-container.px-10(fluid)
           nuxt-link(:to='title.r')
             div(
               :title='title.t',
-              :style='"height: 100%;  position: relative; background-size: cover; background-position: center; background-image: url(" + title.b + ");"'
+              :style='"height: 100%;  position: relative; background-size: cover; background-position: center; background-image: url(" + (title.b ? title.b : "/storyPlaceholder.png") + ");"'
             )
             div(
               style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))'

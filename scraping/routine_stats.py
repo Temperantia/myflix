@@ -124,7 +124,7 @@ def get_video_stats(videos: Dict[str, Any]):
       'r': video['route'],
       't': video['title'],
       'i': video['Poster'] if 'Poster' in video else video['boxArt'],
-      'b': video['boxArt'],
+      'b': video['storyArt'],
       'c': video['categories'],
       'g': video['genres'],
       'y': video['releaseYear'],
@@ -136,7 +136,7 @@ def get_video_stats(videos: Dict[str, Any]):
       'imdbLongName': video['LongIMDbTitle'] if 'LongIMDbTitle' in video else '',
       'o': 1 if video['summary']['isOriginal'] else 0,
       'f': followers[video_id],
-      'z': video['score'],  # scores[id]
+      'z': video['score'],
       'q': rank[video_id],
       'p': popularity[video_id],
       'h': bingeworthiness[video_id],
