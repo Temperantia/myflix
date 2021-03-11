@@ -4,7 +4,7 @@ from calendar import monthrange
 from typing import Any, Dict, List, Tuple
 import meilisearch
 
-from utils import firebase
+from utils import firebase, threads
 
 scores: Dict[str, float] = {}
 followers: Dict[str, int] = {}
@@ -37,6 +37,7 @@ trending: Dict[str, int] = {
 
 
 def get_video_stat(id: str, video: Dict[str, Any]):
+  global followers, scores, bingeworthiness
   followers[id] = len(
       video['followers']) if 'followers' in video and video['followers'] else 0
   video['score'] = mean(list(video['scores'].values())
@@ -52,9 +53,18 @@ def get_video_stat(id: str, video: Dict[str, Any]):
                               'value': 1, 'image': video['boxArt']}
 
 
-def get_video_stats(videos: Dict[str, Any]):
-  global categories
+def upload(video):
+  global scores, rank, popularity
+  video.update({
+      'score': scores[video_id],
+      'rank': rank[video_id],
+      'popularity': popularity[video_id],
+  })
+  firebase.video_collection.document(video_id).set(video, merge=True)
 
+
+def get_video_stats(videos: Dict[str, Any]):
+  print('Stats')
   ordered: List[Tuple[str, float]] = sorted(
       scores.items(), key=lambda elem: elem[1], reverse=True)
   for index, (id, _) in enumerate(ordered):
@@ -95,15 +105,10 @@ def get_video_stats(videos: Dict[str, Any]):
   client.index('categories').delete_all_documents()
   client.index('categories').add_documents(sorted(categories.values(),
                                                   key=lambda elem: elem['value'], reverse=True)[:3])
+  # to thread
 
-  for video_id, video in videos.items():
-    video.update({
-        'score': scores[video_id],
-        'rank': rank[video_id],
-        'popularity': popularity[video_id],
-    })
-    firebase.video_collection.document(video_id).set(video, merge=True)
-
+  print('Upload')
+  threads.threads(upload, [[video] for video in video.items()], 0, 'Uploading')
 
   print('Updating search tables')
   search = [{
