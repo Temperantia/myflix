@@ -55,14 +55,11 @@ if SEED_FIRESTORE:
   for video_id, video in videos.items():
     if video['exists']:
       continue
-    rating: float = round(video['Rating'] - uniform(0.1, 0.4),
-                          1) if 'Rating' in video and video['Rating'] else None
     follower_number = int(video['IMDbFollowers'] * 1000 /
                           2358519) if 'IMDbFollowers' in video and video['IMDbFollowers'] else 0
     firebase.video_collection.document(video_id).update({
-        'scores':  {str(index): rating for index in range(
-            randint(200, 700))} if rating else {},
-        'score': rating,
+        'scores':  {str(index): video['score'] for index in range(
+            randint(200, 700))} if video['score'] else {},
         'followers':  {str(index): dt for index in range(follower_number)},
         'favorites': [],
         'exists': True
