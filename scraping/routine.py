@@ -10,7 +10,7 @@ import routine_stats
 
 from utils import firebase, threads, file
 
-QUERY_NETFLIX = True  # 40 minutes
+QUERY_NETFLIX = False  # 40 minutes
 QUERY_NETFLIX_MEDIA_CENTER = False  # 10 minutes # TODO BUG
 QUERY_IMDB = True
 QUERY_YOUTUBE = True
@@ -18,7 +18,7 @@ SCRAPE_IMDB = True  # ?
 CALCULATE_STATS = True
 UPDATE_FIRESTORE = True
 UPDATE_MEILISEARCH = True
-SEED_FIRESTORE = True
+SEED_FIRESTORE = False
 
 dt = datetime.now()
 
@@ -32,11 +32,8 @@ def get_video(video_id: str, video: Dict[str, Any]):
     pass
   if SCRAPE_IMDB and 'IMDbID' in video:
     scrape_imdb.main_page(video)
-
   if CALCULATE_STATS:
     routine_stats.get_video_stat(video_id, video)
-  if UPDATE_FIRESTORE:
-    firebase.video_collection.document(video_id).set(video, merge=True)
 
 
 videos: Dict[str, Any] = {}
@@ -50,12 +47,15 @@ if QUERY_NETFLIX:
       a[id] = video
   videos = a
 
+videos = file.read_json('data/videos.json')
 args = [[video_id, video] for video_id, video in videos.items()]
-threads.threads(get_video, args, 0.4, 'Getting videos')
+#threads.threads(get_video, args, 0.4, 'Getting videos')
 file.write_json('data/videos.json', videos)
 
 if SEED_FIRESTORE:
   for video_id, video in videos.items():
+    if video['exists']:
+      continue
     rating: float = round(video['Rating'] - uniform(0.1, 0.4),
                           1) if 'Rating' in video and video['Rating'] else None
     follower_number = int(video['IMDbFollowers'] * 1000 /

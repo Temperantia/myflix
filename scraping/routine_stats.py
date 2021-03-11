@@ -102,6 +102,8 @@ def get_video_stats(videos: Dict[str, Any]):
         'rank': rank[video_id],
         'popularity': popularity[video_id],
     })
+    firebase.video_collection.document(video_id).set(video, merge=True)
+
 
   print('Updating search tables')
   search = [{
