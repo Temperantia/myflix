@@ -20,7 +20,7 @@ v-container(fluid, v-if='title')
           div
             span.white-font--text {{ title.releaseYear }} | {{ title.maturity }}
             span.white-font--text(v-if='title.seasonCount') {{ " | " + title.seasonCount + (title.seasonCount > 1 ? " Seasons" : " Season") }}
-            span.white-font--text {{ " | " + title.genres.map((genre) => genre.name).join(", ") }}
+            span.white-font--text {{ " | " + title.genres.join(", ") }}
           div
             span.white-font--text Creators:
             span.ml-1 {{ title.creators.join(", ") || "-" }}
