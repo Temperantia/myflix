@@ -136,7 +136,7 @@ export default {
       process.env.NODE_ENV === "dev"
         ? "http://localhost:3000"
         : "https://my-flix.net",
-    enableAffiliates: false,
+    enableAffiliates: true,
     reviewsPerPage: 20
   },
   privateRuntimeConfig: {}
