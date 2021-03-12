@@ -183,17 +183,14 @@ export default class TitleStore extends VuexModule {
     const flixlist: any = this.context.rootGetters["localStorage/flixlist"]?.[
       id
     ];
-    if (!flixlist) {
-      return;
-    }
-    this.setStatus(flixlist.status ?? "");
-    this.setEpisodes(flixlist.episodes ?? 0);
+    this.setStatus(flixlist?.status ?? "");
+    this.setEpisodes(flixlist?.episodes ?? 0);
     this.setScore(
-      flixlist.score
+      flixlist?.score
         ? `${flixlist.score} - ${this.ratings[flixlist.score]}`
         : ""
     );
-    this.setBingeworthy(!!flixlist.bingeworthy);
+    this.setBingeworthy(!!flixlist?.bingeworthy);
   }
 
   @VuexAction({ rawError: true, commit: "setTitle" })

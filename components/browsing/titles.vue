@@ -151,9 +151,8 @@ export default class Titles extends Vue {
     if (filters.length > 0) {
       options.filters = filters.join(' AND ');
     }
-    return (await this.$titles.search(search, options)).hits
+    return ((await this.$titles.search(search, options)).hits as any)
       .map((hit: any) => {
-        console.log(hit.i);
         hit.i =
           hit.i === 'https://m.media-amazon.png'
             ? 'storyPlaceholder.png'
