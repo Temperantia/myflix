@@ -31,6 +31,7 @@ v-autocomplete(
   no-filter,
   :hide-details='true',
   :search-input.sync='value',
+  :value='value',
   append-icon='mdi-magnify',
   background-color='#0f0f0f',
   item-text='t',
