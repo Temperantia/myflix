@@ -2,7 +2,7 @@ import imdb
 
 db = imdb.IMDb(accessSystem='https', reraiseExceptions=True)
 
-search = db.search_movie_advanced('Money Heist')
+search = db.search_movie_advanced('Chief Kim')
 
 db.update(search[0])
 
