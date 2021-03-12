@@ -13,7 +13,7 @@ v-app(app)
             v-menu(v-if='connected', offset-y)
               template(v-slot:activator='{ on, attrs }')
                 div(v-bind='attrs', v-on='on')
-                  span {{ user.username }}
+                  span.mr-5 {{ user.username }}
                   v-avatar
                     img(:src='image')
               v-list
