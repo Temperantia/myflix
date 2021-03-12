@@ -209,7 +209,7 @@ export default class TitleStore extends VuexModule {
           )
         : null,
       Producers: title.creators.join(", "),
-      Genres: title.genres.map((genre: any) => genre.name).join(", "),
+      Genres: title.genres.join(", "),
       Rating: title.maturity
     };
     if (title.summary.type === "show") {
