@@ -8,7 +8,7 @@ db.update(search[0])
 
 movie = search[0]
 
-"""a = {
+a = {
     "title": movie['title'],
     "original title": movie['original title'],
     "canonical title": movie['canonical title'],
@@ -18,4 +18,4 @@ movie = search[0]
     "smart long imdb canonical title": movie['smart long imdb canonical title']
 }
 
-print(a)"""
+print(a)
