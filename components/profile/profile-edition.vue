@@ -86,7 +86,7 @@ v-container(fluid)
             v-col(cols='12', lg='9')
               h3 {{ show.title }}
               .white-font--text {{ show.year + " " + show.maturity + " " + show.season + " Seasons" }}
-              .white-font--text {{ show.genres.map((genre) => genre.name).join(", ") }}
+              .white-font--text {{ show.genres.join(", ") }}
             v-col.text-right(cols='12', lg='3')
               a.click.white-font--text(
                 @click='removeFavorite(copy.favorites.shows, id)'
@@ -98,7 +98,7 @@ v-container(fluid)
             v-col(cols='12', lg='9')
               h3 {{ film.title }}
               .white-font--text {{ film.year + " " + film.maturity + " " }}
-              .white-font--text {{ film.genres.map((genre) => genre.name).join(", ") }}
+              .white-font--text {{ film.genres.join(", ") }}
             v-col.text-right(cols='12', lg='3')
               a.click.white-font--text(
                 @click='removeFavorite(copy.favorites.films, id)'
