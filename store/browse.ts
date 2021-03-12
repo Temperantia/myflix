@@ -45,7 +45,9 @@ export default class BrowseStore extends VuexModule {
         })
       ).hits
     );
-    this.setTopSeries((await $titles.search(null, { filters: "topSeriesRank<=5" })).hits);
+    this.setTopSeries(
+      (await $titles.search(null, { filters: "topSeriesRank<=5" })).hits
+    );
     this.setCategories(await $categories.getDocuments());
   }
 }

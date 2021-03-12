@@ -107,15 +107,6 @@ export default class Titles extends Vue {
   categories = categories;
   now = Date.now();
   nowYear = new Date().getFullYear();
-  map: any = {
-    a: 'á|à|ã|â|À|Á|Ã|Â',
-    e: 'é|è|ê|É|È|Ê',
-    i: 'í|ì|î|Í|Ì|Î',
-    o: 'ó|ò|ô|õ|Ó|Ò|Ô|Õ',
-    u: 'ú|ù|û|ü|Ú|Ù|Û|Ü',
-    c: 'ç|Ç',
-    n: 'ñ|Ñ',
-  };
   page = 1;
 
   mounted() {
@@ -136,13 +127,6 @@ export default class Titles extends Vue {
         ? this.$globals.filmCount
         : this.$globals.showCount + this.$globals.filmCount) / 24
     );
-  }
-
-  slugify(str: string): string {
-    for (const pattern in this.map) {
-      str = str.replace(new RegExp(this.map[pattern], 'g'), pattern);
-    }
-    return str;
   }
 
   @AsyncComputed()
@@ -167,21 +151,28 @@ export default class Titles extends Vue {
     if (filters.length > 0) {
       options.filters = filters.join(' AND ');
     }
-    const hits = (await this.$titles.search(search, options)).hits;
-
-    return hits.filter((title: any) => {
-      const status = this.titleStatus(title.id);
-      if (title.y === 0 || title.a > this.now || title.y > this.nowYear) {
-        return false;
-      }
-      return (
-        ((!this.completed || status === 'Completed') &&
-          (!this.watching || status === 'Watching')) ||
-        (this.completed &&
-          this.watching &&
-          (status === 'Completed' || status === 'Watching'))
-      );
-    });
+    return (await this.$titles.search(search, options)).hits
+      .map((hit: any) => {
+        console.log(hit.i);
+        hit.i =
+          hit.i === 'https://m.media-amazon.png'
+            ? 'storyPlaceholder.png'
+            : hit.i;
+        return hit;
+      })
+      .filter((title: any) => {
+        const status = this.titleStatus(title.id);
+        if (title.y === 0 || title.a > this.now || title.y > this.nowYear) {
+          return false;
+        }
+        return (
+          ((!this.completed || status === 'Completed') &&
+            (!this.watching || status === 'Watching')) ||
+          (this.completed &&
+            this.watching &&
+            (status === 'Completed' || status === 'Watching'))
+        );
+      });
     /* .sort((a: any, b: any) => {
         if (this.sort === 'Most Popular') {
           return a.p - b.p;
