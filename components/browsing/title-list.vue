@@ -22,7 +22,7 @@ v-container(fluid)
             div(style='position: absolute; top: 0; left: 0; font-size: 14px') {{ "Trending #" + title.j }}
         div(
           :title='title.t',
-          :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + title.i + ");"'
+          :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + (title.i ? title.i : "storyPlaceholderTall.png") + ");"'
         )
         .gradient
           .hover-title
@@ -54,7 +54,7 @@ v-container(fluid)
       v-container(fluid)
         v-row
           v-col
-            img(:src='title.i', :alt='title.t')
+            img(:src='title.i ? title.i : "storyPlaceholderTall.png"', :alt='title.t')
     v-col(cols='12', lg='11')
       v-container(fluid)
         v-row(v-if='$vuetify.breakpoint.smAndDown')
