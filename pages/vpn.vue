@@ -29,7 +29,7 @@ v-container(fluid)
                             b {{ vpn.score }} / 5
                         v-btn.black-body--bg.px-10.blue-completed--border.border
                           .blue-completed--text.font-weight-bold
-                            a(:href='$config.enableAffiliates && vpn.link') Get {{ vpn.name }}
+                            a(:href='$config.enableAffiliates && vpn.link' target="_blank") Get {{ vpn.name }}
 </template>
 <script lang='ts'>
 import { Vue, Component } from 'nuxt-property-decorator';
