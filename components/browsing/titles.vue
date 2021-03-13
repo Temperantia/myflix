@@ -155,7 +155,7 @@ export default class Titles extends Vue {
       .map((hit: any) => {
         hit.i =
           hit.i === 'https://m.media-amazon.png'
-            ? 'storyPlaceholder.png'
+            ? 'storyPlaceholderTall.png'
             : hit.i;
         return hit;
       })
