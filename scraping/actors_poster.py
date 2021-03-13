@@ -1,43 +1,35 @@
 import imdb
-import json
-import time
-from threads import threads
-import meilisearch
 from firebase import db as database, get_collection
+from threads import threads
 
+video_database = database.collection('videos').limit(3).stream() #get_collection(database.collection('videos'), [])
 
-client = meilisearch.Client('https://search.my-flix.net')
-# client.create_index('actors', {'primaryKey': 'actor_name'})
-
-video_database = get_collection(database.collection('videos'))
-
-dico = []
+ids = []
 
 for doc in video_database:
-  video = doc.to_dict()
-  if video['releaseYear'] ==0 or video['title'] =='' or video['releaseYear'] ==0 and video['title'] =='':
-    pass
-  else:
-    dico.append([video['title']])
+	video = doc.to_dict()
+	ids.append([doc.id, video])
 
 db = imdb.IMDb(accessSystem='https', reraiseExceptions=True)
 
-def get_poster(title):
+def update_actors(id, video):
 
 	try:
-		movies = db.search_movie(f'{title}')
-		time.sleep(0.3)
-		if len(movies) > 0:
-			movie = movies[0]
-			db.update(movie, 'full credits')
-      time.sleep(0.3)
-			if 'cast' in movie.keys():
-				for actor in movie['cast']:
-					client.index('actors').add_documents([{
-						'actor_name': str(actor['name']) if 'name' in actor.keys() else None,
-						'poster': str(actor['full-size headshot']) if 'full-size headshot' in actor.keys() else None
-							}])
+		if 'Actors' in video:
+			save = {}
+			actor_dict = video['Actors']
+			for actor in actor_dict:
+				role = actor_dict[actor]
+				search = db.search_person(str(actor))
+				if len(search)>0:
+					actor = search[0]
+					name = actor["name"]
+					save[name] = {
+						'poster': actor['full-size headshot'] if 'full-size headshot' in actor.keys() else None,
+						'role': role
+					}
+			database.collection('videos').document(id).update({'Actors': save})
 	except:
 		print('e')
-
-threads(get_poster, dico, 0.3)
+	
+threads(update_actors, ids, 0.3)
