@@ -63,9 +63,10 @@ export default {
       firestore: {
         enablePersistence: true
       },
+      analytics: true,
       auth: {
         initialize: {
-          onAuthStateChangedMutation: "ON_AUTH_STATE_CHANGED_MUTATION"
+          onAuthStateChangedMutation: "ON_AUTH_STATE_CHANGED_MUTATION",
         }
       }
     }
