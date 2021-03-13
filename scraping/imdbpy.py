@@ -25,25 +25,25 @@ def get_imdb_data(video):
       if 'production companies' in keys:
         obj['ProductionCompanies'] = []
         for company in movie['production companies']:
-          if not company in obj['ProductionCompanies']:
+          if not company['name'] in obj['ProductionCompanies']:
             obj['ProductionCompanies'].append(company['name'])
 
       if 'distributors' in keys:
         obj['DistributorCompanies'] = []
         for company in movie['distributors']:
-          if not company in obj['DistributorCompanies']:
+          if not company['name'] in obj['DistributorCompanies']:
             obj['DistributorCompanies'].append(company['name'])
 
       if 'special effects' in keys:
         obj['SpecialEffects'] = []
         for company in movie['special effects']:
-          if not company in obj['SpecialEffects']:
+          if not company['name'] in obj['SpecialEffects']:
             obj['SpecialEffects'].append(company['name'])
 
       if 'other companies' in keys:
         obj['OtherCompanies'] = []
         for company in movie['other companies']:
-          if not company in obj['OtherCompanies']:
+          if not company['name'] in obj['OtherCompanies']:
             obj['OtherCompanies'].append(company['name'])
 
       if 'plot outline' in keys:
