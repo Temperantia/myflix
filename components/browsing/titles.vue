@@ -1,10 +1,10 @@
 <template lang="pug">
 v-container(fluid, v-if='titles')
   v-row.subtitle-border
-    v-col.pr-0(cols='12', lg='2')
+    v-col.pr-0(cols='12', lg='3')
       h1.pageSubHead.font-weight-black {{ show ? "TV SHOWS" : film ? "FILMS" : "SEARCH" }}
       h2.pageSubHead_1 {{ (show ? $globals.showCount : film ? $globals.filmCount : $globals.showCount + $globals.filmCount).toLocaleString("en") }} titles currently available on Netflix
-    v-col.searchContainer(cols='8', offset-lg='2', lg='4')
+    v-col.searchContainer(cols='8', offset-lg='1', lg='4')
       input#search.titlePageSearch(
         v-model='search',
         :placeholder='"SEARCH " + (show ? "TV SHOWS" : film ? "FILMS" : "TITLES")',
