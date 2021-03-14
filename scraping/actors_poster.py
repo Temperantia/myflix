@@ -3,7 +3,7 @@ import time
 from firebase import db as database, get_collection
 from threads import threads
 
-get_collection(database.collection('videos'), [])
+video_datbase = get_collection(database.collection('videos'), [])
 
 ids = []
 
