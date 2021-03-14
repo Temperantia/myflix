@@ -60,7 +60,7 @@ export default class Search extends Vue {
     this.value = title.t;
     this.$emit('click', {
       id: title.id,
-      Poster: title.i,
+      Poster: title.i ?? "storyPlaceholderTall.png",
       route: title.r,
       title: title.t,
       type: title.u ? 'show' : 'movie',

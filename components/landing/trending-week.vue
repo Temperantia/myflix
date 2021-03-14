@@ -19,25 +19,24 @@ div
       div(
         style='width: 100%; height: 100%; position: absolute; bottom: 0; left: 0; background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))'
       )
-      client-only
-        div(
-          style='width: 100%; position: absolute; bottom: 0; left: 0; padding: 1.5vw'
+      div(
+        style='width: 100%; position: absolute; bottom: 0; left: 0; padding: 1.5vw'
+      )
+        h1.mb-1 {{ title.t }}
+        h2(v-if='title.e', style='padding-top: 10px') Episodes: {{ title.e }}
+        span.font-weight-bold(style='padding-top: 10px') Available on Netflix: {{ " " + availability(title.a) }}
+        p(
+          style='padding-top: 10px; font-weight: 300',
+          v-html='title.d.length < 200 ? title.d : title.d.substring(0, 200) + "..."'
         )
-          h1.mb-1 {{ title.t }}
-          h2(v-if='title.e', style='padding-top: 10px') Episodes: {{ title.e }}
-          span.font-weight-bold(style='padding-top: 10px') Available on Netflix: {{ " " + availability(title.a) }}
-          p(
-            style='padding-top: 10px; font-weight: 300',
-            v-html='title.d.length < 200 ? title.d : title.d.substring(0, 200) + "..."'
-          )
-          div(style='padding-top: 10px')
-            button.button.button-red.mr-5
-              a(
-                :href='"https://www.netflix.com/title/" + title.id',
-                style='color: inherit; text-decoration: none'
-              ) SEE ON NETFLIX
-            nuxt-link(:to='title.r')
-              button.button MORE >
+        div(style='padding-top: 10px')
+          button.button.button-red.mr-5
+            a(
+              :href='"https://www.netflix.com/title/" + title.id',
+              style='color: inherit; text-decoration: none'
+            ) SEE ON NETFLIX
+          nuxt-link(:to='title.r')
+            button.button MORE >
 </template>
 <script lang='ts'>
 import { Swiper as SwiperClass, Autoplay } from 'swiper/swiper.esm';
