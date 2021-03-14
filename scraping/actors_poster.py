@@ -21,6 +21,7 @@ def update_actors(id, video):
 			for actor in actor_dict:
 				role = actor_dict[actor]
 				search = db.search_person(str(actor))
+        time.sleep(0.4)
 				if len(search)>0:
 					actor = search[0]
 					name = actor["name"]
