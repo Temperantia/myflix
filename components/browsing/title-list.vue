@@ -22,7 +22,7 @@ v-container(fluid)
             div(style='position: absolute; top: 0; left: 0; font-size: 14px') {{ "Trending #" + title.j }}
         div(
           :title='title.t',
-          :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + title.i + ");"'
+          :style='"width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(" + title.b + ");"'
         )
         .gradient
           .hover-title
@@ -92,15 +92,14 @@ v-container(fluid)
             :episodeCount='title.e',
             :width='200'
           )
-  client-only(v-if='pages > 1')
-    v-row.pagination(justify='center')
-      v-col
-        v-pagination(
-          :length='pages',
-          :value='page',
-          :total-visible='7',
-          @input='(page) => $emit("update", page)'
-        )
+  v-row.pagination(justify='center')
+    v-col
+      v-pagination(
+        :length='pages',
+        :value='page',
+        :total-visible='7',
+        @input='(page) => $emit("update", page)'
+      )
 </template>
 <script lang='ts'>
 import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
