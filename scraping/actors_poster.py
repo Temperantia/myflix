@@ -1,8 +1,9 @@
 import imdb
+import time
 from firebase import db as database, get_collection
 from threads import threads
 
-video_database = database.collection('videos').limit(3).stream() #get_collection(database.collection('videos'), [])
+get_collection(database.collection('videos'), [])
 
 ids = []
 
