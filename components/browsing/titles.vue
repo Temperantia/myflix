@@ -80,7 +80,7 @@ v-container(fluid, v-if='titles')
   )
 </template>
 <script lang='ts'>
-import categories from '~/scraping/data/categories.json';
+import categories from '~/data/categories.json';
 import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator';
 import AsyncComputed from 'vue-async-computed-decorator/dist';
 

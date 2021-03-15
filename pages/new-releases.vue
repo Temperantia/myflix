@@ -59,7 +59,7 @@ div
 </template>
 <script lang='ts'>
 import { Vue, Component, namespace } from 'nuxt-property-decorator';
-import genres from '~/scraping/data/categories.json';
+import genres from '~/data/categories.json';
 import AsyncComputed from 'vue-async-computed-decorator/dist';
 
 const titleModule = namespace('title');
