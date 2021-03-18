@@ -93,7 +93,8 @@ v-app(app)
           v-col.pa-5(cols='6', lg='1')
             img(src='/myflix-logo.png', alt='myflix logo')
           v-col.pa-5(cols='6', lg='1')
-            img(src='/inc digital.png', alt='inc digital logo')
+            a(href='https://inc-digital.com', target='_blank')
+              img(src='/inc digital.png', alt='inc digital logo')
           v-col(lg='10')
             p MyFlix is not endorsed, moderated, owned by or affiliated with Netflix or any of its partners in any capacity. The authors of this site also have no affiliation with Netflix. MyFlix is a unofficial fansite for Netflix. All promotional material including but not limited to trailers, images and videos are all copyright to their respective owners. Netflix is a registered trademark of Netflix, Inc.
         v-row.bottom
