@@ -2,33 +2,35 @@
 client-only
   v-container(fluid)
     v-row(align='center')
-      v-col(cols='6')
-        .button-block.google(@click='signInWithGoogle(); clicked = true')
-          button Google
+      v-col.d-flex.flex-column.align-center(cols='12')
+        button.button-block.google.mb-5(@click='registerWithGoogle()')
+          h4 Google
           img(src='/Google.png', alt='google logo')
-      v-col(cols='6')
-        .button-block.facebook(@click='signInWithFacebook(); clicked = true')
-          button Facebook
+
+          .overlay(v-if='clickedFacebook')
+        button.button-block.facebook(@click='registerWithFacebook()')
+          h4 Facebook
           img(src='/Facebook auth.png', alt='facebook logo')
+          .overlay(v-if='clickedGoogle')
       //-v-col(cols='4')
         .button-block.apple(@click='signInWithApple')
           button Apple
           img(src='/Apple.png', alt='apple logo')
-    v-form(v-if='clicked', ref='form', @submit.prevent='check')
-      v-text-field(
+    //-v-form(v-if='clicked', ref='form', @submit.prevent='check')
+      //-v-text-field(
         color='red',
         v-model='username',
         :rules='[(v) => !!v || "Required", (v) => v.length >= 2 || v.length <= 16 || "(Between 2 and 16 characters)"]',
         label='Username',
         required
-      )
-      v-text-field(
+       )
+      //-v-text-field(
         color='red',
         v-model='email',
         :rules='[(v) => !!v || "Required", (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"]',
         label='Email',
         required
-      )
+       )
       .pt-5.pb-10.d-flex.justify-center
         v-checkbox(color='red', v-model='agreed')
           template(v-slot:label)
@@ -50,31 +52,34 @@ export default class SocialsAuth extends Vue {
   @localStorageModule.State('socialAuthUser') socialAuthUser!: any;
   @localStorageModule.Action('signInWithGoogle') signInWithGoogle!: any;
   @localStorageModule.Action('signInWithFacebook') signInWithFacebook!: any;
-  @localStorageModule.Action('register') register!: any;
-  clicked = false;
+  clickedGoogle = false;
+  clickedFacebook = false;
   username = '';
-  email = '';
-  agreed = false;
 
-  check() {
-    if (!(this.$refs.form as any).validate() || !this.agreed) {
+  async registerWithGoogle() {
+    if (this.clickedGoogle || this.clickedFacebook) {
       return;
     }
-    this.register({
-      id: this.socialAuthUser.id,
-      email: this.email,
-      username: this.username,
-      photoURL: this.socialAuthUser.image,
-      provider: this.socialAuthUser.provider,
-      token: this.socialAuthUser.token,
-    });
+    await this.signInWithGoogle();
+    this.clickedGoogle = true;
+  }
+
+  async registerWithFacebook() {
+    if (this.clickedGoogle || this.clickedFacebook) {
+      return;
+    }
+    await this.signInWithGoogle();
+    this.clickedFacebook = true;
   }
 }
 </script>
 <style lang="scss" scoped>
 .google {
   background-color: white;
-  color: $grey-google;
+
+  h4 {
+    color: $grey-google;
+  }
 }
 
 .facebook {
@@ -88,11 +93,10 @@ export default class SocialsAuth extends Vue {
 
 .button-block {
   position: relative;
-  width: 100%;
+  width: 300px;
   height: 50px;
   display: flex;
   border-radius: 5px;
-  padding-left: 30px;
   justify-content: center;
   align-items: center;
   font-size: 20px;
@@ -109,6 +113,14 @@ export default class SocialsAuth extends Vue {
 
   button {
     outline: none;
+  }
+
+  .overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.8;
   }
 }
 </style>

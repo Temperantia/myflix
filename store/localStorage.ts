@@ -204,7 +204,7 @@ export default class localStorageStore extends VuexModule {
       .doc(id)
       .set(user);
     $router.push("/");
-    this.signIn({ id, ...user });
+    this._signIn({ id, ...user });
   }
 
   @VuexAction({ rawError: true })

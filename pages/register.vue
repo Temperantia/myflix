@@ -10,12 +10,9 @@ v-container(fluid)
       h3 Sign Up with
       socials-auth
       v-row.py-5(align='center')
-        v-col.pa-0(cols='5')
-          .line
-        v-col.pa-0(cols='2')
-          h3 OR
-        v-col.pa-0(cols='5')
-          .line
+        v-col.pa-0(offset='5', cols='2')
+          h3(v-if='!socialAuthUser') OR
+
       v-form(ref='form', @submit.prevent='registerWithMyflix')
         v-text-field(
           color='red',
@@ -33,6 +30,7 @@ v-container(fluid)
           autocomplete='username'
         )
         v-text-field(
+          v-if='!socialAuthUser',
           color='red',
           type='password',
           v-model='password',
@@ -62,19 +60,35 @@ export default class Register extends Vue {
   email = '';
   username = '';
   password = '';
-  sub = false;
   agreed = false;
+  @localStorageModule.State('socialAuthUser') socialAuthUser!: any;
+  @localStorageModule.Mutation('setSocialAuthUser') setSocialAuthUser!: any;
   @localStorageModule.Action('register') register!: any;
+
+  created() {
+    this.setSocialAuthUser(null);
+  }
 
   registerWithMyflix() {
     if (!(this.$refs.form as any).validate() || !this.agreed) {
       return;
     }
-    this.register({
-      email: this.email,
-      username: this.username,
-      password: this.password,
-    });
+    if (this.socialAuthUser) {
+      this.register({
+        id: this.socialAuthUser.id,
+        email: this.email,
+        username: this.username,
+        photoURL: this.socialAuthUser.image,
+        provider: this.socialAuthUser.provider,
+        token: this.socialAuthUser.token,
+      });
+    } else {
+      this.register({
+        email: this.email,
+        username: this.username,
+        password: this.password,
+      });
+    }
   }
 }
 </script>
