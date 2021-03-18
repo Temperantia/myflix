@@ -44,54 +44,55 @@ v-container(fluid)
             .titleDetails
               span {{ "Genres: " }}
               span.white-font--text {{ title.g.join(", ") }}
-  v-row.subtitle-border(
-    v-else,
+  div(
+    style='cursor: pointer',
+    @click='$router.push(title.r)',
     v-for='title in titles',
     :key='title.id',
-    :set='(status = titleStatus(title.id))'
+    :set='(status = titleStatus(title.id))',
+    v-else
   )
-    v-col(cols='12', lg='1')
-      v-container(fluid)
-        v-row
-          v-col
-            img(:src='title.i', :alt='title.t')
-    v-col(cols='12', lg='11')
-      v-container(fluid)
-        v-row(v-if='$vuetify.breakpoint.smAndDown')
-          v-col(cols='12')
-            nuxt-link(:to='title.r')
+    v-row.subtitle-border
+      v-col(cols='12', lg='1')
+        v-container(fluid)
+          v-row
+            v-col
+              img(:src='title.i', :alt='title.t')
+      v-col(cols='12', lg='11')
+        v-container(fluid)
+          v-row(v-if='$vuetify.breakpoint.smAndDown')
+            v-col(cols='12')
               h2.mr-5 {{ title.t }}
-          v-col.d-flex.align-center(v-if='title.o', cols='12')
-            img.icon.mr-3(src='/netflix.png', alt='netflix logo')
-            span.white-font--text O R I G I N A L
-        v-row(v-else, align='center')
-          v-col
-            nuxt-link(:to='title.r')
-              h2.d-inline.mr-5 {{ title.t }}
-            .d-inline-flex.align-center.justify-space-between(v-if='title.o')
+            v-col.d-flex.align-center(v-if='title.o', cols='12')
               img.icon.mr-3(src='/netflix.png', alt='netflix logo')
               span.white-font--text O R I G I N A L
-          v-col.text-right
-            flixlist-add(v-if='connected', :title='title')
-        .my-1
-          span.white-font--text.mr-2 {{ title.y }}
-          span.white-font--text.mr-1.py-0.px-1.border.white-font--border {{ title.v }}
-          span.white-font--text.mr-1(v-if='title.s') {{ title.s }} SEASONS
-          b(v-if='connected')
-            i.green-watching--text(v-if='title.u && status === "Watching"') {{ episodes(title.id) }}
-              span {{ " / " + title.e }}
-            i(v-else, :class='$titleStatusColor(status)') {{ status }}
-        .my-1(v-html='title.d')
-        div
-          span Genres:
-          span.white-font--text {{ " " + title.g.join(", ") }}
-        .mt-3(v-if='connected && status')
-          progress-bar(
-            :status='status',
-            :episodes='episodes(title.id)',
-            :episodeCount='title.e',
-            :width='200'
-          )
+          v-row(v-else, align='center')
+            v-col
+              h2.d-inline.mr-5 {{ title.t }}
+              .d-inline-flex.align-center.justify-space-between(v-if='title.o')
+                img.icon.mr-3(src='/netflix.png', alt='netflix logo')
+                span.white-font--text O R I G I N A L
+            v-col.text-right
+              flixlist-add(v-if='connected', :title='title')
+          .my-1
+            span.white-font--text.mr-2 {{ title.y }}
+            span.white-font--text.mr-1.py-0.px-1.border.white-font--border {{ title.v }}
+            span.white-font--text.mr-1(v-if='title.s') {{ title.s }} SEASONS
+            b(v-if='connected')
+              i.green-watching--text(v-if='title.u && status === "Watching"') {{ episodes(title.id) }}
+                span {{ " / " + title.e }}
+              i(v-else, :class='$titleStatusColor(status)') {{ status }}
+          .my-1(v-html='title.d')
+          div
+            span Genres:
+            span.white-font--text {{ " " + title.g.join(", ") }}
+          .mt-3(v-if='connected && status')
+            progress-bar(
+              :status='status',
+              :episodes='episodes(title.id)',
+              :episodeCount='title.e',
+              :width='200'
+            )
   v-row.pagination(justify='center')
     v-col
       v-pagination(

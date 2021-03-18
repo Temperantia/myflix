@@ -1,8 +1,8 @@
 <template lang="pug">
-.click(v-if='flixlist[t.id]', @click='removeFromFlixlist(t.id)')
+.click(v-if='flixlist[t.id]', @click.stop='removeFromFlixlist(t.id)')
   v-icon.mr-2 mdi-minus
   span Remove from Flixlist
-.click(v-else, @click='addToFlixlist(t)')
+.click(v-else, @click.stop='addToFlixlist(t)')
   v-icon.mr-2 mdi-plus
   span Add to Flixlist
 </template>
